@@ -1,0 +1,130 @@
+import type { InvitationContent } from "@/types/invitation";
+
+/**
+ * Bengali invitation copy.
+ * Unverified OCR-sensitive lines are marked in CONTENT_REVIEW.md.
+ */
+export const invitationBN: InvitationContent = {
+  meta: {
+    title: "শুভ বিবাহ — দেবমাল্য ও অভীপ্সা",
+    description:
+      "দেবমাল্য ও অভীপ্সার শুভ বিবাহের ডিজিটাল আমন্ত্রণ — ২৫ নভেম্বর ২০২৬।",
+  },
+  common: {
+    wedding: "শুভ বিবাহ",
+    openInvite: "আমন্ত্রণ খুলুন",
+    skipIntro: "এড়িয়ে যান",
+    scrollHint: "নিচে স্ক্রল করুন",
+    music: "সঙ্গীত",
+    replay: "আবার দেখুন",
+    languageLabel: "ভাষা",
+  },
+  envelope: {
+    instruction: "সিল স্পর্শ করে আমন্ত্রণ খুলুন",
+    sealLabel: "মোমের সিল",
+  },
+  grandReveal: {
+    kicker: "শুভ বিবাহ",
+    namesBn: "দেবমাল্য ও অভীপ্সা",
+    namesEn: "DEBMALYA & AVEEPSA",
+    date: "২৫ নভেম্বর ২০২৬",
+    dateEn: "25 November 2026",
+    location: "Murshidabad, West Bengal",
+    tagline: "ঐতিহ্য, ভালোবাসা ও একসঙ্গে থাকার উৎসব",
+  },
+  identities: {
+    groomLabelEn: "The Groom",
+    brideLabelEn: "The Bride",
+    groomLabelBn: "পাত্র",
+    brideLabelBn: "পাত্রী",
+    groomName: "দেবমাল্য মজুমদার",
+    brideName: "অভীপ্সা চক্রবর্তী",
+    groomRelation: "বনিষ্ঠ পুত্র",
+    brideRelation: "একমাত্র কন্যা",
+    groomDetails: [
+      { label: "পিতা", value: "শ্রী প্রশান্ত কুমার মজুমদার" },
+      { label: "মাতা", value: "শ্রীমতী নূতন মজুমদার" },
+      { label: "নিবাস", value: "অরবিন্দপল্লী" },
+      { label: "পোঃ ও থানা", value: "রঘুনাথগঞ্জ" },
+      { label: "জেলা", value: "মুর্শিদাবাদ" },
+    ],
+    brideDetails: [
+      { label: "পিতা", value: "শ্রী বাসুদেব চক্রবর্তী" },
+      { label: "মাতা", value: "শ্রীমতী মধুছন্দা চক্রবর্তী" },
+      { label: "ভাই", value: "শ্রী অভিজিৎ চক্রবর্তী" },
+      { label: "ভাবী", value: "শ্রীমতী অমৃতা মজুমদার" },
+      { label: "নিবাস", value: "ওল্ড হাসপাতাল রোড" },
+      { label: "পোঃ ও থানা", value: "রঘুনাথগঞ্জ" },
+      { label: "জেলা", value: "মুর্শিদাবাদ" },
+    ],
+    unitedLine: "দেবমাল্য ও অভীপ্সা",
+  },
+  events: {
+    eyebrow: "The Wedding Festivities",
+    headingBn: "শুভ অনুষ্ঠান সূচী",
+    headingEn: "Wedding Celebrations",
+    subtitle: "দুই বিশেষ দিন · এক সুন্দর শুরু",
+    closingNames: "দেবমাল্য ও অভীপ্সা",
+    items: [
+      {
+        id: "wedding",
+        titleBn: "গাত্রহরিদ্রা ও শুভবিবাহ",
+        titleEn: "Gaye Holud & Wedding",
+        bengaliDate: "৮ই অগ্রহায়ণ, ১৪৩৩",
+        englishDate: "২৫ নভেম্বর ২০২৬",
+        day: "বুধবার",
+        time: "সন্ধ্যায়",
+        accent: "turmeric",
+      },
+      {
+        id: "reception",
+        titleBn: "প্রীতিভোজ",
+        titleEn: "Wedding Reception",
+        bengaliDate: "১০ই অগ্রহায়ণ, ১৪৩৩",
+        englishDate: "২৭ নভেম্বর ২০২৬",
+        day: "শুক্রবার",
+        time: "সন্ধ্যায়",
+        accent: "burgundy",
+      },
+    ],
+  },
+  letter: {
+    eyebrow: "দুই পরিবারের পক্ষ থেকে আমন্ত্রণ",
+    salutation: "সবিনয় নিবেদন",
+    bengaliTitle: "শুভ বিবাহ",
+    subtitle: "ভালোবাসা ও একসঙ্গে থাকার উৎসব",
+    paragraphs: [
+      "আনন্দের সঙ্গে জানাই, আমাদের দুই পরিবারের মিলনে দেবমাল্য ও অভীপ্সার শুভ বিবাহ অনুষ্ঠিত হবে।",
+      "আপনাদের উপস্থিতি ও আশীর্বাদ এই উৎসবকে সত্যিই বিশেষ করে তুলবে।",
+    ],
+    closing: "ভালোবাসা ও আশীর্বাদসহ",
+    families: "দুই পরিবারের পক্ষ থেকে",
+    date: "২৫ নভেম্বর ২০২৬",
+  },
+  venue: {
+    greetingBn: "সাদর আমন্ত্রণ",
+    greetingEn: "With warm regards",
+    cordially: "You are cordially invited",
+    cityBn: "রঘুনাথগঞ্জ, মুর্শিদাবাদ",
+    cityEn: "Raghunathganj, Murshidabad",
+    heritageTagline: "West Bengal, India",
+    lodgeBn: "ভাগীরথী লজ",
+    lodgeEn: "Bhagirathi Lodge",
+    addressBn: "সদরঘাট, রঘুনাথগঞ্জ, মুর্শিদাবাদ",
+    addressEn: "Sadarghat, Raghunathganj, Murshidabad, West Bengal, India",
+    mapsLabel: "Google Maps-এ খুলুন",
+    mapsUrl:
+      "https://www.google.com/maps/search/?api=1&query=Bhagirathi%20Lodge%20Sadarghat%20Raghunathganj%20Murshidabad",
+    blessing: "আপনাদের উপস্থিতি ও আশীর্বাদই আমাদের পরম প্রাপ্তি।",
+    coupleNames: "DEBMALYA ♥ AVEEPSA",
+  },
+  final: {
+    blessing: "আপনাদের উপস্থিতি ও আশীর্বাদই আমাদের পরম প্রাপ্তি।",
+    closingTitle: "শুভ পরিণয়",
+    names: "দেবমাল্য ♥ অভীপ্সা",
+    familyLines: [
+      "মজুমদার পরিবার",
+      "চক্রবর্তী পরিবার",
+    ],
+  },
+};

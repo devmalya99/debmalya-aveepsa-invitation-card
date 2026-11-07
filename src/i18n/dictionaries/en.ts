@@ -1,0 +1,231 @@
+import type { Dictionary } from "./types";
+
+const en: Dictionary = {
+  meta: {
+    title: "Debmalya & Aveepsa — Wedding Invitation",
+    description:
+      "With love and blessings, Debmalya Mazumdar and Aveepsa Chakrabarty invite you to celebrate their Bengali wedding, 25–27 November 2026, Raghunathganj, Murshidabad.",
+  },
+  language: {
+    welcomeEyebrow: "A Bengali celebration",
+    welcomeTitle: "How would you like to experience our celebration?",
+    welcomeSubtitle:
+      "Choose a language. You can switch anytime without losing your place.",
+    chooseEnglish: "Continue in English",
+    chooseBengali: "বাংলায় আমন্ত্রণটি দেখুন",
+    switcherLabel: "Language",
+    switchToEnglish: "English",
+    switchToBengali: "বাংলা",
+  },
+  nav: {
+    home: "Opening",
+    blessings: "Blessings",
+    story: "Our Story",
+    heritage: "Heritage",
+    rajbari: "Celebration",
+    events: "Events",
+    countdown: "Countdown",
+    venue: "Venue",
+    gallery: "Gallery",
+    rsvp: "RSVP",
+    closing: "Closing",
+    cover: "Once",
+    kolkata: "Kolkata",
+    winds: "Winds",
+    taxi: "Smile",
+    ceremony: "Yes",
+    moonlit: "Night",
+    invite: "Invite",
+  },
+  hero: {
+    shubhoBibaho: "শুভ বিবাহ",
+    partnerOne: "Debmalya",
+    ampersand: "&",
+    partnerTwo: "Aveepsa",
+    date: "25 November 2026",
+    tagline: "Two Hearts, One Beautiful Journey",
+    scrollHint: "Scroll to begin",
+  },
+  blessings: {
+    eyebrow: "With love",
+    title: "Family Blessings",
+    body: "With the love and blessings of our families, we invite you to celebrate our new beginning.",
+  },
+  story: {
+    eyebrow: "Our journey",
+    title: "Pre-Wedding Story",
+    body: "Five moments from our path together — cinematic, playful, editorial, and rooted in Bengali tradition.",
+    captions: {
+      cinematic: "A quiet cinematic evening",
+      playful: "Laughter between frames",
+      editorial: "Dreamy light, shared stillness",
+      traditional: "In traditional Bengali splendour",
+      cultural: "Where heritage holds us",
+    },
+  },
+  loveStory: {
+    chapterLabel: "Chapter",
+    scrollHint: "Keep scrolling the story",
+    chapters: {
+      cover: {
+        kicker: "শুভ বিবাহ",
+        title: "Once upon a Bengal evening",
+        lines: [
+          "Debmalya & Aveepsa",
+          "A little love story, written with laughter and blessings.",
+        ],
+      },
+      kolkata: {
+        kicker: "City of Joy",
+        title: "It began under a golden Kolkata sky",
+        lines: [
+          "Where the river glowed, the city hummed,",
+          "and two hearts quietly found the same sunset.",
+        ],
+      },
+      winds: {
+        kicker: "Soft winds",
+        title: "Some loves arrive like birds on a breeze",
+        lines: [
+          "No grand speech. Just easy smiles,",
+          "and the feeling of coming home.",
+        ],
+      },
+      taxi: {
+        kicker: "A yellow memory",
+        title: "Then forever felt close",
+        lines: [
+          "A shared ride, a shared laugh,",
+          "and the city became their favourite witness.",
+        ],
+      },
+      ceremony: {
+        kicker: "With family",
+        title: "They said yes to forever",
+        lines: [
+          "Around sacred fire and soft petals,",
+          "two families became one celebration.",
+        ],
+      },
+      moonlit: {
+        kicker: "After dusk",
+        title: "The night grew a little softer",
+        lines: [
+          "Lanterns, quiet water, and a promise",
+          "glowing gently between them.",
+        ],
+      },
+      invite: {
+        kicker: "Your chapter",
+        title: "Come celebrate with us",
+        lines: [
+          "25–27 November 2026 · Raghunathganj, Murshidabad",
+          "We saved a seat for your smile.",
+        ],
+      },
+    },
+  },
+  heritage: {
+    eyebrow: "Bengali heritage",
+    title: "Symbols of Celebration",
+    body: "Alpana, shankha, lotus, dhunuchi and the quiet glow of the pradip — motifs of home and blessing.",
+  },
+  rajbari: {
+    eyebrow: "Entering the celebration",
+    title: "A Royal Bengali Evening",
+    body: "Inspired by zamindar-era courtyards and warm golden light — an atmosphere of welcome, not a depiction of our venue.",
+  },
+  events: {
+    eyebrow: "Celebrations",
+    title: "Wedding Functions",
+    body: "Three days of ritual, gathering and joy.",
+    timeTbd: "Time to be announced",
+    directions: "Directions",
+  },
+  countdown: {
+    eyebrow: "Until we gather",
+    title: "Live Countdown",
+    days: "Days",
+    hours: "Hours",
+    minutes: "Minutes",
+    seconds: "Seconds",
+    celebrated: "The celebrations have begun. Thank you for being part of our joy.",
+  },
+  venue: {
+    eyebrow: "Find us",
+    title: "Venue & Directions",
+    body: "We look forward to welcoming you in Raghunathganj.",
+    openMaps: "Open in Google Maps",
+    parking: "Parking",
+    landmarks: "Nearby landmarks",
+    contact: "Contact",
+    detailsSoon: "Additional details will be shared soon.",
+  },
+  gallery: {
+    eyebrow: "Memories",
+    title: "Photo Gallery",
+    body: "Authentic photographs from our journey — never substituted with stock imagery.",
+    categories: {
+      prewedding: "Pre-wedding",
+      traditional: "Traditional Bengali looks",
+      wedding: "Wedding memories",
+    },
+    empty: "Photographs will appear here once uploaded.",
+  },
+  rsvp: {
+    eyebrow: "Your presence",
+    title: "RSVP",
+    body: "Please let us know if you will celebrate with us.",
+    guestName: "Guest name",
+    phone: "Mobile number (optional)",
+    attending: "Will you attend?",
+    attendingYes: "Joyfully attending",
+    attendingNo: "Unable to attend",
+    guestCount: "Number of attendees",
+    accompanying: "Accompanying guest names",
+    accompanyingHint: "Optional — one name per line",
+    message: "Personal message (optional)",
+    submit: "Send RSVP",
+    submitting: "Sending…",
+    successTitle: "Thank you",
+    successBody: "Your response has been received with love.",
+    errorGeneric: "Something went wrong. Please try again.",
+  },
+  closing: {
+    eyebrow: "Until we meet",
+    title: "With Love",
+    body: "With love, from our families to yours.",
+    blessing: "With love, from our families to yours.",
+    thanks: "Thank you for being part of our journey.",
+  },
+  share: {
+    invite: "Share invitation",
+    copied: "Link copied",
+  },
+  common: {
+    loading: "Loading…",
+    placeholderPhoto: "Couple photograph placeholder",
+    decorativePending: "Decorative artwork pending upload",
+  },
+  mobileOnly: {
+    title: "This invitation opens on a phone",
+    body: "For the best experience, open this link on your mobile. The pocket invitation is designed only for phone-sized screens.",
+  },
+  pocket: {
+    tapCover: "Tap the heart to open",
+    momentsHint: "Swipe the illustrated cards",
+    charmsHint: "Tap a charm",
+    openCard: "Invitation unlocked",
+    swipeHint: "Swipe or scroll to turn the pages",
+    detailsCta: "See celebrations",
+    detailsHint: "Events, venue & RSVP",
+    backToCards: "Back to invitation",
+  },
+  formalInvite: {
+    eyebrow: "With the blessings of our families",
+    weds: "weds",
+    dateLine: "25 November 2026 · Raghunathganj",
+  },
+};
+
+export default en;
