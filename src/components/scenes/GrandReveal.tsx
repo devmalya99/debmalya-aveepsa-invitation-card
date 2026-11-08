@@ -18,6 +18,7 @@ import { UnionFamilyCard } from "@/components/scenes/UnionFamilyCard";
 import { assets } from "@/data/assets";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useOpeningBeat } from "@/hooks/useOpeningBeat";
+import { useOpeningLayerSwipe } from "@/hooks/useOpeningLayerSwipe";
 import { usePinnedScene } from "@/hooks/usePinnedScene";
 import { usePrefersReducedMotion } from "@/hooks/useReducedMotion";
 import { useScrollModeContext } from "@/hooks/useScrollModeContext";
@@ -61,9 +62,17 @@ export function GrandReveal() {
   const { cinematic } = useScrollModeContext();
   const reducedMotion = usePrefersReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
+  const layerRef = useRef<HTMLDivElement>(null);
   const entrancePlayedRef = useRef(false);
-  const { beat, onPinProgress } = useOpeningBeat();
+  const { beat, onPinProgress, goNext, goPrev } = useOpeningBeat();
   const isBengali = locale === "bn";
+
+  useOpeningLayerSwipe(layerRef, {
+    /* Festivities owns its own event pager + edge swipe. */
+    enabled: !reducedMotion && beat !== "festivities",
+    onNext: goNext,
+    onPrev: goPrev,
+  });
 
   useGSAP(
     () => {
@@ -185,7 +194,8 @@ export function GrandReveal() {
     },
   });
 
-  const activeBeat = cinematic ? beat : "couple";
+  /* Always follow beat — swipe works even if pin mode is still hydrating. */
+  const activeBeat = beat;
   const motionOff = reducedMotion;
 
   return (
@@ -236,7 +246,16 @@ export function GrandReveal() {
         <FloatingPetals />
       </div>
 
-      <div className="relative z-10 h-full min-h-0 w-full">
+      <div
+        ref={layerRef}
+        className="relative z-10 h-full min-h-0 w-full touch-pan-y"
+        style={{ touchAction: "pan-y" }}
+        role="group"
+        aria-roledescription="carousel"
+        aria-label={
+          isBengali ? "বিবাহের আমন্ত্রণ স্তর" : "Wedding invitation layers"
+        }
+      >
         <AnimatePresence mode="sync" initial={false}>
           {activeBeat === "couple" ? (
             <motion.div
@@ -286,17 +305,17 @@ export function GrandReveal() {
               exit={motionOff ? undefined : LAYER_MOTION.festivities.exit}
               transition={{ duration: 0.7, ease: LAYER_EASE }}
             >
-              <FestivitiesCard />
+              <FestivitiesCard onEdgeNext={goNext} onEdgePrev={goPrev} />
             </motion.div>
           ) : null}
         </AnimatePresence>
       </div>
 
       <span className="sr-only">
-        {isBengali ? "শুভ বিবাহ আমন্ত্রণ" : "Wedding invitation opening"}
+        {isBengali
+          ? "সোয়াইপ করে পরবর্তী স্তরে যান"
+          : "Swipe to move between invitation layers"}
       </span>
     </SceneWrapper>
-
-    
   );
 }

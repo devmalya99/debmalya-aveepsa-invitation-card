@@ -5,11 +5,14 @@ export function shouldUseCinematicScroll() {
   if (reduced) return false;
 
   const coarse = window.matchMedia("(pointer: coarse)").matches;
-  const shortViewport = window.innerHeight < 560;
-  if (shortViewport) return false;
 
   // Prefer native touch scrolling on phones; keep pinning via GSAP only.
+  // Short viewports still pin — otherwise opening layers stay stuck on couple.
   if (coarse && window.innerWidth < 768) {
+    return "pin-only" as const;
+  }
+
+  if (window.innerHeight < 560) {
     return "pin-only" as const;
   }
 
