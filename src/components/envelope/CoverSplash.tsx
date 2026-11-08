@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import { assets } from "@/data/assets";
 import { useAudio } from "@/hooks/useAudio";
@@ -13,8 +13,10 @@ type CoverSplashProps = {
   onComplete: () => void;
 };
 
+const READY_MS = 900;
+
 /**
- * Full-bleed Kolkata wedding illustration — lifts upward on touch/scroll to reveal the envelope.
+ * Full-bleed Kolkata wedding illustration — lifts upward on tap/scroll to reveal the envelope.
  */
 export function CoverSplash({ onComplete }: CoverSplashProps) {
   const { content, locale } = useLanguage();
@@ -22,12 +24,26 @@ export function CoverSplash({ onComplete }: CoverSplashProps) {
   const reducedMotion = usePrefersReducedMotion();
   const rootRef = useRef<HTMLDivElement>(null);
   const leavingRef = useRef(false);
+  const readyRef = useRef(false);
   const touchYRef = useRef<number | null>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const timer = window.setTimeout(() => {
+      readyRef.current = true;
+      setReady(true);
+    }, READY_MS);
+    return () => {
+      window.clearTimeout(timer);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
 
   const dismiss = useCallback(() => {
-    if (leavingRef.current) return;
+    if (!readyRef.current || leavingRef.current) return;
     leavingRef.current = true;
-    // Start ambient music on the same user gesture that dismisses the cover.
     startMusic();
 
     if (reducedMotion || !rootRef.current) {
@@ -47,11 +63,7 @@ export function CoverSplash({ onComplete }: CoverSplashProps) {
         { yPercent: -18, scale: 1.04, duration: 1.15 },
         0,
       )
-      .to(
-        ".cover-splash-veil",
-        { autoAlpha: 1, duration: 0.85 },
-        0.15,
-      )
+      .to(".cover-splash-veil", { autoAlpha: 1, duration: 0.85 }, 0.15)
       .to(
         rootRef.current,
         { yPercent: -108, autoAlpha: 0, duration: 1.05 },
@@ -63,10 +75,11 @@ export function CoverSplash({ onComplete }: CoverSplashProps) {
     () => {
       if (!rootRef.current || reducedMotion) return;
       registerGsap();
+      // Keep image CSS-visible — only gently settle scale (no autoAlpha hide).
       gsap.fromTo(
         ".cover-splash-image",
-        { scale: 1.06, autoAlpha: 0.85 },
-        { scale: 1, autoAlpha: 1, duration: 1.1, ease: "power2.out" },
+        { scale: 1.04 },
+        { scale: 1, duration: 1.1, ease: "power2.out" },
       );
       gsap.fromTo(
         ".cover-splash-hint",
@@ -79,7 +92,11 @@ export function CoverSplash({ onComplete }: CoverSplashProps) {
 
   useEffect(() => {
     const onWheel = (event: WheelEvent) => {
-      if (Math.abs(event.deltaY) < 6) return;
+      if (!readyRef.current) {
+        event.preventDefault();
+        return;
+      }
+      if (Math.abs(event.deltaY) < 40) return;
       event.preventDefault();
       dismiss();
     };
@@ -89,16 +106,21 @@ export function CoverSplash({ onComplete }: CoverSplashProps) {
     };
 
     const onTouchMove = (event: TouchEvent) => {
+      if (!readyRef.current) {
+        event.preventDefault();
+        return;
+      }
       const startY = touchYRef.current;
       const currentY = event.touches[0]?.clientY;
       if (startY == null || currentY == null) return;
-      if (startY - currentY > 28) {
+      if (startY - currentY > 40) {
         event.preventDefault();
         dismiss();
       }
     };
 
     const onKey = (event: KeyboardEvent) => {
+      if (!readyRef.current) return;
       if (
         event.key === "Enter" ||
         event.key === " " ||
@@ -126,12 +148,20 @@ export function CoverSplash({ onComplete }: CoverSplashProps) {
   return (
     <div
       ref={rootRef}
-      className="cover-splash fixed inset-0 z-[60] flex cursor-pointer flex-col bg-[#1a0c10]"
+      className={`cover-splash fixed inset-0 z-[200] flex flex-col bg-[#1a0c10] ${
+        ready ? "cursor-pointer" : "cursor-wait"
+      }`}
       role="button"
       tabIndex={0}
-      aria-label={content.envelope.instruction}
-      onClick={dismiss}
+      aria-label={
+        locale === "bn" ? "স্পর্শ করুন বা স্ক্রল করুন" : "Tap or scroll to open"
+      }
+      onClick={() => {
+        if (!readyRef.current) return;
+        dismiss();
+      }}
       onKeyDown={(event) => {
+        if (!readyRef.current) return;
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
           dismiss();
@@ -141,25 +171,26 @@ export function CoverSplash({ onComplete }: CoverSplashProps) {
       <div className="cover-splash-image absolute inset-0 will-change-transform">
         <Image
           src={assets.decorations.kolkataCover}
-          alt=""
+          alt={content.common.wedding}
           fill
           priority
+          unoptimized
           sizes="100vw"
-          className="object-cover object-[center_20%]"
+          className="object-cover object-[center_18%]"
         />
       </div>
 
       <div
-        className="cover-splash-veil pointer-events-none absolute inset-0 bg-[#F6EBD6] opacity-0"
+        className="cover-splash-veil pointer-events-none absolute inset-0 bg-[#F8F0E0] opacity-0"
         aria-hidden
       />
 
       <div className="cover-splash-hint relative z-10 mt-auto flex flex-col items-center gap-2 px-6 pb-[max(1.75rem,env(safe-area-inset-bottom))] pt-8">
         <div className="h-8 w-px bg-gradient-to-b from-transparent via-[#C5A365] to-[#C5A365]/40" />
         <p
-          className={`text-center text-[0.78rem] tracking-[0.04em] text-[#FFF8EA]/92 ${
+          className={`text-center text-[0.78rem] tracking-[0.04em] text-[#FFF8EA]/92 transition-opacity duration-300 ${
             locale === "bn" ? "font-bn-body" : "font-body"
-          }`}
+          } ${ready ? "opacity-100" : "opacity-50"}`}
           style={{ textShadow: "0 1px 8px rgba(26,12,16,0.55)" }}
         >
           {locale === "bn" ? "স্পর্শ করুন বা স্ক্রল করুন" : "Tap or scroll to open"}

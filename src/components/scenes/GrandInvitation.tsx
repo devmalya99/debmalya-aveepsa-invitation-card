@@ -361,6 +361,23 @@ export function GrandInvitation() {
           ".letter-skip",
           { autoAlpha: 0, duration: 0.2, ease: MOTION.easeScrub },
           3.1,
+        )
+        /* Soft exit so the handoff into the river scene isn’t a hard cut */
+        .to(
+          ".letter-sheet",
+          {
+            autoAlpha: 0.55,
+            y: -10,
+            scale: 0.985,
+            duration: 0.45,
+            ease: MOTION.easeScrub,
+          },
+          3.25,
+        )
+        .to(
+          ".letter-seal-stage",
+          { autoAlpha: 0, y: -8, duration: 0.35, ease: MOTION.easeScrub },
+          3.3,
         );
     },
   });

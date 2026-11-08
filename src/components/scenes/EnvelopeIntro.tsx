@@ -282,22 +282,23 @@ export function EnvelopeIntro({ onOpen }: EnvelopeIntroProps) {
   }, [finish, reducedMotion]);
 
   return (
-    <section
-      ref={sectionRef}
-      id="envelope"
-      className="relative flex h-svh min-h-svh flex-col overflow-hidden px-5 pt-[max(0.35rem,env(safe-area-inset-top))] pb-[max(0.5rem,env(safe-area-inset-bottom))]"
-    >
-      <EnvelopeAtmosphere />
-      <GoldenParticles burst={burst} />
-
+    <>
       {!coverDone ? (
         <CoverSplash onComplete={() => setCoverDone(true)} />
       ) : null}
 
-      <InvitationHeader
-        showProgress={false}
-        staticProgress={{ current: 1, total: 6 }}
-      />
+      <section
+        ref={sectionRef}
+        id="envelope"
+        className="relative flex h-svh min-h-svh flex-col overflow-hidden px-5 pt-[max(0.35rem,env(safe-area-inset-top))] pb-[max(0.5rem,env(safe-area-inset-bottom))]"
+      >
+        <EnvelopeAtmosphere />
+        <GoldenParticles burst={burst} />
+
+        <InvitationHeader
+          showProgress={false}
+          staticProgress={{ current: 1, total: 6 }}
+        />
 
       <div className="relative z-10 mx-auto flex w-full max-w-[24rem] flex-1 flex-col justify-center gap-0">
         <header className="relative z-20 flex shrink-0 flex-col items-center pt-[3.4rem] text-center">
@@ -383,10 +384,11 @@ export function EnvelopeIntro({ onOpen }: EnvelopeIntroProps) {
         </p>
       </div>
 
-      <div
-        className="env-reveal-flash pointer-events-none absolute inset-0 z-30 bg-[radial-gradient(circle_at_center,rgba(232,205,150,0.4),transparent_55%)] opacity-0"
-        aria-hidden
-      />
-    </section>
+        <div
+          className="env-reveal-flash pointer-events-none absolute inset-0 z-30 bg-[radial-gradient(circle_at_center,rgba(232,205,150,0.4),transparent_55%)] opacity-0"
+          aria-hidden
+        />
+      </section>
+    </>
   );
 }

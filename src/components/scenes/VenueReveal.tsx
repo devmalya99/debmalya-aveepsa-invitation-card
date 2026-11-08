@@ -14,7 +14,7 @@ import { gsap, registerGsap } from "@/lib/gsap";
 
 /**
  * Scene 04 — Destination folio.
- * Hero shell always present (no blank ivory). Greeting + place copy load on scrub.
+ * River hero starts fully veiled and unveils top → bottom on scrub.
  */
 export function VenueReveal() {
   const { content, locale } = useLanguage();
@@ -31,11 +31,18 @@ export function VenueReveal() {
 
       const blur = reducedMotion ? "none" : "blur(4px)";
 
-      /* Page shell: hero visible immediately so the scene never opens blank. */
-      gsap.set(".venue-hero", { autoAlpha: 1, y: 0 });
-      gsap.set(".venue-hero-image", { scale: 1.06 });
+      /* River starts fully clipped — no peeking before scrub. */
+      gsap.set(".venue-hero-frame", { autoAlpha: 1 });
+      gsap.set(".venue-hero-mask", {
+        clipPath: reducedMotion
+          ? "inset(0% 0% 0% 0%)"
+          : "inset(0% 0% 100% 0%)",
+      });
+      gsap.set(".venue-hero-image", {
+        scale: reducedMotion ? 1 : 1.08,
+        yPercent: reducedMotion ? 0 : -6,
+      });
 
-      /* Text loads in — same idea as the living letter. */
       gsap.set(".venue-greeting", { autoAlpha: 0, y: 14, filter: blur });
       gsap.set(".venue-cordially", { autoAlpha: 0, y: 10 });
       gsap.set(".venue-rule", { scaleX: 0, autoAlpha: 0 });
@@ -61,52 +68,66 @@ export function VenueReveal() {
       const clearBlur = reducedMotion ? {} : { filter: "blur(0px)" };
 
       timeline
-        /* Greeting opens the page */
+        /* Soft greeting before the river opens */
         .to(
           ".venue-greeting",
           {
             autoAlpha: 1,
             y: 0,
             ...clearBlur,
-            duration: 0.4,
+            duration: 0.35,
             ease: MOTION.easeScrub,
           },
           0,
         )
         .to(
           ".venue-cordially",
-          { autoAlpha: 1, y: 0, duration: 0.3, ease: MOTION.easeScrub },
-          0.2,
+          { autoAlpha: 1, y: 0, duration: 0.28, ease: MOTION.easeScrub },
+          0.15,
         )
 
-        /* Hero settles while copy continues */
+        /* Primary beat — river reveals top → bottom */
+        .to(
+          ".venue-hero-mask",
+          {
+            clipPath: "inset(0% 0% 0% 0%)",
+            duration: 0.85,
+            ease: MOTION.easeScrub,
+          },
+          0.28,
+        )
         .to(
           ".venue-hero-image",
-          { scale: 1, duration: 0.55, ease: MOTION.easeScrub },
-          0.25,
+          {
+            scale: 1,
+            yPercent: 0,
+            duration: 0.85,
+            ease: MOTION.easeScrub,
+          },
+          0.28,
         )
+
         .to(
           ".venue-rule",
           {
             scaleX: 1,
             autoAlpha: 1,
-            duration: 0.32,
+            duration: 0.3,
             ease: MOTION.easeScrub,
           },
-          0.55,
+          0.95,
         )
 
-        /* Place facts load */
         .to(
           ".venue-lodge",
           {
             autoAlpha: 1,
             y: 0,
             ...clearBlur,
-            duration: 0.4,
+            duration: 0.38,
             ease: MOTION.easeScrub,
           },
-          0.7,
+          1.05,
         )
         .to(
           ".venue-city",
@@ -114,20 +135,20 @@ export function VenueReveal() {
             autoAlpha: 1,
             y: 0,
             stagger: 0.08,
-            duration: 0.32,
+            duration: 0.3,
             ease: MOTION.easeScrub,
           },
-          0.95,
+          1.25,
         )
         .to(
           ".venue-tag",
-          { autoAlpha: 1, y: 0, duration: 0.28, ease: MOTION.easeScrub },
-          1.15,
+          { autoAlpha: 1, y: 0, duration: 0.26, ease: MOTION.easeScrub },
+          1.4,
         )
         .to(
           ".venue-address",
-          { autoAlpha: 1, y: 0, duration: 0.28, ease: MOTION.easeScrub },
-          1.28,
+          { autoAlpha: 1, y: 0, duration: 0.26, ease: MOTION.easeScrub },
+          1.52,
         )
         .to(
           ".venue-blessing",
@@ -135,15 +156,15 @@ export function VenueReveal() {
             autoAlpha: 1,
             y: 0,
             ...clearBlur,
-            duration: 0.36,
+            duration: 0.34,
             ease: MOTION.easeScrub,
           },
-          1.45,
+          1.68,
         )
         .to(
           ".venue-maps",
-          { autoAlpha: 1, y: 0, duration: 0.3, ease: MOTION.easeScrub },
-          1.7,
+          { autoAlpha: 1, y: 0, duration: 0.28, ease: MOTION.easeScrub },
+          1.9,
         );
     },
   });
@@ -162,6 +183,8 @@ export function VenueReveal() {
       innerClassName="max-w-[26rem] justify-center touch-pan-y sm:max-w-lg"
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_12%,rgba(185,154,88,0.1),transparent_55%)]" />
+      {/* Soft top veil so the letter→venue handoff doesn’t flash raw photo */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-24 bg-gradient-to-b from-[#F8F0E0] to-transparent" />
 
       <div className="relative z-10 mx-auto flex w-full max-w-[22rem] flex-col items-center px-1 text-center">
         <p
@@ -179,17 +202,20 @@ export function VenueReveal() {
           {venue.cordially}
         </p>
 
-        <div className="venue-hero relative mt-4 w-full overflow-hidden shadow-[0_14px_32px_rgba(64,21,29,0.14)]">
-          <div className="relative aspect-[16/10] w-full overflow-hidden">
+        <div className="venue-hero-frame relative mt-4 w-full overflow-hidden rounded-[0.4rem] border border-[#E8CD96]/35 bg-[#E5D1AE]/35 p-[3px] shadow-[0_14px_32px_rgba(64,21,29,0.12)]">
+          <div
+            className="venue-hero-mask relative aspect-[16/10] w-full overflow-hidden rounded-[0.28rem] will-change-[clip-path]"
+            style={{ clipPath: "inset(0% 0% 100% 0%)" }}
+          >
             <Image
-              src={assets.decorations.bhagirathiBoat}
+              src={assets.decorations.bhagirathiRiver}
               alt={cityPrimary}
               fill
               priority
-              className="venue-hero-image object-cover object-[center_42%] will-change-transform"
+              className="venue-hero-image object-cover object-[center_45%] will-change-transform"
               sizes="(max-width: 430px) 90vw, 400px"
             />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-deep-burgundy/25 via-transparent to-transparent" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-deep-burgundy/30 via-transparent to-antique-ivory/10" />
           </div>
         </div>
 

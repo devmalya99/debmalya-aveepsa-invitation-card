@@ -55,7 +55,7 @@ function ExperienceInner() {
   const replay = useCallback(() => {
     window.localStorage.removeItem(OPENED_KEY);
     setOpened(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
 
   if (!ready || !hydratedOpen) {
