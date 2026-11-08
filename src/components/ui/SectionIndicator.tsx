@@ -48,7 +48,7 @@ export function SectionIndicator({
         </p>
 
         <div
-          className="h-[2px] w-10 overflow-hidden rounded-full bg-antique-gold/25 sm:w-14"
+          className="h-[1.5px] w-10 overflow-hidden bg-antique-gold/25 sm:w-12"
           role="progressbar"
           aria-valuemin={0}
           aria-valuemax={100}
@@ -56,7 +56,7 @@ export function SectionIndicator({
           aria-label={content.common.wedding}
         >
           <motion.div
-            className="h-full origin-left rounded-full bg-deep-burgundy"
+            className="h-full origin-left bg-deep-burgundy"
             initial={false}
             animate={{ scaleX: fill }}
             transition={{ type: "spring", stiffness: 180, damping: 28 }}

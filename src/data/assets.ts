@@ -31,7 +31,7 @@ export const assets = {
     murshidabadSketch: "/decorations/venue/murshidabad-heritage-sketch.png",
     hazarduari: "/decorations/venue/hazarduari-palace.jpg",
     bhagirathiRiver: "/decorations/venue/bhagirathi-river-sunset.jpg",
-    bhagirathiBoat: "/decorations/venue/bhagirathi-boat.jpg",
+    bhagirathiBoat: "/decorations/venue/bhagirathi-boat-v2.jpg",
     moorshedabadPrint: "/decorations/venue/moorshedabad-print.png",
     venueAlpana: "/decorations/venue/alpana-panel.jpg",
     shiuliHeritage: "/decorations/venue/shiuli-heritage.jpg",

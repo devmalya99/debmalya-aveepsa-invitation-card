@@ -44,7 +44,7 @@ export const invitationBN: InvitationContent = {
     groomDetails: [
       { label: "পিতা", value: "শ্রী প্রশান্ত কুমার মজুমদার" },
       { label: "মাতা", value: "শ্রীমতী নূতন মজুমদার" },
-      { label: "ভাই", value: "নির্মল্য মজুমদার" },
+      { label: "ভাই", value: "নির্মাল্য মজুমদার" },
       { label: "নিবাস", value: "অরবিন্দপল্লী" },
       { label: "পোঃ ও থানা", value: "রঘুনাথগঞ্জ" },
       { label: "জেলা", value: "মুর্শিদাবাদ" },

@@ -151,25 +151,29 @@ export function FinalScene() {
           transition={pressSpring}
         >
           <svg
-            className="pointer-events-none absolute -inset-[3%] z-20 text-antique-gold"
-            viewBox="0 0 200 260"
+            className="pointer-events-none absolute -inset-[4%] z-20 text-antique-gold"
+            viewBox="0 0 200 200"
             fill="none"
             aria-hidden
           >
-            <path
+            <circle
               className="rx-frame-path"
-              d="M20 78 C20 34 58 12 100 12 C142 12 180 34 180 78 L180 236 C180 244 174 250 166 250 L34 250 C26 250 20 244 20 236 Z"
+              cx="100"
+              cy="100"
+              r="94"
               stroke="currentColor"
               strokeWidth="1.6"
               pathLength="1"
               strokeDasharray="1"
               strokeDashoffset="1"
             />
-            <path
+            <circle
               className="rx-frame-path"
-              d="M28 80 C28 42 62 22 100 22 C138 22 172 42 172 80 L172 228 C172 234 168 238 162 238 L38 238 C32 238 28 234 28 228 Z"
+              cx="100"
+              cy="100"
+              r="87"
               stroke="currentColor"
-              strokeWidth="0.8"
+              strokeWidth="0.85"
               opacity="0.55"
               pathLength="1"
               strokeDasharray="1"
@@ -178,23 +182,17 @@ export function FinalScene() {
           </svg>
 
           <div
-            className="rx-frame-sweep pointer-events-none absolute inset-y-[10%] left-0 z-30 w-1/4 bg-gradient-to-r from-transparent via-[rgba(255,242,214,0.45)] to-transparent mix-blend-soft-light"
+            className="rx-frame-sweep pointer-events-none absolute inset-y-[10%] left-0 z-30 w-1/4 rounded-full bg-gradient-to-r from-transparent via-[rgba(255,242,214,0.45)] to-transparent mix-blend-soft-light"
             aria-hidden
           />
 
-          <div
-            className="rx-photo-mask relative aspect-[3/4] w-full overflow-hidden bg-deep-burgundy/40 shadow-[0_14px_28px_rgba(0,0,0,0.35)] will-change-[clip-path]"
-            style={{
-              borderRadius:
-                "50% 50% 0.75rem 0.75rem / 22% 22% 0.75rem 0.75rem",
-            }}
-          >
+          <div className="rx-photo-mask relative aspect-square w-full overflow-hidden rounded-full bg-deep-burgundy/40 shadow-[0_14px_28px_rgba(0,0,0,0.35)] will-change-[clip-path]">
             <Image
               src={assets.couple.finalBlessing}
               alt={copy.names}
               fill
               priority
-              className="rx-photo object-cover object-[50%_18%] will-change-transform"
+              className="rx-photo object-cover object-[50%_22%] will-change-transform"
               sizes="(max-width: 430px) 46vw, 184px"
             />
           </div>

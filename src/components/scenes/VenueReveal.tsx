@@ -46,7 +46,6 @@ export function VenueReveal() {
       gsap.set(".venue-greeting", { autoAlpha: 0, y: 14, filter: blur });
       gsap.set(".venue-cordially", { autoAlpha: 0, y: 10 });
       gsap.set(".venue-rule", { scaleX: 0, autoAlpha: 0 });
-      gsap.set(".venue-lodge", { autoAlpha: 0, y: 16, filter: blur });
       gsap.set(".venue-city", { autoAlpha: 0, y: 12 });
       gsap.set(".venue-tag", { autoAlpha: 0, y: 10 });
       gsap.set(".venue-address", { autoAlpha: 0, y: 10 });
@@ -118,17 +117,6 @@ export function VenueReveal() {
         )
 
         .to(
-          ".venue-lodge",
-          {
-            autoAlpha: 1,
-            y: 0,
-            ...clearBlur,
-            duration: 0.38,
-            ease: MOTION.easeScrub,
-          },
-          1.05,
-        )
-        .to(
           ".venue-city",
           {
             autoAlpha: 1,
@@ -137,17 +125,17 @@ export function VenueReveal() {
             duration: 0.3,
             ease: MOTION.easeScrub,
           },
-          1.25,
+          1.05,
         )
         .to(
           ".venue-tag",
           { autoAlpha: 1, y: 0, duration: 0.26, ease: MOTION.easeScrub },
-          1.4,
+          1.22,
         )
         .to(
           ".venue-address",
           { autoAlpha: 1, y: 0, duration: 0.26, ease: MOTION.easeScrub },
-          1.52,
+          1.34,
         )
         .to(
           ".venue-blessing",
@@ -158,13 +146,12 @@ export function VenueReveal() {
             duration: 0.34,
             ease: MOTION.easeScrub,
           },
-          1.68,
+          1.5,
         );
     },
   });
 
   const greeting = isBengali ? venue.greetingBn : venue.greetingEn;
-  const lodgeName = isBengali ? venue.lodgeBn : venue.lodgeEn;
   const cityPrimary = isBengali ? venue.cityBn : venue.cityEn;
   const citySecondary = isBengali ? venue.cityEn : venue.cityBn;
   const address = isBengali ? venue.addressBn : venue.addressEn;
@@ -202,11 +189,12 @@ export function VenueReveal() {
             style={{ clipPath: "inset(0% 0% 100% 0%)" }}
           >
             <Image
-              src={assets.decorations.bhagirathiRiver}
+              src={assets.decorations.bhagirathiBoat}
               alt={cityPrimary}
               fill
               priority
-              className="venue-hero-image object-cover object-[center_45%] will-change-transform"
+              unoptimized
+              className="venue-hero-image object-cover object-[center_40%] will-change-transform"
               sizes="(max-width: 430px) 90vw, 400px"
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-deep-burgundy/30 via-transparent to-antique-ivory/10" />
@@ -215,16 +203,8 @@ export function VenueReveal() {
 
         <div className="venue-rule mt-4 h-px w-12 origin-center bg-gradient-to-r from-transparent via-antique-gold to-transparent" />
 
-        <h2
-          className={`venue-lodge mt-4 text-[clamp(1.35rem,5.5vw,1.6rem)] leading-snug text-sindoor-red ${
-            isBengali ? "font-bn-display" : "font-display"
-          }`}
-        >
-          {lodgeName}
-        </h2>
-
         <p
-          className={`venue-city mt-1.5 text-[clamp(1rem,4vw,1.15rem)] leading-snug text-deep-burgundy ${
+          className={`venue-city mt-4 text-[clamp(1.15rem,4.5vw,1.35rem)] leading-snug text-sindoor-red ${
             isBengali ? "font-bn-display" : "font-display"
           }`}
         >

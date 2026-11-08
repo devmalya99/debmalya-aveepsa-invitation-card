@@ -26,30 +26,35 @@ function StaticProgress({
 
   return (
     <div className="min-w-0">
-      <p className="font-display text-[0.72rem] leading-none tracking-[0.06em] text-deep-burgundy">
-        <span className="font-medium">{currentLabel}</span>
-        <span className="text-antique-gold/80"> / {totalLabel}</span>
+      <p className="font-bn-display text-[0.68rem] leading-none tracking-normal text-antique-gold">
+        {content.common.wedding}
       </p>
-      <div
-        className="mt-1.5 h-[2px] w-12 overflow-hidden rounded-full bg-antique-gold/25 sm:w-14"
-        role="progressbar"
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={Math.round(fill * 100)}
-        aria-label={content.common.wedding}
-      >
+      <div className="mt-1.5 flex items-center gap-2.5">
+        <p className="font-display text-[0.82rem] leading-none tracking-[0.04em] text-deep-burgundy">
+          <span className="font-medium">{currentLabel}</span>
+          <span className="text-antique-gold/80"> / {totalLabel}</span>
+        </p>
         <div
-          className="h-full origin-left rounded-full bg-deep-burgundy"
-          style={{ transform: `scaleX(${fill})` }}
-        />
+          className="h-[1.5px] w-10 overflow-hidden bg-antique-gold/25 sm:w-12"
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(fill * 100)}
+          aria-label={content.common.wedding}
+        >
+          <div
+            className="h-full origin-left bg-deep-burgundy"
+            style={{ transform: `scaleX(${fill})` }}
+          />
+        </div>
       </div>
     </div>
   );
 }
 
 /**
- * Stable global header for the cinematic invitation.
- * Position stays fixed across scenes — only the section number/progress update.
+ * Compact royal header — ivory bar, champagne border, identity + controls.
+ * Fixed across scenes; title content never overlaps this reserved band.
  */
 export function InvitationHeader({
   showProgress = true,
@@ -59,9 +64,9 @@ export function InvitationHeader({
 
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-40">
-      <div className="mx-auto w-full max-w-lg px-3 pt-[max(0.4rem,env(safe-area-inset-top))] sm:px-4">
+      <div className="mx-auto w-full max-w-lg px-3 pt-[max(0.35rem,env(safe-area-inset-top))] sm:px-4">
         <div
-          className={`pointer-events-auto flex min-h-[2.85rem] items-center gap-2 rounded-[0.9rem] border border-antique-gold/40 bg-antique-ivory/94 px-2 py-1 shadow-[0_1px_2px_rgba(64,21,29,0.05)] backdrop-blur-md ${
+          className={`pointer-events-auto flex min-h-[2.7rem] items-center gap-2 rounded-[0.65rem] border border-antique-gold/35 bg-antique-ivory/92 px-2.5 py-1 shadow-[0_1px_3px_rgba(64,21,29,0.04)] backdrop-blur-md ${
             showLeft ? "justify-between" : "justify-end"
           }`}
         >

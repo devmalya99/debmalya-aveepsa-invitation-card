@@ -12,15 +12,15 @@ export function LanguageSelector({ className = "" }: LanguageSelectorProps) {
 
   return (
     <div
-      className={`relative inline-grid h-11 min-h-11 grid-cols-2 items-center rounded-full border border-antique-gold/45 bg-antique-ivory p-[3px] ${className}`}
+      className={`relative inline-grid h-9 min-h-9 grid-cols-2 items-center rounded-md border border-antique-gold/40 bg-antique-ivory/80 p-[2px] ${className}`}
       role="group"
       aria-label={content.common.languageLabel}
     >
       <motion.span
         aria-hidden
-        className="absolute top-[3px] bottom-[3px] w-[calc(50%-3px)] rounded-full bg-deep-burgundy"
+        className="absolute top-[2px] bottom-[2px] w-[calc(50%-2px)] rounded-[0.3rem] bg-deep-burgundy"
         initial={false}
-        animate={{ left: locale === "bn" ? 3 : "calc(50%)" }}
+        animate={{ left: locale === "bn" ? 2 : "calc(50%)" }}
         transition={{ type: "spring", stiffness: 420, damping: 34 }}
       />
 
@@ -32,7 +32,7 @@ export function LanguageSelector({ className = "" }: LanguageSelectorProps) {
             type="button"
             onClick={() => setLocale(code)}
             aria-pressed={active}
-            className={`relative z-10 flex h-full min-h-[2.5rem] min-w-[2.75rem] items-center justify-center px-2.5 text-[0.7rem] leading-none transition-colors ${
+            className={`relative z-10 flex h-full min-h-[2rem] min-w-[2.4rem] items-center justify-center px-2 text-[0.65rem] leading-none transition-colors active:scale-[0.97] ${
               code === "bn" ? "font-bn-body" : "font-body tracking-[0.04em]"
             } ${active ? "text-antique-ivory" : "text-deep-burgundy/70"}`}
           >
