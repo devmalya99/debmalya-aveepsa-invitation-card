@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useState } from "react";
+import { motion } from "motion/react";
 import { WeddingCardDivider } from "@/components/events/WeddingCardDivider";
 import { WeddingCardEventBlock } from "@/components/events/WeddingCardEventBlock";
 import {
@@ -9,46 +9,25 @@ import {
   WEDDING_CARD_MOTION,
 } from "@/config/weddingCard";
 import { useLanguage } from "@/hooks/useLanguage";
-import { useOpeningLayerSwipe } from "@/hooks/useOpeningLayerSwipe";
 import { usePrefersReducedMotion } from "@/hooks/useReducedMotion";
-import { isCoarseMobile } from "@/lib/performance";
 
 type FestivitiesCardProps = {
   className?: string;
-  /** Leave festivities toward venue (mobile edge swipe). */
-  onEdgeNext?: () => void;
-  /** Return to bride layer (mobile edge swipe). */
-  onEdgePrev?: () => void;
 };
-
-const PAGE_EASE = [0.22, 1, 0.36, 1] as const;
 
 /**
  * Royal editorial Wedding Celebrations card for the opening canvas.
- * On phones: one event at a time, swipe between them, then edge-swipe to venue/bride.
+ * Always shows both events as a vertical list (mobile + desktop).
  */
-export function FestivitiesCard({
-  className = "",
-  onEdgeNext,
-  onEdgePrev,
-}: FestivitiesCardProps) {
+export function FestivitiesCard({ className = "" }: FestivitiesCardProps) {
   const { locale } = useLanguage();
   const reducedMotion = usePrefersReducedMotion();
-  const rootRef = useRef<HTMLDivElement>(null);
   const [sequenceOn, setSequenceOn] = useState(false);
-  const [touchPager, setTouchPager] = useState(false);
-  const [eventIndex, setEventIndex] = useState(0);
   const copy = getWeddingCardCopy(locale);
-  const events = copy.items;
-  const [wedding, reception] = events;
+  const [wedding, reception] = copy.items;
   const instant = reducedMotion;
   const go = sequenceOn || instant;
   const d = (delay: number) => (instant ? 0 : delay);
-  const pageEvent = events[eventIndex] ?? wedding;
-
-  useEffect(() => {
-    setTouchPager(isCoarseMobile());
-  }, []);
 
   useEffect(() => {
     if (instant) {
@@ -62,35 +41,16 @@ export function FestivitiesCard({
     return () => window.clearTimeout(timer);
   }, [instant]);
 
-  useOpeningLayerSwipe(rootRef, {
-    enabled: touchPager && !reducedMotion,
-    onNext: () => {
-      setEventIndex((index) => {
-        if (index < events.length - 1) return index + 1;
-        onEdgeNext?.();
-        return index;
-      });
-    },
-    onPrev: () => {
-      setEventIndex((index) => {
-        if (index > 0) return index - 1;
-        onEdgePrev?.();
-        return index;
-      });
-    },
-  });
-
   return (
     <motion.div
-      ref={rootRef}
-      className={`wedding-card relative flex h-full min-h-0 w-full flex-col items-center justify-center ${className}`}
+      className={`wedding-card relative flex h-full min-h-0 w-full flex-col items-center justify-center overflow-y-auto overscroll-contain ${className}`}
       initial={instant ? false : { opacity: 0, scale: 0.98 }}
       animate={go ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.98 }}
       transition={{
         duration: instant ? 0 : WEDDING_CARD_MOTION.shellDuration,
         ease: WEDDING_CARD_MOTION.ease,
       }}
-      style={{ maxWidth: "var(--wc-content-max)", touchAction: "pan-y" }}
+      style={{ maxWidth: "var(--wc-content-max)" }}
     >
       <div
         className="wedding-card-shimmer pointer-events-none absolute inset-x-[-8%] inset-y-[-4%] z-0 hidden opacity-60 sm:block"
@@ -205,109 +165,47 @@ export function FestivitiesCard({
           </motion.div>
         </header>
 
-        {touchPager ? (
-          <div
-            className="relative w-full"
-            style={{ marginTop: "var(--wc-section-gap)" }}
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={pageEvent.id}
-                initial={
-                  instant ? false : { opacity: 0, x: eventIndex === 0 ? -28 : 28 }
-                }
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: eventIndex === 0 ? 28 : -28 }}
-                transition={{ duration: instant ? 0 : 0.4, ease: PAGE_EASE }}
-              >
-                <WeddingCardEventBlock
-                  event={pageEvent}
-                  go={go}
-                  instant={instant}
-                  baseDelay={0.08}
-                />
-              </motion.div>
-            </AnimatePresence>
+        <div
+          className="flex w-full flex-col items-center"
+          style={{
+            marginTop: "var(--wc-section-gap)",
+            gap: "var(--wc-event-gap)",
+          }}
+        >
+          <WeddingCardEventBlock
+            event={wedding}
+            go={go}
+            instant={instant}
+            baseDelay={WEDDING_CARD_MOTION.eventBaseDelays[0]}
+          />
 
-            <div
-              className="mt-4 flex items-center justify-center gap-2"
-              aria-label={
-                locale === "bn" ? "অনুষ্ঠানের পৃষ্ঠা" : "Event pages"
-              }
-            >
-              {events.map((event, index) => (
-                <button
-                  key={event.id}
-                  type="button"
-                  aria-label={event.titleEn}
-                  aria-current={index === eventIndex}
-                  onClick={() => setEventIndex(index)}
-                  className="h-2 w-2 rounded-full transition"
-                  style={{
-                    background:
-                      index === eventIndex
-                        ? "var(--wc-primary)"
-                        : "color-mix(in srgb, var(--wc-accent) 45%, transparent)",
-                  }}
-                />
-              ))}
-            </div>
-
-            <p
-              className="mt-2 text-center uppercase"
-              style={{
-                fontFamily: "var(--wc-font-en)",
-                fontSize: "0.58rem",
-                letterSpacing: "0.14em",
-                color: "var(--wc-body)",
-              }}
-            >
-              {locale === "bn" ? "সোয়াইপ করুন" : "Swipe for next"}
-            </p>
-          </div>
-        ) : (
-          <div
-            className="flex w-full flex-col items-center"
-            style={{
-              marginTop: "var(--wc-section-gap)",
-              gap: "var(--wc-event-gap)",
+          <motion.div
+            className="flex w-full flex-col items-center gap-2"
+            style={{ color: "var(--wc-accent)" }}
+            initial={false}
+            animate={go ? { opacity: 1 } : { opacity: 0 }}
+            transition={{
+              duration: instant ? 0 : 0.4,
+              delay: d(1.12),
+              ease: WEDDING_CARD_MOTION.ease,
             }}
           >
-            <WeddingCardEventBlock
-              event={wedding}
-              go={go}
-              instant={instant}
-              baseDelay={WEDDING_CARD_MOTION.eventBaseDelays[0]}
-            />
-
-            <motion.div
-              className="flex w-full flex-col items-center gap-2"
-              style={{ color: "var(--wc-accent)" }}
-              initial={false}
-              animate={go ? { opacity: 1 } : { opacity: 0 }}
-              transition={{
-                duration: instant ? 0 : 0.4,
-                delay: d(1.12),
-                ease: WEDDING_CARD_MOTION.ease,
+            <div
+              className="h-px w-16 origin-center"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent, var(--wc-accent), transparent)",
               }}
-            >
-              <div
-                className="h-px w-16 origin-center"
-                style={{
-                  background:
-                    "linear-gradient(90deg, transparent, var(--wc-accent), transparent)",
-                }}
-              />
-            </motion.div>
-
-            <WeddingCardEventBlock
-              event={reception}
-              go={go}
-              instant={instant}
-              baseDelay={WEDDING_CARD_MOTION.eventBaseDelays[1]}
             />
-          </div>
-        )}
+          </motion.div>
+
+          <WeddingCardEventBlock
+            event={reception}
+            go={go}
+            instant={instant}
+            baseDelay={WEDDING_CARD_MOTION.eventBaseDelays[1]}
+          />
+        </div>
 
         <motion.footer
           className="w-full shrink-0 text-center"
@@ -316,7 +214,7 @@ export function FestivitiesCard({
           animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
           transition={{
             duration: instant ? 0 : WEDDING_CARD_MOTION.footerDuration,
-            delay: d(touchPager ? 0.4 : WEDDING_CARD_MOTION.footerDelay),
+            delay: d(WEDDING_CARD_MOTION.footerDelay),
             ease: WEDDING_CARD_MOTION.ease,
           }}
         >

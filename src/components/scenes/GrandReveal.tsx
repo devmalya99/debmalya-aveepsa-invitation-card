@@ -68,8 +68,7 @@ export function GrandReveal() {
   const isBengali = locale === "bn";
 
   useOpeningLayerSwipe(layerRef, {
-    /* Festivities owns its own event pager + edge swipe. */
-    enabled: !reducedMotion && beat !== "festivities",
+    enabled: !reducedMotion,
     onNext: goNext,
     onPrev: goPrev,
   });
@@ -305,7 +304,7 @@ export function GrandReveal() {
               exit={motionOff ? undefined : LAYER_MOTION.festivities.exit}
               transition={{ duration: 0.7, ease: LAYER_EASE }}
             >
-              <FestivitiesCard onEdgeNext={goNext} onEdgePrev={goPrev} />
+              <FestivitiesCard />
             </motion.div>
           ) : null}
         </AnimatePresence>
