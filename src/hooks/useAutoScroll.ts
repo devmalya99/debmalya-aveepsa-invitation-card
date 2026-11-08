@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { useAutoPlay } from "@/hooks/useAutoPlay";
 
-/** Slightly faster so opening layers (couple → families) advance cleanly on auto-play. */
-const PX_PER_FRAME = 3.4;
+/** Faster pace so opening layers + later scenes don't linger on auto-play. */
+const PX_PER_FRAME = 5.8;
 
 /**
  * While auto-play is engaged and the invitation film is open,

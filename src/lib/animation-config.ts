@@ -1,11 +1,10 @@
 export const SCENE_SCROLL = {
   /*
-   * One pinned canvas: couple → groom family → bride family.
-   * Long enough for three readable holds without empty ivory between beats.
+   * One pinned canvas: couple → groom → bride → festivities.
+   * Four readable holds on the shared atmosphere.
    */
-  "grand-reveal": { end: "+=280%" },
+  "grand-reveal": { end: "+=360%" },
   "venue-reveal": { end: "+=180%" },
-  "wedding-events": { end: "+=200%" },
   /* Moderate pin — enough for unveil choreography without dominating the scroll. */
   "final-scene": { end: "+=160%" },
   /* Guest name form — one viewport, light hold */
@@ -14,10 +13,9 @@ export const SCENE_SCROLL = {
 
 export type SceneId = keyof typeof SCENE_SCROLL;
 
-/** Pin / DOM scene order (family beats live inside grand-reveal). */
+/** Pin / DOM scene order (opening layers live inside grand-reveal). */
 export const SCENE_ORDER: SceneId[] = [
   "grand-reveal",
-  "wedding-events",
   "venue-reveal",
   "final-scene",
   "guest-blessing",
@@ -37,15 +35,25 @@ export type ProgressStep = {
 };
 
 export const PROGRESS_STEPS: ProgressStep[] = [
-  { id: "couple", sceneId: "grand-reveal", pinStart: 0, pinEnd: 1 / 3 },
+  { id: "couple", sceneId: "grand-reveal", pinStart: 0, pinEnd: 0.25 },
   {
     id: "groom-family",
     sceneId: "grand-reveal",
-    pinStart: 1 / 3,
-    pinEnd: 2 / 3,
+    pinStart: 0.25,
+    pinEnd: 0.5,
   },
-  { id: "bride-family", sceneId: "grand-reveal", pinStart: 2 / 3, pinEnd: 1 },
-  { id: "wedding-events", sceneId: "wedding-events", pinStart: 0, pinEnd: 1 },
+  {
+    id: "bride-family",
+    sceneId: "grand-reveal",
+    pinStart: 0.5,
+    pinEnd: 0.75,
+  },
+  {
+    id: "festivities",
+    sceneId: "grand-reveal",
+    pinStart: 0.75,
+    pinEnd: 1,
+  },
   { id: "venue-reveal", sceneId: "venue-reveal", pinStart: 0, pinEnd: 1 },
   { id: "final-scene", sceneId: "final-scene", pinStart: 0, pinEnd: 1 },
   { id: "guest-blessing", sceneId: "guest-blessing", pinStart: 0, pinEnd: 1 },

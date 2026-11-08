@@ -12,6 +12,7 @@ import {
   FloatingPetals,
   GoldParticles,
 } from "@/components/reveal/HeroOrnaments";
+import { FestivitiesCard } from "@/components/scenes/FestivitiesCard";
 import { OpeningCoupleCard } from "@/components/scenes/OpeningCoupleCard";
 import { UnionFamilyCard } from "@/components/scenes/UnionFamilyCard";
 import { assets } from "@/data/assets";
@@ -37,9 +38,20 @@ const LAYER_MOTION = {
     exit: { opacity: 0, x: 64, rotate: 1.5, scale: 0.98 },
   },
   bride: {
-    initial: { opacity: 0, x: 80, rotate: 2.5, scale: 0.97, filter: "blur(0px)" },
+    initial: {
+      opacity: 0,
+      x: 80,
+      rotate: 2.5,
+      scale: 0.97,
+      filter: "blur(0px)",
+    },
     animate: { opacity: 1, x: 0, rotate: 0, scale: 1, filter: "blur(0px)" },
-    exit: { opacity: 0, y: 52, scale: 0.97, filter: "blur(4px)" },
+    exit: { opacity: 0, x: -56, rotate: -1.5, scale: 0.98 },
+  },
+  festivities: {
+    initial: { opacity: 0, y: 72, scale: 0.96, filter: "blur(0px)" },
+    animate: { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" },
+    exit: { opacity: 0, y: -40, scale: 0.98, filter: "blur(4px)" },
   },
 } as const;
 
@@ -265,10 +277,10 @@ export function GrandReveal() {
         .fromTo(
           ".reveal-parallax-bg",
           { y: 0, scale: 1 },
-          { y: -14, scale: 1.02, duration: 3, ease: MOTION.easeScrub },
+          { y: -16, scale: 1.025, duration: 4, ease: MOTION.easeScrub },
           0,
         )
-        .to({}, { duration: 3 }, 0);
+        .to({}, { duration: 4 }, 0);
     },
   });
 
@@ -361,6 +373,19 @@ export function GrandReveal() {
               transition={{ duration: 0.58, ease: LAYER_EASE }}
             >
               <UnionFamilyCard side="bride" />
+            </motion.div>
+          ) : null}
+
+          {activeBeat === "festivities" ? (
+            <motion.div
+              key="opening-festivities"
+              className="absolute inset-0 flex items-center justify-center"
+              initial={motionOff ? false : LAYER_MOTION.festivities.initial}
+              animate={LAYER_MOTION.festivities.animate}
+              exit={motionOff ? undefined : LAYER_MOTION.festivities.exit}
+              transition={{ duration: 0.62, ease: LAYER_EASE }}
+            >
+              <FestivitiesCard />
             </motion.div>
           ) : null}
         </AnimatePresence>

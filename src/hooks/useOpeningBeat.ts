@@ -2,12 +2,14 @@
 
 import { useCallback, useState } from "react";
 
-export type OpeningBeat = "couple" | "groom" | "bride";
+export type OpeningBeat = "couple" | "groom" | "bride" | "festivities";
 
+/** Four equal holds on the shared opening pin. */
 export function beatFromProgress(progress: number): OpeningBeat {
-  if (progress < 1 / 3) return "couple";
-  if (progress < 2 / 3) return "groom";
-  return "bride";
+  if (progress < 0.25) return "couple";
+  if (progress < 0.5) return "groom";
+  if (progress < 0.75) return "bride";
+  return "festivities";
 }
 
 /**

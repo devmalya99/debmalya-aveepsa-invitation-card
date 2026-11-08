@@ -9,7 +9,6 @@ import { FinalScene } from "@/components/scenes/FinalScene";
 import { GrandReveal } from "@/components/scenes/GrandReveal";
 import { GuestBlessingScene } from "@/components/scenes/GuestBlessingScene";
 import { VenueReveal } from "@/components/scenes/VenueReveal";
-import { WeddingEvents } from "@/components/scenes/WeddingEvents";
 import { InvitationHeader } from "@/components/navigation/InvitationHeader";
 import { AudioProvider } from "@/hooks/useAudio";
 import { AutoPlayProvider } from "@/hooks/useAutoPlay";
@@ -85,7 +84,6 @@ function ExperienceInner() {
           <InvitationHeader showProgress />
 
           <GrandReveal />
-          <WeddingEvents />
           <VenueReveal />
           <FinalScene />
           <GuestBlessingScene onReplay={replay} />
