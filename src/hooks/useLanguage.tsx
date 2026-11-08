@@ -18,36 +18,40 @@ type LanguageContextValue = {
   locale: Locale;
   content: InvitationContent;
   setLocale: (locale: Locale) => void;
+  /** True after hydration. */
   ready: boolean;
+  /** True only after the guest explicitly chose a language (or had one stored). */
+  hasChosenLocale: boolean;
 };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
-function readStoredLocale(): Locale {
-  if (typeof window === "undefined") return "bn";
-  const stored = window.localStorage.getItem(STORAGE_KEY);
-  return stored === "en" || stored === "bn" ? stored : "bn";
-}
-
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>("bn");
+  const [hasChosenLocale, setHasChosenLocale] = useState(false);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setLocaleState(readStoredLocale());
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    if (stored === "en" || stored === "bn") {
+      setLocaleState(stored);
+      setHasChosenLocale(true);
+      document.documentElement.lang = stored === "bn" ? "bn" : "en";
+    }
     setReady(true);
   }, []);
 
   const setLocale = useCallback((next: Locale) => {
     setLocaleState(next);
+    setHasChosenLocale(true);
     window.localStorage.setItem(STORAGE_KEY, next);
     document.documentElement.lang = next === "bn" ? "bn" : "en";
   }, []);
 
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || !hasChosenLocale) return;
     document.documentElement.lang = locale === "bn" ? "bn" : "en";
-  }, [locale, ready]);
+  }, [locale, ready, hasChosenLocale]);
 
   const value = useMemo(
     () => ({
@@ -55,8 +59,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       content: getInvitation(locale),
       setLocale,
       ready,
+      hasChosenLocale,
     }),
-    [locale, setLocale, ready],
+    [locale, setLocale, ready, hasChosenLocale],
   );
 
   return (

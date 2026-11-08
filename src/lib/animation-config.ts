@@ -7,11 +7,13 @@ export const SCENE_SCROLL = {
   "wedding-events": { end: "+=220%" },
   /* Moderate pin — enough for unveil choreography without dominating the scroll. */
   "final-scene": { end: "+=180%" },
+  /* Guest name form — one viewport, light hold */
+  "guest-blessing": { end: "+=100%" },
 } as const;
 
 export type SceneId = keyof typeof SCENE_SCROLL;
 
-/** Narrative order: hero → identities → letter → destination → festivities → close */
+/** Narrative order: hero → identities → letter → destination → festivities → close → name */
 export const SCENE_ORDER: SceneId[] = [
   "grand-reveal",
   "groom-bride",
@@ -19,6 +21,7 @@ export const SCENE_ORDER: SceneId[] = [
   "venue-reveal",
   "wedding-events",
   "final-scene",
+  "guest-blessing",
 ];
 
 export const SCROLL_SCRUB = 1;

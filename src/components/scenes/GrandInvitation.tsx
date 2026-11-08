@@ -466,17 +466,17 @@ export function GrandInvitation() {
         </div>
 
         {/* Parchment — content-driven, not viewport-stretched */}
-        <article className="letter-sheet relative w-full origin-center overflow-hidden rounded-[1.85rem] bg-[linear-gradient(168deg,#fff9ed_0%,#f5e8d2_52%,#e9d5b2_100%)] px-[clamp(1.35rem,5.5vw,1.6rem)] pt-[clamp(2.25rem,6vw,2.6rem)] pb-[clamp(1.75rem,5vw,2.15rem)] text-deep-burgundy shadow-[0_18px_40px_rgba(20,6,10,0.28)] will-change-[clip-path]">
-          {/* One refined double border */}
-          <div className="letter-border pointer-events-none absolute inset-[7px] rounded-[1.5rem] border border-antique-gold/50" />
-          <div className="letter-border pointer-events-none absolute inset-[11px] rounded-[1.3rem] border border-antique-gold/22" />
+        <article className="letter-sheet relative w-full origin-center overflow-hidden rounded-[1.85rem] bg-[linear-gradient(168deg,#fff9ed_0%,#f5e8d2_52%,#e9d5b2_100%)] px-[clamp(1.85rem,7.5vw,2.35rem)] pt-[clamp(2.35rem,6.5vw,2.75rem)] pb-[clamp(1.9rem,5.5vw,2.35rem)] text-deep-burgundy shadow-[0_18px_40px_rgba(20,6,10,0.28)] will-change-[clip-path]">
+          {/* Double gold border — inset so it never hugs the card edge */}
+          <div className="letter-border pointer-events-none absolute inset-[14px] rounded-[1.35rem] border border-antique-gold/55" />
+          <div className="letter-border pointer-events-none absolute inset-[19px] rounded-[1.15rem] border border-antique-gold/25" />
 
-          <LetterCorner className="letter-corner absolute top-3.5 left-3.5 z-10 h-5 w-5 text-antique-gold/90" />
-          <LetterCorner className="letter-corner absolute top-3.5 right-3.5 z-10 h-5 w-5 rotate-90 text-antique-gold/90" />
-          <LetterCorner className="letter-corner absolute bottom-3.5 left-3.5 z-10 h-5 w-5 -rotate-90 text-antique-gold/90" />
-          <LetterCorner className="letter-corner absolute right-3.5 bottom-3.5 z-10 h-5 w-5 rotate-180 text-antique-gold/90" />
+          <LetterCorner className="letter-corner absolute top-5 left-5 z-10 h-5 w-5 text-antique-gold/90" />
+          <LetterCorner className="letter-corner absolute top-5 right-5 z-10 h-5 w-5 rotate-90 text-antique-gold/90" />
+          <LetterCorner className="letter-corner absolute bottom-5 left-5 z-10 h-5 w-5 -rotate-90 text-antique-gold/90" />
+          <LetterCorner className="letter-corner absolute right-5 bottom-5 z-10 h-5 w-5 rotate-180 text-antique-gold/90" />
 
-          <div className="relative z-10 mx-auto flex w-full max-w-[22rem] flex-col items-center text-center">
+          <div className="relative z-10 mx-auto flex w-full max-w-[20.5rem] flex-col items-center text-center">
             {/* A — Invitation heading */}
             <p
               className={`letter-eyebrow text-[clamp(0.62rem,2.8vw,0.72rem)] text-[#6b5224] ${
@@ -515,7 +515,7 @@ export function GrandInvitation() {
               {letter.paragraphs.map((paragraph) => (
                 <p
                   key={paragraph}
-                  className={`letter-paragraph text-[clamp(1.05rem,4.2vw,1.125rem)] leading-[1.65] text-deep-burgundy/90 ${
+                  className={`letter-paragraph text-[clamp(1rem,4vw,1.1rem)] leading-[1.7] text-deep-burgundy/90 ${
                     isBengali ? "font-bn-body" : "font-letter"
                   }`}
                 >
@@ -525,9 +525,9 @@ export function GrandInvitation() {
             </div>
 
             {/* D — Family blessing plaque (same column width) */}
-            <div className="letter-plaque relative mt-8 w-full touch-pan-y overflow-hidden bg-[linear-gradient(165deg,#3a121a_0%,#6e1c26_48%,#2a0e14_100%)] px-4 py-5 will-change-transform">
-              <div className="letter-plaque-border pointer-events-none absolute inset-[5px] border border-antique-gold/45" />
-              <div className="letter-plaque-border pointer-events-none absolute inset-[9px] border border-antique-gold/20" />
+            <div className="letter-plaque relative mt-8 w-full touch-pan-y overflow-hidden bg-[linear-gradient(165deg,#3a121a_0%,#6e1c26_48%,#2a0e14_100%)] px-5 py-5 will-change-transform">
+              <div className="letter-plaque-border pointer-events-none absolute inset-[7px] border border-antique-gold/45" />
+              <div className="letter-plaque-border pointer-events-none absolute inset-[11px] border border-antique-gold/20" />
 
               <PlaqueLotus className="letter-plaque-lotus relative z-10 mx-auto h-6 w-16 text-antique-gold" />
 

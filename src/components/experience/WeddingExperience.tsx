@@ -2,11 +2,14 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ScrollExperience } from "@/components/experience/ScrollExperience";
+import { MobileOnlyGate } from "@/components/mobile/MobileOnlyGate";
+import { LanguagePreference } from "@/components/envelope/LanguagePreference";
 import { EnvelopeIntro } from "@/components/scenes/EnvelopeIntro";
 import { FinalScene } from "@/components/scenes/FinalScene";
 import { GrandInvitation } from "@/components/scenes/GrandInvitation";
 import { GrandReveal } from "@/components/scenes/GrandReveal";
 import { GroomBride } from "@/components/scenes/GroomBride";
+import { GuestBlessingScene } from "@/components/scenes/GuestBlessingScene";
 import { VenueReveal } from "@/components/scenes/VenueReveal";
 import { WeddingEvents } from "@/components/scenes/WeddingEvents";
 import { InvitationHeader } from "@/components/navigation/InvitationHeader";
@@ -17,7 +20,7 @@ import { registerGsap, ScrollTrigger } from "@/lib/gsap";
 const OPENED_KEY = "wedding-invite-opened";
 
 function ExperienceInner() {
-  const { ready } = useLanguage();
+  const { ready, hasChosenLocale } = useLanguage();
   const [opened, setOpened] = useState(false);
   const [hydratedOpen, setHydratedOpen] = useState(false);
 
@@ -45,7 +48,6 @@ function ExperienceInner() {
   const openInvitation = useCallback(() => {
     setOpened(true);
     window.localStorage.setItem(OPENED_KEY, "1");
-    // Land at the top of Scene 01 immediately — no smooth scroll dead-zone.
     window.requestAnimationFrame(() => {
       window.scrollTo({ top: 0, behavior: "auto" });
       ScrollTrigger.refresh();
@@ -71,18 +73,22 @@ function ExperienceInner() {
   }
 
   return (
-    <ScrollExperience>
-      <main className="relative bg-antique-ivory">
-        <InvitationHeader showProgress />
+    <>
+      {!hasChosenLocale ? <LanguagePreference /> : null}
+      <ScrollExperience>
+        <main className="relative bg-antique-ivory">
+          <InvitationHeader showProgress />
 
-        <GrandReveal />
-        <GroomBride />
-        <GrandInvitation />
-        <VenueReveal />
-        <WeddingEvents />
-        <FinalScene onReplay={replay} />
-      </main>
-    </ScrollExperience>
+          <GrandReveal />
+          <GroomBride />
+          <GrandInvitation />
+          <VenueReveal />
+          <WeddingEvents />
+          <FinalScene onReplay={replay} />
+          <GuestBlessingScene />
+        </main>
+      </ScrollExperience>
+    </>
   );
 }
 
@@ -90,7 +96,9 @@ export function WeddingExperience() {
   return (
     <LanguageProvider>
       <AudioProvider>
-        <ExperienceInner />
+        <MobileOnlyGate>
+          <ExperienceInner />
+        </MobileOnlyGate>
       </AudioProvider>
     </LanguageProvider>
   );

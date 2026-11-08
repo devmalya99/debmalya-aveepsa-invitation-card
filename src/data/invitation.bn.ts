@@ -132,4 +132,11 @@ export const invitationBN: InvitationContent = {
     familiesBn: "মজুমদার ও চক্রবর্তী পরিবার",
     familiesEn: "Mazumdar & Chakrabarti Families",
   },
+  guestForm: {
+    prompt: "আপনার নামে আশীর্বাদ দিন",
+    placeholder: "আপনার নাম",
+    submit: "আশীর্বাদ পাঠান",
+    thanks: "ধন্যবাদ, {name}",
+    error: "সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।",
+  },
 };

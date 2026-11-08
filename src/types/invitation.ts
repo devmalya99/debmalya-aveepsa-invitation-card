@@ -97,4 +97,11 @@ export type InvitationContent = {
     familiesBn: string;
     familiesEn: string;
   };
+  guestForm: {
+    prompt: string;
+    placeholder: string;
+    submit: string;
+    thanks: string;
+    error: string;
+  };
 };

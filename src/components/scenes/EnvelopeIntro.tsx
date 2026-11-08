@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import { CoverSplash } from "@/components/envelope/CoverSplash";
+import { LanguagePreference } from "@/components/envelope/LanguagePreference";
 import { Envelope } from "@/components/envelope/Envelope";
 import { EnvelopeAtmosphere } from "@/components/envelope/EnvelopeAtmosphere";
 import { EnvelopeFlap } from "@/components/envelope/EnvelopeFlap";
@@ -22,7 +23,7 @@ type EnvelopeIntroProps = {
  * Cover illustration → envelope homepage composition.
  */
 export function EnvelopeIntro({ onOpen }: EnvelopeIntroProps) {
-  const { content, locale } = useLanguage();
+  const { content, locale, hasChosenLocale } = useLanguage();
   const reducedMotion = usePrefersReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const openingRef = useRef(false);
@@ -283,7 +284,9 @@ export function EnvelopeIntro({ onOpen }: EnvelopeIntroProps) {
 
   return (
     <>
-      {!coverDone ? (
+      {!hasChosenLocale ? <LanguagePreference /> : null}
+
+      {hasChosenLocale && !coverDone ? (
         <CoverSplash onComplete={() => setCoverDone(true)} />
       ) : null}
 

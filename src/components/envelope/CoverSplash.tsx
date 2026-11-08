@@ -185,13 +185,16 @@ export function CoverSplash({ onComplete }: CoverSplashProps) {
         aria-hidden
       />
 
-      <div className="cover-splash-hint relative z-10 mt-auto flex flex-col items-center gap-2 px-6 pb-[max(1.75rem,env(safe-area-inset-bottom))] pt-8">
-        <div className="h-8 w-px bg-gradient-to-b from-transparent via-[#C5A365] to-[#C5A365]/40" />
+      <div className="cover-splash-hint relative z-10 mt-auto flex flex-col items-center gap-2.5 px-6 pb-[max(2rem,env(safe-area-inset-bottom))] pt-10">
+        <div className="h-9 w-px bg-gradient-to-b from-transparent via-[#C5A365] to-[#C5A365]/45" />
         <p
-          className={`text-center text-[0.78rem] tracking-[0.04em] text-[#FFF8EA]/92 transition-opacity duration-300 ${
-            locale === "bn" ? "font-bn-body" : "font-body"
-          } ${ready ? "opacity-100" : "opacity-50"}`}
-          style={{ textShadow: "0 1px 8px rgba(26,12,16,0.55)" }}
+          className={`text-center text-[1.05rem] font-semibold tracking-[0.03em] text-[#FFF8EA] transition-opacity duration-300 sm:text-[1.12rem] ${
+            locale === "bn" ? "font-bn-display" : "font-display"
+          } ${ready ? "opacity-100" : "opacity-55"}`}
+          style={{
+            textShadow:
+              "0 2px 4px rgba(0,0,0,0.85), 0 4px 18px rgba(0,0,0,0.65), 0 0 1px rgba(0,0,0,0.9)",
+          }}
         >
           {locale === "bn" ? "স্পর্শ করুন বা স্ক্রল করুন" : "Tap or scroll to open"}
         </p>

@@ -130,4 +130,11 @@ export const invitationEN: InvitationContent = {
     familiesBn: "মজুমদার ও চক্রবর্তী পরিবার",
     familiesEn: "Mazumdar & Chakrabarti Families",
   },
+  guestForm: {
+    prompt: "Bless us with your name",
+    placeholder: "Your name",
+    submit: "Send blessings",
+    thanks: "Thank you, {name}",
+    error: "Could not save. Please try again.",
+  },
 };
