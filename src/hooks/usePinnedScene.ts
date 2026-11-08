@@ -19,6 +19,8 @@ type UsePinnedSceneOptions = {
   pin?: boolean;
   start?: string;
   end?: string;
+  /** Override global SCROLL_SCRUB (e.g. 0.8 for softer finale lag). */
+  scrub?: number | boolean;
 };
 
 /**
@@ -33,6 +35,7 @@ export function usePinnedScene({
   pin = true,
   start = "top top",
   end,
+  scrub = SCROLL_SCRUB,
 }: UsePinnedSceneOptions) {
   useGSAP(
     () => {
@@ -48,7 +51,7 @@ export function usePinnedScene({
           trigger,
           start,
           end: end ?? SCENE_SCROLL[sceneId].end,
-          scrub: SCROLL_SCRUB,
+          scrub,
           pin,
           pinSpacing: true,
           anticipatePin: pin ? 1 : 0,
@@ -62,7 +65,7 @@ export function usePinnedScene({
     },
     {
       scope: sectionRef,
-      dependencies: [enabled, sceneId, pin, start, end],
+      dependencies: [enabled, sceneId, pin, start, end, scrub],
       revertOnUpdate: true,
     },
   );

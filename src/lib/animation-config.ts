@@ -5,7 +5,8 @@ export const SCENE_SCROLL = {
   "grand-invitation": { end: "+=220%" },
   "venue-reveal": { end: "+=220%" },
   "wedding-events": { end: "+=220%" },
-  "final-scene": { end: "+=120%" },
+  /* Moderate pin — enough for unveil choreography without dominating the scroll. */
+  "final-scene": { end: "+=180%" },
 } as const;
 
 export type SceneId = keyof typeof SCENE_SCROLL;

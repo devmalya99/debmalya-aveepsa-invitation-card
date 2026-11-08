@@ -1,93 +1,108 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
-import { useGSAP } from "@gsap/react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { SceneWrapper } from "@/components/experience/SceneWrapper";
 import { FinalePetals } from "@/components/finale/FinalePetals";
 import { assets } from "@/data/assets";
+import { useFinalSceneAnimation } from "@/hooks/useFinalSceneAnimation";
 import { useLanguage } from "@/hooks/useLanguage";
 import { usePrefersReducedMotion } from "@/hooks/useReducedMotion";
-import { usePinnedScene } from "@/hooks/usePinnedScene";
 import { useScrollModeContext } from "@/hooks/useScrollModeContext";
-import { MOTION } from "@/lib/animation-config";
 import { gsap, registerGsap } from "@/lib/gsap";
 
 type FinalSceneProps = {
   onReplay: () => void;
 };
 
-function CardLotus({ className = "" }: { className?: string }) {
+function CardLotus({
+  className = "",
+  bloomKey = 0,
+}: {
+  className?: string;
+  bloomKey?: number;
+}) {
   return (
-    <svg viewBox="0 0 64 24" className={className} aria-hidden fill="none">
+    <motion.svg
+      key={bloomKey}
+      viewBox="0 0 64 24"
+      className={className}
+      aria-hidden
+      fill="none"
+      initial={{ scale: 0.85, opacity: 0.7 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ type: "spring", stiffness: 380, damping: 22 }}
+    >
       <path
+        className="rx-lotus-path"
         d="M32 20 C28 12 22 8 16 6 C22 8 26 12 32 18 C38 12 42 8 48 6 C42 8 36 12 32 20 Z"
         stroke="currentColor"
         strokeWidth="1.1"
       />
       <circle cx="32" cy="12" r="1.6" fill="currentColor" opacity="0.8" />
+    </motion.svg>
+  );
+}
+
+function FamilyOrnament({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden fill="none">
+      <circle cx="12" cy="12" r="3.2" stroke="currentColor" strokeWidth="1" />
+      <path
+        d="M12 4 C13.5 7 13.5 9 12 12 C10.5 9 10.5 7 12 4 Z
+           M12 20 C10.5 17 10.5 15 12 12 C13.5 15 13.5 17 12 20 Z"
+        stroke="currentColor"
+        strokeWidth="0.9"
+      />
     </svg>
   );
 }
 
+function splitWords(text: string) {
+  return text.split(/\s+/).filter(Boolean);
+}
+
+/**
+ * Split blessing into phrase groups without breaking Bengali grapheme clusters.
+ * Uses punctuation / mid-dot / natural pauses — never per-character.
+ */
+function splitBlessingPhrases(text: string): string[] {
+  const parts = text
+    .split(/(?<=[।.!?…])\s+|(?<=·)\s+/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  return parts.length > 0 ? parts : [text];
+}
+
 /**
  * Scene 06 — Reception finale.
- * Stacked composition only: portrait → families → welcome card → replay.
- * No overlapping negative margins; no clip-path that collapses the photo.
+ * Photograph unveil → families meet → ivory card rises → blessing → replay.
  */
 export function FinalScene({ onReplay }: FinalSceneProps) {
   const { content, locale } = useLanguage();
   const { cinematic } = useScrollModeContext();
   const reducedMotion = usePrefersReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
+  const [lotusBloom, setLotusBloom] = useState(0);
+  const [replaySpin, setReplaySpin] = useState(0);
   const copy = content.final;
   const isBengali = locale === "bn";
 
-  useGSAP(
-    () => {
-      if (!cinematic || !sectionRef.current) return;
-      registerGsap();
-
-      gsap.set(".rx-glow", { autoAlpha: 0.45, scale: 1 });
-      gsap.set(".rx-portrait", { autoAlpha: 1 });
-      gsap.set(".rx-frame-path", { strokeDashoffset: 0 });
-      gsap.set(".rx-photo", { scale: 1 });
-      gsap.set(".rx-family", { autoAlpha: 1, y: 0 });
-      gsap.set(".rx-card", { autoAlpha: 1, y: 0 });
-      gsap.set(".rx-line", { autoAlpha: 1, y: 0 });
-      gsap.set(".rx-signature", { autoAlpha: 1, y: 0 });
-      gsap.set(".rx-replay", { autoAlpha: 1, y: 0 });
-    },
-    {
-      scope: sectionRef,
-      dependencies: [cinematic],
-      revertOnUpdate: true,
-    },
+  const headingText = isBengali ? "সাদর আমন্ত্রণ" : "With warm regards";
+  const subtitleWords = useMemo(
+    () => splitWords("Welcome to our celebration"),
+    [],
+  );
+  const blessingPhrases = useMemo(
+    () => splitBlessingPhrases(copy.blessing),
+    [copy.blessing],
   );
 
-  usePinnedScene({
+  useFinalSceneAnimation({
     sectionRef,
-    sceneId: "final-scene",
     enabled: cinematic,
-    build: (timeline) => {
-      timeline
-        .to(
-          ".rx-glow",
-          {
-            autoAlpha: 0.6,
-            scale: 1.04,
-            duration: 0.55,
-            ease: MOTION.easeScrub,
-          },
-          0,
-        )
-        .to(
-          ".rx-photo",
-          { scale: 1.03, duration: 0.55, ease: MOTION.easeScrub },
-          0,
-        );
-    },
+    reducedMotion,
   });
 
   const pressSpring = {
@@ -95,6 +110,32 @@ export function FinalScene({ onReplay }: FinalSceneProps) {
     stiffness: 420,
     damping: 28,
   };
+
+  const onPhotoPress = useCallback(() => {
+    if (reducedMotion || !sectionRef.current) return;
+    registerGsap();
+    const frame = sectionRef.current.querySelectorAll(".rx-frame-path");
+    gsap.fromTo(
+      frame,
+      { strokeOpacity: 0.55 },
+      {
+        strokeOpacity: 1,
+        duration: 0.28,
+        yoyo: true,
+        repeat: 1,
+        ease: "sine.inOut",
+      },
+    );
+  }, [reducedMotion]);
+
+  const onLotusTap = useCallback(() => {
+    setLotusBloom((value) => value + 1);
+  }, []);
+
+  const handleReplay = useCallback(() => {
+    setReplaySpin((value) => value + 1);
+    onReplay();
+  }, [onReplay]);
 
   return (
     <SceneWrapper
@@ -109,10 +150,14 @@ export function FinalScene({ onReplay }: FinalSceneProps) {
       </div>
 
       <div className="relative z-10 mx-auto flex w-full max-w-[22rem] flex-col items-center pb-[max(0.5rem,env(safe-area-inset-bottom))]">
-        {/* Portrait — width drives height; never max-h shorter than aspect box */}
-        <div
-          className="rx-portrait relative w-[min(46vw,11.5rem)] shrink-0"
+        {/* Portrait — viewport fixed; image scales + clip unveils independently */}
+        <motion.button
+          type="button"
+          className="rx-portrait relative w-[min(46vw,11.5rem)] shrink-0 border-0 bg-transparent p-0"
           aria-label={copy.names}
+          onClick={onPhotoPress}
+          whileTap={reducedMotion ? undefined : { scale: 0.985 }}
+          transition={pressSpring}
         >
           <svg
             className="pointer-events-none absolute -inset-[3%] z-20 text-antique-gold"
@@ -127,7 +172,7 @@ export function FinalScene({ onReplay }: FinalSceneProps) {
               strokeWidth="1.6"
               pathLength="1"
               strokeDasharray="1"
-              strokeDashoffset="0"
+              strokeDashoffset="1"
             />
             <path
               className="rx-frame-path"
@@ -137,12 +182,17 @@ export function FinalScene({ onReplay }: FinalSceneProps) {
               opacity="0.55"
               pathLength="1"
               strokeDasharray="1"
-              strokeDashoffset="0"
+              strokeDashoffset="1"
             />
           </svg>
 
           <div
-            className="relative aspect-[3/4] w-full overflow-hidden bg-deep-burgundy/40 shadow-[0_14px_28px_rgba(0,0,0,0.35)]"
+            className="rx-frame-sweep pointer-events-none absolute inset-y-[10%] left-0 z-30 w-1/4 bg-gradient-to-r from-transparent via-[rgba(255,242,214,0.45)] to-transparent mix-blend-soft-light"
+            aria-hidden
+          />
+
+          <div
+            className="rx-photo-mask relative aspect-[3/4] w-full overflow-hidden bg-deep-burgundy/40 shadow-[0_14px_28px_rgba(0,0,0,0.35)] will-change-[clip-path]"
             style={{
               borderRadius:
                 "50% 50% 0.75rem 0.75rem / 22% 22% 0.75rem 0.75rem",
@@ -157,11 +207,11 @@ export function FinalScene({ onReplay }: FinalSceneProps) {
               sizes="(max-width: 430px) 46vw, 184px"
             />
           </div>
-        </div>
+        </motion.button>
 
-        {/* Families — clear band under portrait, never under the photo */}
-        <div className="rx-family mt-4 grid w-full grid-cols-2 gap-3 text-center">
-          <div>
+        {/* Families — independent left / right entrances */}
+        <div className="rx-family relative mt-4 grid w-full grid-cols-2 gap-3 text-center">
+          <div className="rx-family-left">
             <p className="font-display text-[0.55rem] tracking-[0.12em] text-antique-gold uppercase">
               Mazumdar Family
             </p>
@@ -169,7 +219,7 @@ export function FinalScene({ onReplay }: FinalSceneProps) {
               মজুমদার পরিবার
             </p>
           </div>
-          <div>
+          <div className="rx-family-right">
             <p className="font-display text-[0.55rem] tracking-[0.12em] text-antique-gold uppercase">
               Chakrabarti Family
             </p>
@@ -177,77 +227,120 @@ export function FinalScene({ onReplay }: FinalSceneProps) {
               চক্রবর্তী পরিবার
             </p>
           </div>
+          <FamilyOrnament className="rx-family-ornament pointer-events-none absolute top-1/2 left-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 text-antique-gold/80" />
         </div>
 
         <div
-          className="mt-3 h-px w-16 bg-gradient-to-r from-transparent via-antique-gold to-transparent"
+          className="rx-family-divider mt-3 h-px w-16 origin-center bg-gradient-to-r from-transparent via-antique-gold to-transparent"
           aria-hidden
         />
 
-        {/* Welcome card — no negative overlap onto portrait */}
-        <article className="rx-card relative mt-3 w-full bg-[linear-gradient(168deg,#fff9ed_0%,#f4e6cf_55%,#e8d4b0_100%)] px-4 pt-3.5 pb-3.5 text-center text-deep-burgundy shadow-[0_12px_28px_rgba(0,0,0,0.28)]">
-          <div className="pointer-events-none absolute inset-[5px] border border-antique-gold/50" />
-
-          <CardLotus className="relative z-10 mx-auto h-4 w-12 text-antique-gold" />
-
-          <p
-            className={`rx-line relative z-10 mt-2 text-[1.1rem] leading-snug text-sindoor-red ${
-              isBengali ? "font-bn-display" : "font-display"
-            }`}
+        {/* Welcome card — GSAP owns .rx-card transform; press lives on inner shell */}
+        <article className="rx-card relative mt-3 w-full will-change-transform">
+          <motion.div
+            className="relative w-full bg-[linear-gradient(168deg,#fff9ed_0%,#f4e6cf_55%,#e8d4b0_100%)] px-4 pt-3.5 pb-3.5 text-center text-deep-burgundy"
+            whileTap={reducedMotion ? undefined : { scale: 0.985 }}
+            transition={pressSpring}
           >
-            {isBengali ? "সাদর আমন্ত্রণ" : "With warm regards"}
-          </p>
-          <p className="rx-line relative z-10 mt-1 font-display text-[0.7rem] italic text-deep-burgundy/80">
-            Welcome to our celebration
-          </p>
+            <div className="rx-card-border pointer-events-none absolute inset-[5px] border border-antique-gold/50" />
 
-          <p
-            className={`rx-line relative z-10 mt-2.5 text-[0.82rem] leading-relaxed text-deep-burgundy/90 ${
-              isBengali ? "font-bn-display" : "font-letter"
-            }`}
-          >
-            {copy.blessing}
-          </p>
+            <button
+              type="button"
+              className="rx-lotus relative z-10 mx-auto block border-0 bg-transparent p-0 will-change-transform"
+              aria-label="Ornament"
+              onClick={onLotusTap}
+            >
+              <CardLotus
+                className="mx-auto h-4 w-12 text-antique-gold"
+                bloomKey={lotusBloom}
+              />
+            </button>
 
-          <div className="rx-line relative z-10 mx-auto mt-2.5 h-px w-10 bg-gradient-to-r from-transparent via-antique-gold to-transparent" />
+            <div className="rx-heading-mask relative z-10 mt-2 overflow-hidden">
+              <p
+                className={`rx-heading text-[1.1rem] leading-snug text-sindoor-red ${
+                  isBengali ? "font-bn-display" : "font-display"
+                }`}
+              >
+                {headingText}
+              </p>
+            </div>
 
-          <p className="rx-line relative z-10 mt-2 font-display text-[0.52rem] tracking-[0.16em] text-[#6b5224] uppercase">
-            With love from
-          </p>
-          {isBengali ? (
-            <p className="rx-line relative z-10 mt-1 font-bn-display text-[0.85rem] text-deep-burgundy">
-              মজুমদার ও চক্রবর্তী পরিবার
+            <p className="relative z-10 mt-1 font-display text-[0.7rem] italic text-deep-burgundy/80">
+              {subtitleWords.map((word, index) => (
+                <span
+                  key={`${word}-${index}`}
+                  className="rx-subtitle-word inline-block will-change-transform"
+                >
+                  {word}
+                  {index < subtitleWords.length - 1 ? "\u00A0" : null}
+                </span>
+              ))}
             </p>
-          ) : null}
-          <p className="rx-line relative z-10 mt-0.5 font-display text-[0.68rem] text-deep-burgundy/80">
-            Mazumdar & Chakrabarti Families
-          </p>
 
-          <p
-            className={`rx-signature relative z-10 mt-2.5 text-[0.8rem] text-sindoor-red ${
-              isBengali
-                ? "font-bn-display"
-                : "font-display tracking-[0.14em] uppercase"
-            }`}
-          >
-            {copy.names}
-          </p>
+            <div className="relative z-10 mt-2.5 space-y-1">
+              {blessingPhrases.map((phrase, index) => (
+                <p
+                  key={`blessing-${index}`}
+                  className={`rx-blessing-phrase text-[0.82rem] leading-relaxed text-deep-burgundy/90 ${
+                    isBengali ? "font-bn-display" : "font-letter"
+                  }`}
+                >
+                  {phrase}
+                </p>
+              ))}
+            </div>
+
+            <div className="rx-attr relative z-10 mx-auto mt-2.5 h-px w-10 bg-gradient-to-r from-transparent via-antique-gold to-transparent" />
+
+            <p className="rx-attr relative z-10 mt-2 font-display text-[0.52rem] tracking-[0.16em] text-[#6b5224] uppercase">
+              With love from
+            </p>
+            {isBengali ? (
+              <p className="rx-attr relative z-10 mt-1 font-bn-display text-[0.85rem] text-deep-burgundy">
+                মজুমদার ও চক্রবর্তী পরিবার
+              </p>
+            ) : null}
+            <p className="rx-attr relative z-10 mt-0.5 font-display text-[0.68rem] text-deep-burgundy/80">
+              Mazumdar & Chakrabarti Families
+            </p>
+
+            <div className="relative z-10 mt-2.5 overflow-hidden">
+              <p
+                className={`rx-signature relative text-[0.8rem] text-sindoor-red ${
+                  isBengali
+                    ? "font-bn-display"
+                    : "font-display tracking-[0.14em] uppercase"
+                }`}
+              >
+                {copy.names}
+              </p>
+              <span
+                className="rx-shimmer pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-[rgba(185,154,88,0.35)] to-transparent"
+                aria-hidden
+              />
+            </div>
+          </motion.div>
         </article>
 
         <motion.button
           type="button"
-          onClick={onReplay}
+          onClick={handleReplay}
           className="rx-replay mt-3 inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-antique-gold/65 bg-deep-burgundy/55 px-4 py-2 text-antique-ivory transition hover:bg-antique-gold/15"
           whileTap={{ scale: 0.96 }}
           transition={pressSpring}
           aria-label={content.common.replay}
         >
-          <span
+          <motion.span
+            key={replaySpin}
             className="flex h-5 w-5 items-center justify-center rounded-full border border-antique-gold/50 font-display text-[0.7rem] text-antique-gold"
             aria-hidden
+            initial={reducedMotion ? false : { rotate: 0 }}
+            animate={reducedMotion ? undefined : { rotate: 360 }}
+            transition={{ duration: 0.55, ease: "easeOut" }}
           >
             ↻
-          </span>
+          </motion.span>
           <span
             className={`text-[0.75rem] ${
               isBengali
