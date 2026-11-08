@@ -46,12 +46,12 @@ export const WEDDING = {
     state: "West Bengal",
     country: "India",
     address: {
-      en: "Sadarghat, Raghunathganj, Murshidabad, West Bengal, India",
-      bn: "সদরঘাট, রঘুনাথগঞ্জ, মুর্শিদাবাদ, পশ্চিমবঙ্গ, ভারত",
+      en: "Raghunathganj, Murshidabad, West Bengal, India",
+      bn: "রঘুনাথগঞ্জ, মুর্শিদাবাদ, পশ্চিমবঙ্গ, ভারত",
     },
-    mapsQuery: "Bhagirathi Lodge Sadarghat Raghunathganj Murshidabad",
+    mapsQuery: "Bhagirathi Lodge Raghunathganj Murshidabad",
     mapsUrl:
-      "https://www.google.com/maps/search/?api=1&query=Bhagirathi%20Lodge%20Sadarghat%20Raghunathganj%20Murshidabad",
+      "https://www.google.com/maps/search/?api=1&query=Bhagirathi%20Lodge%20Raghunathganj%20Murshidabad",
     parking: null as string | null,
     landmarks: null as string | null,
     contact: null as string | null,

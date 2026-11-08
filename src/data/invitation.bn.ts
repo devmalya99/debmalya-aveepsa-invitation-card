@@ -44,6 +44,7 @@ export const invitationBN: InvitationContent = {
     groomDetails: [
       { label: "পিতা", value: "শ্রী প্রশান্ত কুমার মজুমদার" },
       { label: "মাতা", value: "শ্রীমতী নূতন মজুমদার" },
+      { label: "ভাই", value: "নির্মল্য মজুমদার" },
       { label: "নিবাস", value: "অরবিন্দপল্লী" },
       { label: "পোঃ ও থানা", value: "রঘুনাথগঞ্জ" },
       { label: "জেলা", value: "মুর্শিদাবাদ" },
@@ -111,11 +112,11 @@ export const invitationBN: InvitationContent = {
     heritageTagline: "পশ্চিমবঙ্গ, ভারত",
     lodgeBn: "ভাগীরথী লজ",
     lodgeEn: "Bhagirathi Lodge",
-    addressBn: "সদরঘাট, রঘুনাথগঞ্জ, মুর্শিদাবাদ",
-    addressEn: "Sadarghat, Raghunathganj, Murshidabad, West Bengal, India",
+    addressBn: "রঘুনাথগঞ্জ, মুর্শিদাবাদ",
+    addressEn: "Raghunathganj, Murshidabad, West Bengal, India",
     mapsLabel: "Google Maps-এ খুলুন",
     mapsUrl:
-      "https://www.google.com/maps/search/?api=1&query=Bhagirathi%20Lodge%20Sadarghat%20Raghunathganj%20Murshidabad",
+      "https://www.google.com/maps/search/?api=1&query=Bhagirathi%20Lodge%20Raghunathganj%20Murshidabad",
     blessing: "আপনাদের উপস্থিতি ও আশীর্বাদই আমাদের পরম প্রাপ্তি।",
     coupleNames: "DEBMALYA ♥ AVEEPSA",
   },

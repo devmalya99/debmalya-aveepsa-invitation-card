@@ -12,9 +12,6 @@ import { usePrefersReducedMotion } from "@/hooks/useReducedMotion";
 import { useScrollModeContext } from "@/hooks/useScrollModeContext";
 import { gsap, registerGsap } from "@/lib/gsap";
 
-type FinalSceneProps = {
-  onReplay: () => void;
-};
 
 function CardLotus({
   className = "",
@@ -79,13 +76,12 @@ function splitBlessingPhrases(text: string): string[] {
  * Scene 06 — Reception finale.
  * Photograph unveil → families meet → ivory card rises → blessing → replay.
  */
-export function FinalScene({ onReplay }: FinalSceneProps) {
+export function FinalScene() {
   const { content, locale } = useLanguage();
   const { cinematic } = useScrollModeContext();
   const reducedMotion = usePrefersReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const [lotusBloom, setLotusBloom] = useState(0);
-  const [replaySpin, setReplaySpin] = useState(0);
   const copy = content.final;
   const isBengali = locale === "bn";
 
@@ -131,11 +127,6 @@ export function FinalScene({ onReplay }: FinalSceneProps) {
   const onLotusTap = useCallback(() => {
     setLotusBloom((value) => value + 1);
   }, []);
-
-  const handleReplay = useCallback(() => {
-    setReplaySpin((value) => value + 1);
-    onReplay();
-  }, [onReplay]);
 
   return (
     <SceneWrapper
@@ -323,34 +314,6 @@ export function FinalScene({ onReplay }: FinalSceneProps) {
           </motion.div>
         </article>
 
-        <motion.button
-          type="button"
-          onClick={handleReplay}
-          className="rx-replay mt-3 inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-antique-gold/65 bg-deep-burgundy/55 px-4 py-2 text-antique-ivory transition hover:bg-antique-gold/15"
-          whileTap={{ scale: 0.96 }}
-          transition={pressSpring}
-          aria-label={content.common.replay}
-        >
-          <motion.span
-            key={replaySpin}
-            className="flex h-5 w-5 items-center justify-center rounded-full border border-antique-gold/50 font-display text-[0.7rem] text-antique-gold"
-            aria-hidden
-            initial={reducedMotion ? false : { rotate: 0 }}
-            animate={reducedMotion ? undefined : { rotate: 360 }}
-            transition={{ duration: 0.55, ease: "easeOut" }}
-          >
-            ↻
-          </motion.span>
-          <span
-            className={`text-[0.75rem] ${
-              isBengali
-                ? "font-bn-body"
-                : "font-display tracking-[0.1em] uppercase"
-            }`}
-          >
-            {content.common.replay}
-          </span>
-        </motion.button>
       </div>
     </SceneWrapper>
   );

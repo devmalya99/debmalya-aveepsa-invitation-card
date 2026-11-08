@@ -76,8 +76,8 @@ export function GroomBride() {
   const copy = content.identities;
   const isBengali = locale === "bn";
 
-  /* Parents for groom; parents + siblings for bride (no address rows here). */
-  const groomMembers = copy.groomDetails.slice(0, 2);
+  /* Parents + brother for groom; parents + siblings for bride (no address rows). */
+  const groomMembers = copy.groomDetails.slice(0, 3);
   const brideMembers = copy.brideDetails.slice(0, 4);
 
   useGSAP(

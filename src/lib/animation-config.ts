@@ -2,7 +2,6 @@ export const SCENE_SCROLL = {
   /* Short pin so Scene 02 arrives quickly after the cover settles. */
   "grand-reveal": { end: "+=110%" },
   "groom-bride": { end: "+=260%" },
-  "grand-invitation": { end: "+=220%" },
   "venue-reveal": { end: "+=220%" },
   "wedding-events": { end: "+=220%" },
   /* Moderate pin — enough for unveil choreography without dominating the scroll. */
@@ -13,13 +12,12 @@ export const SCENE_SCROLL = {
 
 export type SceneId = keyof typeof SCENE_SCROLL;
 
-/** Narrative order: hero → identities → letter → destination → festivities → close → name */
+/** Narrative order: hero → identities → festivities → destination → close → name */
 export const SCENE_ORDER: SceneId[] = [
   "grand-reveal",
   "groom-bride",
-  "grand-invitation",
-  "venue-reveal",
   "wedding-events",
+  "venue-reveal",
   "final-scene",
   "guest-blessing",
 ];

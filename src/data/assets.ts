@@ -4,7 +4,7 @@
  */
 export const assets = {
   couple: {
-    grandReveal: "/images/couple/couple-01.jpg",
+    grandReveal: "/images/couple/couple-grand-reveal-v2.jpg",
     finalBlessing: "/images/couple/couple-02.jpg",
   },
   decorations: {

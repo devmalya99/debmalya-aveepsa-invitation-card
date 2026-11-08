@@ -1,9 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import { assets } from "@/data/assets";
 import { useLanguage } from "@/hooks/useLanguage";
 import type { Locale } from "@/types/invitation";
+
+const COVER_SRC = assets.decorations.kolkataCover;
 
 /**
  * Blurred Kolkata cover + explicit language choice (no guessing).
@@ -17,22 +18,29 @@ export function LanguagePreference() {
   };
 
   return (
-    <div className="fixed inset-0 z-[210] flex flex-col bg-[#1a0c10]">
-      <div className="absolute inset-0">
-        <Image
-          src={assets.decorations.kolkataCover}
-          alt=""
-          fill
-          priority
-          unoptimized
-          sizes="100vw"
-          className="object-cover object-[center_18%] scale-105 blur-[10px] brightness-[0.55]"
-        />
-        <div
-          className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,rgba(26,12,16,0.25),rgba(26,12,16,0.72))]"
-          aria-hidden
-        />
-      </div>
+    <div
+      className="fixed inset-0 z-[230] flex flex-col"
+      style={{ backgroundColor: "#1a0c10" }}
+    >
+      <div
+        className="absolute inset-0 scale-105"
+        style={{
+          backgroundImage: `url(${COVER_SRC})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center 18%",
+          backgroundRepeat: "no-repeat",
+          filter: "blur(10px) brightness(0.55)",
+        }}
+        aria-hidden
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 40%, rgba(26,12,16,0.25), rgba(26,12,16,0.72))",
+        }}
+        aria-hidden
+      />
 
       <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[max(2rem,env(safe-area-inset-top))]">
         <p className="font-display text-[0.68rem] tracking-[0.28em] text-[#E8CD96] uppercase">

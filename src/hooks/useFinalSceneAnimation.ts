@@ -55,7 +55,6 @@ export function useFinalSceneAnimation({
         gsap.set(".rx-attr", { autoAlpha: 1, y: 0 });
         gsap.set(".rx-signature", { autoAlpha: 1, y: 0, filter: "none" });
         gsap.set(".rx-shimmer", { autoAlpha: 0 });
-        gsap.set(".rx-replay", { autoAlpha: 1, y: 0 });
         return;
       }
 
@@ -105,7 +104,6 @@ export function useFinalSceneAnimation({
         autoAlpha: 0,
         xPercent: -120,
       });
-      gsap.set(".rx-replay", { autoAlpha: 0, y: 16 });
     },
     {
       scope: sectionRef,
@@ -134,7 +132,7 @@ export function useFinalSceneAnimation({
       });
       gsap.set(".rx-card-border", { autoAlpha: 1 });
       gsap.set(
-        ".rx-lotus, .rx-heading, .rx-subtitle-word, .rx-blessing-phrase, .rx-attr, .rx-signature, .rx-replay",
+        ".rx-lotus, .rx-heading, .rx-subtitle-word, .rx-blessing-phrase, .rx-attr, .rx-signature",
         {
           autoAlpha: 1,
           y: 0,
@@ -371,17 +369,7 @@ export function useFinalSceneAnimation({
           0.9,
         )
 
-        /* 90–100% Replay */
-        .to(
-          ".rx-replay",
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.08,
-            ease: MOTION.easeScrub,
-          },
-          0.92,
-        )
+        /* 90–100% Soft settle before guest blessing */
         .to(
           ".rx-glow",
           {
@@ -389,7 +377,7 @@ export function useFinalSceneAnimation({
             duration: 0.06,
             ease: MOTION.easeScrub,
           },
-          0.96,
+          0.92,
         );
     },
   });

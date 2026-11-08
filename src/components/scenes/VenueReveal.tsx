@@ -51,7 +51,6 @@ export function VenueReveal() {
       gsap.set(".venue-tag", { autoAlpha: 0, y: 10 });
       gsap.set(".venue-address", { autoAlpha: 0, y: 10 });
       gsap.set(".venue-blessing", { autoAlpha: 0, y: 12, filter: blur });
-      gsap.set(".venue-maps", { autoAlpha: 0, y: 10 });
     },
     {
       scope: sectionRef,
@@ -160,11 +159,6 @@ export function VenueReveal() {
             ease: MOTION.easeScrub,
           },
           1.68,
-        )
-        .to(
-          ".venue-maps",
-          { autoAlpha: 1, y: 0, duration: 0.28, ease: MOTION.easeScrub },
-          1.9,
         );
     },
   });
@@ -269,15 +263,6 @@ export function VenueReveal() {
         >
           {venue.blessing}
         </p>
-
-        <a
-          href={venue.mapsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="venue-maps mt-4 inline-flex min-h-11 items-center border-b border-antique-gold/70 pb-0.5 font-display text-[0.78rem] tracking-[0.08em] text-deep-burgundy transition-colors hover:border-antique-gold hover:text-sindoor-red"
-        >
-          {venue.mapsLabel}
-        </a>
       </div>
     </SceneWrapper>
   );

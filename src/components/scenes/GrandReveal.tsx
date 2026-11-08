@@ -339,20 +339,16 @@ export function GrandReveal() {
         <div className="reveal-parallax-photo reveal-portrait-stage relative mt-4 w-[min(78vw,19.5rem)] sm:w-[20.5rem]">
           <div className="pointer-events-none absolute -inset-6 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(185,154,88,0.22)_0%,transparent_68%)]" />
 
-          <div className="relative aspect-[7/9] w-full">
+          <div className="relative aspect-square w-full">
             <PortraitArchFrame />
-            <div
-              className="reveal-photo-mask absolute inset-[8.5%] overflow-hidden shadow-[0_18px_40px_rgba(64,21,29,0.18)]"
-              style={{
-                borderRadius: "50% 50% 12px 12px / 38% 38% 12px 12px",
-              }}
-            >
+            <div className="reveal-photo-mask absolute inset-[9%] overflow-hidden rounded-full bg-[#2a1612] shadow-[0_18px_40px_rgba(64,21,29,0.18)]">
               <Image
                 src={assets.couple.grandReveal}
                 alt={copy.namesEn}
                 fill
                 priority
-                className="reveal-photo object-cover object-[50%_18%]"
+                unoptimized
+                className="reveal-photo object-cover object-[40%_center]"
                 sizes="(max-width: 430px) 78vw, 330px"
               />
             </div>

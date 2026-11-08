@@ -44,6 +44,7 @@ export const invitationEN: InvitationContent = {
     groomDetails: [
       { label: "Father", value: "Sri Prashanta Kumar Mazumdar" },
       { label: "Mother", value: "Srimati Nutan Mazumdar" },
+      { label: "Brother", value: "Nirmalya Mazumdar" },
       { label: "Residence", value: "Aravindapalli" },
       { label: "P.O. & P.S.", value: "Raghunathganj" },
       { label: "District", value: "Murshidabad" },
@@ -111,11 +112,11 @@ export const invitationEN: InvitationContent = {
     heritageTagline: "West Bengal, India",
     lodgeBn: "ভাগীরথী লজ",
     lodgeEn: "Bhagirathi Lodge",
-    addressBn: "সদরঘাট, রঘুনাথগঞ্জ, মুর্শিদাবাদ",
-    addressEn: "Sadarghat, Raghunathganj, Murshidabad, West Bengal, India",
+    addressBn: "রঘুনাথগঞ্জ, মুর্শিদাবাদ",
+    addressEn: "Raghunathganj, Murshidabad, West Bengal, India",
     mapsLabel: "Open in Google Maps",
     mapsUrl:
-      "https://www.google.com/maps/search/?api=1&query=Bhagirathi%20Lodge%20Sadarghat%20Raghunathganj%20Murshidabad",
+      "https://www.google.com/maps/search/?api=1&query=Bhagirathi%20Lodge%20Raghunathganj%20Murshidabad",
     blessing: "Your presence and blessings are our greatest gift.",
     coupleNames: "DEBMALYA ♥ AVEEPSA",
   },

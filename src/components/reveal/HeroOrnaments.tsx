@@ -86,30 +86,34 @@ export function AlpanaMandala({ className = "" }: ClassProps) {
   );
 }
 
-/** Double-border portrait arch with lotus finials — stroke-drawable. */
+/** Double circular portrait frame with lotus accents — stroke-drawable. */
 export function PortraitArchFrame({ className = "" }: ClassProps) {
   return (
     <svg
-      viewBox="0 0 280 360"
+      viewBox="0 0 280 280"
       className={`reveal-arch-frame pointer-events-none absolute inset-0 h-full w-full overflow-visible text-antique-gold ${className}`}
       aria-hidden
       fill="none"
-      preserveAspectRatio="none"
+      preserveAspectRatio="xMidYMid meet"
     >
-      {/* Outer arch */}
-      <path
+      {/* Outer ring */}
+      <circle
         className="reveal-draw-path reveal-arch-outer"
-        d="M28 348 V150 C28 70 88 28 140 28 C192 28 252 70 252 150 V348"
+        cx="140"
+        cy="140"
+        r="128"
         stroke="currentColor"
         strokeWidth="1.6"
         pathLength="1"
         strokeDasharray="1"
         strokeDashoffset="1"
       />
-      {/* Inner arch */}
-      <path
+      {/* Inner ring */}
+      <circle
         className="reveal-draw-path reveal-arch-inner"
-        d="M40 336 V152 C40 82 92 42 140 42 C188 42 240 82 240 152 V336"
+        cx="140"
+        cy="140"
+        r="116"
         stroke="currentColor"
         strokeWidth="1"
         opacity="0.75"
@@ -117,44 +121,15 @@ export function PortraitArchFrame({ className = "" }: ClassProps) {
         strokeDasharray="1"
         strokeDashoffset="1"
       />
-      {/* Base rail */}
+      {/* Lotus crest at top */}
       <path
         className="reveal-draw-path"
-        d="M28 348 H252"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        pathLength="1"
-        strokeDasharray="1"
-        strokeDashoffset="1"
-      />
-      {/* Lotus crest */}
-      <path
-        className="reveal-draw-path"
-        d="M140 18 C146 28 154 34 140 46 C126 34 134 28 140 18 Z
-           M124 30 C130 34 134 40 140 46 C134 40 128 36 124 30 Z
-           M156 30 C150 34 146 40 140 46 C146 40 152 36 156 30 Z"
+        d="M140 8 C146 18 154 24 140 36 C126 24 134 18 140 8 Z
+           M124 20 C130 24 134 30 140 36 C134 30 128 26 124 20 Z
+           M156 20 C150 24 146 30 140 36 C146 30 152 26 156 20 Z"
         stroke="currentColor"
         strokeWidth="1.1"
         strokeLinejoin="round"
-        pathLength="1"
-        strokeDasharray="1"
-        strokeDashoffset="1"
-      />
-      {/* Corner lotus buds */}
-      <path
-        className="reveal-draw-path"
-        d="M40 336 C36 328 30 324 40 316 C50 324 44 328 40 336 Z"
-        stroke="currentColor"
-        strokeWidth="1"
-        pathLength="1"
-        strokeDasharray="1"
-        strokeDashoffset="1"
-      />
-      <path
-        className="reveal-draw-path"
-        d="M240 336 C244 328 250 324 240 316 C230 324 236 328 240 336 Z"
-        stroke="currentColor"
-        strokeWidth="1"
         pathLength="1"
         strokeDasharray="1"
         strokeDashoffset="1"

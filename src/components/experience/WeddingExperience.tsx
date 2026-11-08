@@ -6,7 +6,6 @@ import { MobileOnlyGate } from "@/components/mobile/MobileOnlyGate";
 import { LanguagePreference } from "@/components/envelope/LanguagePreference";
 import { EnvelopeIntro } from "@/components/scenes/EnvelopeIntro";
 import { FinalScene } from "@/components/scenes/FinalScene";
-import { GrandInvitation } from "@/components/scenes/GrandInvitation";
 import { GrandReveal } from "@/components/scenes/GrandReveal";
 import { GroomBride } from "@/components/scenes/GroomBride";
 import { GuestBlessingScene } from "@/components/scenes/GuestBlessingScene";
@@ -26,8 +25,11 @@ function ExperienceInner() {
 
   useEffect(() => {
     if (!ready) return;
-    const previouslyOpened = window.localStorage.getItem(OPENED_KEY) === "1";
-    if (previouslyOpened) setOpened(true);
+    // Always land on language/cover/envelope after a full reload so the Kolkata
+    // hero is never skipped. OPENED_KEY is still set when the seal opens (and
+    // cleared on replay) for in-session continuity only.
+    window.localStorage.removeItem(OPENED_KEY);
+    setOpened(false);
     setHydratedOpen(true);
   }, [ready]);
 
@@ -81,11 +83,10 @@ function ExperienceInner() {
 
           <GrandReveal />
           <GroomBride />
-          <GrandInvitation />
-          <VenueReveal />
           <WeddingEvents />
-          <FinalScene onReplay={replay} />
-          <GuestBlessingScene />
+          <VenueReveal />
+          <FinalScene />
+          <GuestBlessingScene onReplay={replay} />
         </main>
       </ScrollExperience>
     </>

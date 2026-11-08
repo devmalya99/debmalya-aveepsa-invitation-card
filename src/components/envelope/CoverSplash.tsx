@@ -1,8 +1,6 @@
 "use client";
 
-import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useGSAP } from "@gsap/react";
 import { assets } from "@/data/assets";
 import { useAudio } from "@/hooks/useAudio";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -13,13 +11,15 @@ type CoverSplashProps = {
   onComplete: () => void;
 };
 
-const READY_MS = 900;
+const READY_MS = 1100;
+const COVER_SRC = assets.decorations.kolkataCover;
 
 /**
  * Full-bleed Kolkata wedding illustration — lifts upward on tap/scroll to reveal the envelope.
+ * Uses CSS background + <img> so the hero cannot fail silently via Next/Image layout.
  */
 export function CoverSplash({ onComplete }: CoverSplashProps) {
-  const { content, locale } = useLanguage();
+  const { locale } = useLanguage();
   const { start: startMusic } = useAudio();
   const reducedMotion = usePrefersReducedMotion();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -41,6 +41,24 @@ export function CoverSplash({ onComplete }: CoverSplashProps) {
     };
   }, []);
 
+  useEffect(() => {
+    if (!rootRef.current || reducedMotion) return;
+    registerGsap();
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".cover-splash-image",
+        { scale: 1.04 },
+        { scale: 1, duration: 1.1, ease: "power2.out" },
+      );
+      gsap.fromTo(
+        ".cover-splash-hint",
+        { autoAlpha: 0, y: 8 },
+        { autoAlpha: 1, y: 0, duration: 0.6, delay: 0.55, ease: "power2.out" },
+      );
+    }, rootRef);
+    return () => ctx.revert();
+  }, [reducedMotion]);
+
   const dismiss = useCallback(() => {
     if (!readyRef.current || leavingRef.current) return;
     leavingRef.current = true;
@@ -52,6 +70,7 @@ export function CoverSplash({ onComplete }: CoverSplashProps) {
     }
 
     registerGsap();
+    const root = rootRef.current;
     const tl = gsap.timeline({
       defaults: { ease: "power2.inOut" },
       onComplete,
@@ -64,31 +83,8 @@ export function CoverSplash({ onComplete }: CoverSplashProps) {
         0,
       )
       .to(".cover-splash-veil", { autoAlpha: 1, duration: 0.85 }, 0.15)
-      .to(
-        rootRef.current,
-        { yPercent: -108, autoAlpha: 0, duration: 1.05 },
-        0.35,
-      );
+      .to(root, { yPercent: -108, autoAlpha: 0, duration: 1.05 }, 0.35);
   }, [onComplete, reducedMotion, startMusic]);
-
-  useGSAP(
-    () => {
-      if (!rootRef.current || reducedMotion) return;
-      registerGsap();
-      // Keep image CSS-visible — only gently settle scale (no autoAlpha hide).
-      gsap.fromTo(
-        ".cover-splash-image",
-        { scale: 1.04 },
-        { scale: 1, duration: 1.1, ease: "power2.out" },
-      );
-      gsap.fromTo(
-        ".cover-splash-hint",
-        { autoAlpha: 0, y: 8 },
-        { autoAlpha: 1, y: 0, duration: 0.6, delay: 0.55, ease: "power2.out" },
-      );
-    },
-    { scope: rootRef, dependencies: [reducedMotion] },
-  );
 
   useEffect(() => {
     const onWheel = (event: WheelEvent) => {
@@ -96,7 +92,7 @@ export function CoverSplash({ onComplete }: CoverSplashProps) {
         event.preventDefault();
         return;
       }
-      if (Math.abs(event.deltaY) < 40) return;
+      if (Math.abs(event.deltaY) < 48) return;
       event.preventDefault();
       dismiss();
     };
@@ -113,7 +109,7 @@ export function CoverSplash({ onComplete }: CoverSplashProps) {
       const startY = touchYRef.current;
       const currentY = event.touches[0]?.clientY;
       if (startY == null || currentY == null) return;
-      if (startY - currentY > 40) {
+      if (startY - currentY > 48) {
         event.preventDefault();
         dismiss();
       }
@@ -145,17 +141,19 @@ export function CoverSplash({ onComplete }: CoverSplashProps) {
     };
   }, [dismiss]);
 
+  const hint =
+    locale === "bn" ? "স্পর্শ করুন বা স্ক্রল করুন" : "Tap or scroll to open";
+
   return (
     <div
       ref={rootRef}
-      className={`cover-splash fixed inset-0 z-[200] flex flex-col bg-[#1a0c10] ${
+      className={`cover-splash fixed inset-0 z-[220] flex flex-col ${
         ready ? "cursor-pointer" : "cursor-wait"
       }`}
+      style={{ backgroundColor: "#1a0c10" }}
       role="button"
       tabIndex={0}
-      aria-label={
-        locale === "bn" ? "স্পর্শ করুন বা স্ক্রল করুন" : "Tap or scroll to open"
-      }
+      aria-label={hint}
       onClick={() => {
         if (!readyRef.current) return;
         dismiss();
@@ -168,15 +166,24 @@ export function CoverSplash({ onComplete }: CoverSplashProps) {
         }
       }}
     >
-      <div className="cover-splash-image absolute inset-0 will-change-transform">
-        <Image
-          src={assets.decorations.kolkataCover}
-          alt={content.common.wedding}
-          fill
-          priority
-          unoptimized
-          sizes="100vw"
-          className="object-cover object-[center_18%]"
+      {/* Belt-and-suspenders: CSS background always paints the hero */}
+      <div
+        className="cover-splash-image absolute inset-0 will-change-transform"
+        style={{
+          backgroundColor: "#1a0c10",
+          backgroundImage: `url(${COVER_SRC})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center 18%",
+          backgroundRepeat: "no-repeat",
+        }}
+        aria-hidden
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={COVER_SRC}
+          alt=""
+          className="h-full w-full object-cover object-[center_18%]"
+          draggable={false}
         />
       </div>
 
@@ -196,7 +203,7 @@ export function CoverSplash({ onComplete }: CoverSplashProps) {
               "0 2px 4px rgba(0,0,0,0.85), 0 4px 18px rgba(0,0,0,0.65), 0 0 1px rgba(0,0,0,0.9)",
           }}
         >
-          {locale === "bn" ? "স্পর্শ করুন বা স্ক্রল করুন" : "Tap or scroll to open"}
+          {hint}
         </p>
       </div>
     </div>
