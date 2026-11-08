@@ -45,7 +45,17 @@ export function useSceneProgress(enabled: boolean) {
     registerGsap();
     const bindings: ProgressBinding[] = [];
 
-    const activate = (sceneId: SceneId, pinProgress: number) => {
+    let raf = 0;
+    let pending: { sceneId: SceneId; pinProgress: number } | null = null;
+    let lastStepIndex = -1;
+    let lastProgressBucket = -1;
+
+    const flush = () => {
+      raf = 0;
+      if (!pending) return;
+      const { sceneId, pinProgress } = pending;
+      pending = null;
+
       const stepIndex = Math.max(0, stepIndexFor(sceneId, pinProgress));
       const step = PROGRESS_STEPS[stepIndex];
       const span = Math.max(0.0001, step.pinEnd - step.pinStart);
@@ -53,9 +63,26 @@ export function useSceneProgress(enabled: boolean) {
         1,
         Math.max(0, (pinProgress - step.pinStart) / span),
       );
-      setActiveScene(sceneId);
-      setIndex(stepIndex);
-      setProgress(local);
+      /* ~2% buckets — keeps the bar smooth without React every frame. */
+      const bucket = Math.round(local * 50);
+
+      if (stepIndex !== lastStepIndex) {
+        lastStepIndex = stepIndex;
+        lastProgressBucket = bucket;
+        setActiveScene(sceneId);
+        setIndex(stepIndex);
+        setProgress(local);
+        return;
+      }
+      if (bucket !== lastProgressBucket) {
+        lastProgressBucket = bucket;
+        setProgress(local);
+      }
+    };
+
+    const activate = (sceneId: SceneId, pinProgress: number) => {
+      pending = { sceneId, pinProgress };
+      if (!raf) raf = window.requestAnimationFrame(flush);
     };
 
     const syncActive = () => {
@@ -109,6 +136,7 @@ export function useSceneProgress(enabled: boolean) {
 
     return () => {
       window.clearTimeout(remount);
+      if (raf) window.cancelAnimationFrame(raf);
       ScrollTrigger.removeEventListener("refresh", syncActive);
       bindings.forEach((binding) => binding.trigger.kill());
     };

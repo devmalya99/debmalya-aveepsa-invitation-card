@@ -317,6 +317,17 @@
     }
   }
 
+  /* Coarse mobile: skip continuous heritage drift (transform tax). */
+  @media (pointer: coarse) and (max-width: 767px) {
+    .family-heritage-mandala-drift,
+    .family-heritage-float,
+    .family-heritage-float-delayed,
+    .wedding-card-float,
+    .wedding-card-float-delayed {
+      animation: none;
+    }
+  }
+
   /* Royal Wedding Celebrations card — tokens from src/config/weddingCard.ts */
   .wedding-card {
     --wc-bg: #f8f0e3;

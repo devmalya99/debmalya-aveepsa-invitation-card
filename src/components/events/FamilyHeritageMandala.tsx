@@ -44,8 +44,6 @@ export function FamilyHeritageMandala({
           src={assets.decorations.unionMandala}
           alt=""
           fill
-          priority
-          unoptimized
           className="object-contain opacity-[0.92] [filter:sepia(0.35)_saturate(0.75)_brightness(1.05)]"
           sizes="(max-width: 430px) 42vw, 156px"
         />

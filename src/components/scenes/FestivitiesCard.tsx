@@ -44,25 +44,17 @@ export function FestivitiesCard({ className = "" }: FestivitiesCardProps) {
   return (
     <motion.div
       className={`wedding-card relative flex h-full min-h-0 w-full flex-col items-center justify-center ${className}`}
-      initial={
-        instant
-          ? false
-          : { opacity: 0, scale: 0.98, filter: "blur(8px)" }
-      }
-      animate={
-        go
-          ? { opacity: 1, scale: 1, filter: "blur(0px)" }
-          : { opacity: 0, scale: 0.98, filter: "blur(8px)" }
-      }
+      initial={instant ? false : { opacity: 0, scale: 0.98 }}
+      animate={go ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.98 }}
       transition={{
         duration: instant ? 0 : WEDDING_CARD_MOTION.shellDuration,
         ease: WEDDING_CARD_MOTION.ease,
       }}
       style={{ maxWidth: "var(--wc-content-max)" }}
     >
-      {/* Soft paper sheen — behind content */}
+      {/* Soft paper sheen — transform-only on desktop; skipped on coarse mobile via CSS */}
       <div
-        className="wedding-card-shimmer pointer-events-none absolute inset-x-[-8%] inset-y-[-4%] z-0 opacity-60"
+        className="wedding-card-shimmer pointer-events-none absolute inset-x-[-8%] inset-y-[-4%] z-0 hidden opacity-60 sm:block"
         aria-hidden
       />
 

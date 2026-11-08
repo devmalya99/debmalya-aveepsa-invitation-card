@@ -27,11 +27,12 @@ import { gsap, registerGsap } from "@/lib/gsap";
 const LAYER_EASE = [0.22, 1, 0.36, 1] as const;
 
 const LAYER_MOTION = {
-  /* Soft fade only — element sequence lives inside OpeningCoupleCard. */
+  /* Soft fade only — element sequence lives inside OpeningCoupleCard.
+   * No CSS blur filters — expensive on mobile GPUs. */
   couple: {
     initial: { opacity: 0 },
     animate: { opacity: 1 },
-    exit: { opacity: 0, y: -36, filter: "blur(4px)" },
+    exit: { opacity: 0, y: -28 },
   },
   groom: {
     initial: { opacity: 0, x: -80, rotate: -2.5, scale: 0.97 },
@@ -39,21 +40,15 @@ const LAYER_MOTION = {
     exit: { opacity: 0, x: 64, rotate: 1.5, scale: 0.98 },
   },
   bride: {
-    initial: {
-      opacity: 0,
-      x: 80,
-      rotate: 2.5,
-      scale: 0.97,
-      filter: "blur(0px)",
-    },
-    animate: { opacity: 1, x: 0, rotate: 0, scale: 1, filter: "blur(0px)" },
+    initial: { opacity: 0, x: 80, rotate: 2.5, scale: 0.97 },
+    animate: { opacity: 1, x: 0, rotate: 0, scale: 1 },
     exit: { opacity: 0, x: -56, rotate: -1.5, scale: 0.98 },
   },
   /* Soft fade + scale — element sequence lives inside FestivitiesCard. */
   festivities: {
-    initial: { opacity: 0, scale: 0.985, filter: "blur(6px)" },
-    animate: { opacity: 1, scale: 1, filter: "blur(0px)" },
-    exit: { opacity: 0, y: -28, filter: "blur(4px)" },
+    initial: { opacity: 0, scale: 0.985 },
+    animate: { opacity: 1, scale: 1 },
+    exit: { opacity: 0, y: -28 },
   },
 } as const;
 

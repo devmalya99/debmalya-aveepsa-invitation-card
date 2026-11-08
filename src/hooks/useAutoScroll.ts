@@ -2,13 +2,12 @@
 
 import { useEffect } from "react";
 import { useAutoPlay } from "@/hooks/useAutoPlay";
-
-/** Faster pace so opening layers + later scenes don't linger on auto-play. */
-const PX_PER_FRAME = 5.8;
+import { getAutoScrollPxPerFrame } from "@/lib/performance";
 
 /**
  * While auto-play is engaged and the invitation film is open,
  * gently scrolls the page until the guest interrupts or the end is reached.
+ * Mobile uses a softer px/frame to reduce sustained animation load.
  */
 export function useAutoScroll(enabled: boolean) {
   const { isAutoPlaying, markProgrammatic } = useAutoPlay();
@@ -18,6 +17,7 @@ export function useAutoScroll(enabled: boolean) {
 
     let raf = 0;
     let active = true;
+    const pxPerFrame = getAutoScrollPxPerFrame();
 
     const tick = () => {
       if (!active) return;
@@ -27,7 +27,7 @@ export function useAutoScroll(enabled: boolean) {
         return;
       }
       markProgrammatic(80);
-      window.scrollBy({ top: PX_PER_FRAME, left: 0, behavior: "auto" });
+      window.scrollBy({ top: pxPerFrame, left: 0, behavior: "auto" });
       raf = window.requestAnimationFrame(tick);
     };
 

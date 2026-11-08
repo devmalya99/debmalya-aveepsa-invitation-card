@@ -12,7 +12,7 @@ export const assets = {
     headingMandala: "/decorations/alpana/heading-mandala-circle-v2.png",
     festivityLotus: "/decorations/alpana/festivity-lotus.jpg",
     festivityMandala: "/decorations/alpana/festivity-mandala.jpg",
-    unionMandala: "/decorations/alpana/union-mandala-circle.png",
+    unionMandala: "/decorations/alpana/union-mandala-sm.jpg",
     shiuli: "/decorations/floral/shiuli.jpg",
     shankha: "/decorations/ornaments/shankha.jpg",
     topor: "/decorations/ornaments/topor.jpg",

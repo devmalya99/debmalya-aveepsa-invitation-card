@@ -1,7 +1,10 @@
 "use client";
 
+import { useRef } from "react";
 import { motion } from "motion/react";
+import { useInViewActive } from "@/hooks/useInViewActive";
 import { usePrefersReducedMotion } from "@/hooks/useReducedMotion";
+import { getAmbientDensity } from "@/lib/performance";
 
 type ClassProps = { className?: string };
 
@@ -189,18 +192,25 @@ export function PortraitArchFrame({ className = "" }: ClassProps) {
   );
 }
 
+const GOLD_DOTS = [
+  { left: "10%", top: "20%", size: 2, delay: 0 },
+  { left: "82%", top: "16%", size: 2.2, delay: 0.5 },
+  { left: "90%", top: "46%", size: 1.5, delay: 0.9 },
+  { left: "7%", top: "58%", size: 1.8, delay: 1.2 },
+  { left: "74%", top: "74%", size: 1.6, delay: 0.3 },
+  { left: "20%", top: "80%", size: 2, delay: 0.7 },
+] as const;
+
 export function GoldParticles({ className = "" }: ClassProps) {
-  const dots = [
-    { left: "10%", top: "20%", size: 2, delay: 0 },
-    { left: "82%", top: "16%", size: 2.2, delay: 0.5 },
-    { left: "90%", top: "46%", size: 1.5, delay: 0.9 },
-    { left: "7%", top: "58%", size: 1.8, delay: 1.2 },
-    { left: "74%", top: "74%", size: 1.6, delay: 0.3 },
-    { left: "20%", top: "80%", size: 2, delay: 0.7 },
-  ];
+  const rootRef = useRef<HTMLDivElement>(null);
+  const reducedMotion = usePrefersReducedMotion();
+  const inView = useInViewActive(rootRef, !reducedMotion);
+  const dots = GOLD_DOTS.slice(0, getAmbientDensity().gold);
+  const live = inView && !reducedMotion;
 
   return (
     <div
+      ref={rootRef}
       className={`reveal-particles pointer-events-none absolute inset-0 ${className}`}
       aria-hidden
     >
@@ -213,14 +223,23 @@ export function GoldParticles({ className = "" }: ClassProps) {
             top: dot.top,
             width: dot.size,
             height: dot.size,
+            willChange: live ? "transform, opacity" : "auto",
           }}
-          animate={{ opacity: [0.12, 0.55, 0.18], y: [0, -5, 0] }}
-          transition={{
-            duration: 5.2,
-            repeat: Infinity,
-            delay: dot.delay,
-            ease: "easeInOut",
-          }}
+          animate={
+            live
+              ? { opacity: [0.12, 0.55, 0.18], y: [0, -5, 0] }
+              : { opacity: 0.28, y: 0 }
+          }
+          transition={
+            live
+              ? {
+                  duration: 5.2,
+                  repeat: Infinity,
+                  delay: dot.delay,
+                  ease: "easeInOut",
+                }
+              : { duration: 0.2 }
+          }
         />
       ))}
     </div>
@@ -352,7 +371,13 @@ const REVEAL_LEAVES: LeafItem[] = [
  * Respects prefers-reduced-motion (static soft scatter).
  */
 export function FloatingPetals({ className = "" }: ClassProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
   const reducedMotion = usePrefersReducedMotion();
+  const inView = useInViewActive(rootRef, !reducedMotion);
+  const density = getAmbientDensity();
+  const petals = REVEAL_PETALS.slice(0, density.petals);
+  const leaves = REVEAL_LEAVES.slice(0, density.leaves);
+  const live = inView && !reducedMotion;
 
   if (reducedMotion) {
     return (
@@ -360,7 +385,7 @@ export function FloatingPetals({ className = "" }: ClassProps) {
         className={`reveal-petals pointer-events-none absolute inset-0 overflow-hidden ${className}`}
         aria-hidden
       >
-        {REVEAL_PETALS.slice(0, 4).map((petal, index) => (
+        {petals.slice(0, 4).map((petal, index) => (
           <span
             key={`p-static-${index}`}
             className="absolute opacity-70"
@@ -372,7 +397,7 @@ export function FloatingPetals({ className = "" }: ClassProps) {
             <ShiuliPetalMark size={petal.size} tone={petal.tone} />
           </span>
         ))}
-        {REVEAL_LEAVES.slice(0, 3).map((leaf, index) => (
+        {leaves.slice(0, 3).map((leaf, index) => (
           <span
             key={`l-static-${index}`}
             className="absolute opacity-65"
@@ -390,50 +415,73 @@ export function FloatingPetals({ className = "" }: ClassProps) {
 
   return (
     <div
+      ref={rootRef}
       className={`reveal-petals pointer-events-none absolute inset-0 overflow-hidden ${className}`}
       aria-hidden
     >
-      {REVEAL_PETALS.map((petal, index) => (
+      {petals.map((petal, index) => (
         <motion.span
           key={`petal-${index}`}
-          className="absolute top-[-8%] will-change-transform"
-          style={{ left: petal.left }}
-          animate={{
-            y: ["0vh", "108vh"],
-            x: [0, petal.drift * 0.55, petal.drift],
-            rotate: [0, petal.rotate * 0.5, petal.rotate],
-            opacity: [0, 0.92, 0.85, 0],
+          className="absolute top-[-8%]"
+          style={{
+            left: petal.left,
+            willChange: live ? "transform, opacity" : "auto",
           }}
-          transition={{
-            duration: petal.duration,
-            repeat: Infinity,
-            delay: petal.delay,
-            ease: "linear",
-            times: [0, 0.12, 0.82, 1],
-          }}
+          animate={
+            live
+              ? {
+                  y: ["0vh", "108vh"],
+                  x: [0, petal.drift * 0.55, petal.drift],
+                  rotate: [0, petal.rotate * 0.5, petal.rotate],
+                  opacity: [0, 0.92, 0.85, 0],
+                }
+              : { y: "40vh", opacity: 0 }
+          }
+          transition={
+            live
+              ? {
+                  duration: petal.duration,
+                  repeat: Infinity,
+                  delay: petal.delay,
+                  ease: "linear",
+                  times: [0, 0.12, 0.82, 1],
+                }
+              : { duration: 0.25 }
+          }
         >
           <ShiuliPetalMark size={petal.size} tone={petal.tone} />
         </motion.span>
       ))}
 
-      {REVEAL_LEAVES.map((leaf, index) => (
+      {leaves.map((leaf, index) => (
         <motion.span
           key={`leaf-${index}`}
-          className="absolute top-[-6%] will-change-transform"
-          style={{ left: leaf.left }}
-          animate={{
-            y: ["0vh", "108vh"],
-            x: [0, leaf.drift * 0.4, leaf.drift],
-            rotate: [leaf.rotate * -0.2, leaf.rotate],
-            opacity: [0, 0.88, 0.8, 0],
+          className="absolute top-[-6%]"
+          style={{
+            left: leaf.left,
+            willChange: live ? "transform, opacity" : "auto",
           }}
-          transition={{
-            duration: leaf.duration,
-            repeat: Infinity,
-            delay: leaf.delay,
-            ease: "linear",
-            times: [0, 0.1, 0.85, 1],
-          }}
+          animate={
+            live
+              ? {
+                  y: ["0vh", "108vh"],
+                  x: [0, leaf.drift * 0.4, leaf.drift],
+                  rotate: [leaf.rotate * -0.2, leaf.rotate],
+                  opacity: [0, 0.88, 0.8, 0],
+                }
+              : { y: "45vh", opacity: 0 }
+          }
+          transition={
+            live
+              ? {
+                  duration: leaf.duration,
+                  repeat: Infinity,
+                  delay: leaf.delay,
+                  ease: "linear",
+                  times: [0, 0.1, 0.85, 1],
+                }
+              : { duration: 0.25 }
+          }
         >
           <LeafMark size={leaf.size} tone={leaf.tone} />
         </motion.span>
@@ -445,12 +493,13 @@ export function FloatingPetals({ className = "" }: ClassProps) {
 function FlappingBird({
   flap = 0.5,
   delay = 0,
+  live = true,
 }: {
   flap?: number;
   delay?: number;
+  live?: boolean;
 }) {
-  const reducedMotion = usePrefersReducedMotion();
-
+  /* Transform-only wing flap — path morphing is far more expensive on mobile. */
   return (
     <svg
       viewBox="0 0 120 60"
@@ -460,46 +509,28 @@ function FlappingBird({
       <ellipse cx="58" cy="32" rx="15" ry="6" />
       <path d="M72 30c8-1 15-3.5 20-1.5l2 1-3.5 1.8c-5.5 1-12 1-18.5 0z" />
       <path d="M44 32c-8 1-14 3.5-18.5 7 5.5-1 11-2 16.5-2.8z" />
-      <motion.path
-        d="M52 28 C40 10, 28 8, 18 14 C32 16, 42 22, 50 30 Z"
-        animate={
-          reducedMotion
-            ? undefined
-            : {
-                d: [
-                  "M52 28 C40 10, 28 8, 18 14 C32 16, 42 22, 50 30 Z",
-                  "M52 30 C42 42, 30 48, 18 44 C32 40, 44 36, 52 32 Z",
-                  "M52 28 C40 10, 28 8, 18 14 C32 16, 42 22, 50 30 Z",
-                ],
-              }
+      <motion.g
+        style={{ transformOrigin: "52px 30px" }}
+        animate={live ? { rotate: [-18, 22, -18] } : { rotate: 0 }}
+        transition={
+          live
+            ? { duration: flap, delay, repeat: Infinity, ease: "easeInOut" }
+            : { duration: 0.2 }
         }
-        transition={{
-          duration: flap,
-          delay,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
-      <motion.path
-        d="M62 28 C74 10, 88 8, 100 14 C86 16, 74 22, 64 30 Z"
-        animate={
-          reducedMotion
-            ? undefined
-            : {
-                d: [
-                  "M62 28 C74 10, 88 8, 100 14 C86 16, 74 22, 64 30 Z",
-                  "M62 30 C74 42, 88 48, 100 44 C86 40, 74 36, 64 32 Z",
-                  "M62 28 C74 10, 88 8, 100 14 C86 16, 74 22, 64 30 Z",
-                ],
-              }
+      >
+        <path d="M52 28 C40 10, 28 8, 18 14 C32 16, 42 22, 50 30 Z" />
+      </motion.g>
+      <motion.g
+        style={{ transformOrigin: "62px 30px" }}
+        animate={live ? { rotate: [18, -22, 18] } : { rotate: 0 }}
+        transition={
+          live
+            ? { duration: flap, delay, repeat: Infinity, ease: "easeInOut" }
+            : { duration: 0.2 }
         }
-        transition={{
-          duration: flap,
-          delay,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
+      >
+        <path d="M62 28 C74 10, 88 8, 100 14 C86 16, 74 22, 64 30 Z" />
+      </motion.g>
     </svg>
   );
 }
@@ -524,7 +555,11 @@ const REVEAL_FLOCK: BirdSpec[] = [
 
 /** Black bird flock drifting across the opening canvas. */
 export function FlightOfBirds({ className = "" }: ClassProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
   const reducedMotion = usePrefersReducedMotion();
+  const inView = useInViewActive(rootRef, !reducedMotion);
+  const flock = REVEAL_FLOCK.slice(0, getAmbientDensity().birds);
+  const live = inView && !reducedMotion;
 
   if (reducedMotion) {
     return (
@@ -532,7 +567,7 @@ export function FlightOfBirds({ className = "" }: ClassProps) {
         className={`reveal-birds pointer-events-none absolute inset-0 overflow-hidden ${className}`}
         aria-hidden
       >
-        {REVEAL_FLOCK.slice(0, 3).map((bird, index) => (
+        {flock.slice(0, 3).map((bird, index) => (
           <span
             key={`bird-static-${index}`}
             className="absolute opacity-75"
@@ -543,7 +578,7 @@ export function FlightOfBirds({ className = "" }: ClassProps) {
               height: bird.size * 0.5,
             }}
           >
-            <FlappingBird flap={bird.flap} delay={index * 0.08} />
+            <FlappingBird flap={bird.flap} delay={index * 0.08} live={false} />
           </span>
         ))}
       </div>
@@ -552,33 +587,47 @@ export function FlightOfBirds({ className = "" }: ClassProps) {
 
   return (
     <div
+      ref={rootRef}
       className={`reveal-birds pointer-events-none absolute inset-0 overflow-hidden ${className}`}
       aria-hidden
     >
-      {REVEAL_FLOCK.map((bird, index) => (
+      {flock.map((bird, index) => (
         <motion.div
           key={`bird-${index}`}
-          className="absolute will-change-transform"
+          className="absolute"
           style={{
             top: bird.top,
             width: bird.size,
             height: bird.size * 0.5,
+            willChange: live ? "transform, opacity" : "auto",
           }}
           initial={{ x: "-16vw", opacity: 0 }}
-          animate={{
-            x: ["-16vw", "112vw"],
-            y: [0, bird.yNudge, 0],
-            opacity: [0, 0.92, 0.9, 0],
-          }}
-          transition={{
-            duration: bird.duration,
-            delay: bird.delay,
-            repeat: Infinity,
-            ease: "linear",
-            times: [0, 0.1, 0.88, 1],
-          }}
+          animate={
+            live
+              ? {
+                  x: ["-16vw", "112vw"],
+                  y: [0, bird.yNudge, 0],
+                  opacity: [0, 0.92, 0.9, 0],
+                }
+              : { x: "40vw", opacity: 0 }
+          }
+          transition={
+            live
+              ? {
+                  duration: bird.duration,
+                  delay: bird.delay,
+                  repeat: Infinity,
+                  ease: "linear",
+                  times: [0, 0.1, 0.88, 1],
+                }
+              : { duration: 0.25 }
+          }
         >
-          <FlappingBird flap={bird.flap} delay={index * 0.06} />
+          <FlappingBird
+            flap={bird.flap}
+            delay={index * 0.06}
+            live={live}
+          />
         </motion.div>
       ))}
     </div>

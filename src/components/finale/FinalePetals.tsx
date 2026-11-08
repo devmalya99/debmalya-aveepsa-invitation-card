@@ -2,7 +2,9 @@
 
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
+import { useInViewActive } from "@/hooks/useInViewActive";
 import { usePrefersReducedMotion } from "@/hooks/useReducedMotion";
+import { getAmbientDensity } from "@/lib/performance";
 import { gsap, registerGsap } from "@/lib/gsap";
 
 type FinalePetalsProps = {
@@ -100,6 +102,7 @@ const SPARKS = [
 
 /**
  * Scene 06 ambient layer — edge-biased florals on burgundy.
+ * Pauses when offscreen; density capped on mobile.
  */
 export function FinalePetals({
   enabled = true,
@@ -107,6 +110,12 @@ export function FinalePetals({
 }: FinalePetalsProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const reducedMotion = usePrefersReducedMotion();
+  const inView = useInViewActive(rootRef, enabled && !reducedMotion);
+  const density = getAmbientDensity();
+  const petals = PETALS.slice(0, density.finalePetals);
+  const sparks = SPARKS.slice(0, density.finaleSparks);
+  const flowers = FLOWERS.slice(0, density.finalePetals >= 6 ? 3 : 2);
+  const leaves = LEAVES.slice(0, density.finalePetals >= 6 ? 2 : 1);
 
   useGSAP(
     () => {
@@ -115,42 +124,52 @@ export function FinalePetals({
 
       const loops: gsap.core.Tween[] = [];
 
-      PETALS.forEach((_, index) => {
+      petals.forEach((_, index) => {
         const el = rootRef.current?.querySelector(
           `.finale-petal-${index}`,
         ) as HTMLElement | null;
-        const config = PETALS[index];
+        const config = petals[index];
         if (!el || !config) return;
 
+        const spin = index % 2 === 0 ? 58 : -46;
         loops.push(
-          gsap.fromTo(
-            el,
-            { y: "-8vh", x: 0, rotate: -10, opacity: 0 },
-            {
-              y: "110vh",
-              x: config.drift,
-              rotate: index % 2 === 0 ? 58 : -46,
-              opacity: 0.75,
-              duration: config.duration,
-              delay: config.delay,
-              repeat: -1,
-              ease: "none",
-              onUpdate() {
-                const p = this.progress();
-                const fade =
-                  p < 0.1 ? p / 0.1 : p > 0.82 ? (1 - p) / 0.18 : 1;
-                el.style.opacity = String(0.75 * fade);
+          gsap.to(el, {
+            keyframes: [
+              { y: "-8vh", x: 0, rotate: -10, autoAlpha: 0, duration: 0 },
+              {
+                y: "12vh",
+                x: config.drift * 0.2,
+                rotate: spin * 0.2,
+                autoAlpha: 0.75,
+                duration: config.duration * 0.12,
               },
-            },
-          ),
+              {
+                y: "88vh",
+                x: config.drift * 0.85,
+                rotate: spin * 0.85,
+                autoAlpha: 0.75,
+                duration: config.duration * 0.7,
+              },
+              {
+                y: "110vh",
+                x: config.drift,
+                rotate: spin,
+                autoAlpha: 0,
+                duration: config.duration * 0.18,
+              },
+            ],
+            delay: config.delay,
+            repeat: -1,
+            ease: "none",
+          }),
         );
       });
 
-      FLOWERS.forEach((_, index) => {
+      flowers.forEach((_, index) => {
         const el = rootRef.current?.querySelector(
           `.finale-flower-${index}`,
         ) as HTMLElement | null;
-        const config = FLOWERS[index];
+        const config = flowers[index];
         if (!el || !config) return;
         loops.push(
           gsap.to(el, {
@@ -166,11 +185,11 @@ export function FinalePetals({
         );
       });
 
-      LEAVES.forEach((_, index) => {
+      leaves.forEach((_, index) => {
         const el = rootRef.current?.querySelector(
           `.finale-leaf-${index}`,
         ) as HTMLElement | null;
-        const config = LEAVES[index];
+        const config = leaves[index];
         if (!el || !config) return;
         loops.push(
           gsap.to(el, {
@@ -186,11 +205,11 @@ export function FinalePetals({
         );
       });
 
-      SPARKS.forEach((_, index) => {
+      sparks.forEach((_, index) => {
         const el = rootRef.current?.querySelector(
           `.finale-spark-${index}`,
         ) as HTMLElement | null;
-        const config = SPARKS[index];
+        const config = sparks[index];
         if (!el || !config) return;
         loops.push(
           gsap.to(el, {
@@ -205,22 +224,28 @@ export function FinalePetals({
         );
       });
 
-      const onVisibility = () => {
+      const syncPlayback = () => {
+        const shouldRun = inView && !document.hidden;
         loops.forEach((tween) => {
-          if (document.hidden) tween.pause();
-          else tween.resume();
+          if (shouldRun) tween.resume();
+          else tween.pause();
         });
+        if (rootRef.current) {
+          rootRef.current.style.willChange = shouldRun ? "transform" : "auto";
+        }
       };
-      document.addEventListener("visibilitychange", onVisibility);
+
+      syncPlayback();
+      document.addEventListener("visibilitychange", syncPlayback);
 
       return () => {
-        document.removeEventListener("visibilitychange", onVisibility);
+        document.removeEventListener("visibilitychange", syncPlayback);
         loops.forEach((tween) => tween.kill());
       };
     },
     {
       scope: rootRef,
-      dependencies: [enabled, reducedMotion],
+      dependencies: [enabled, reducedMotion, inView, petals.length, sparks.length],
       revertOnUpdate: true,
     },
   );
@@ -233,10 +258,10 @@ export function FinalePetals({
       className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}
       aria-hidden
     >
-      {PETALS.map((petal, index) => (
+      {petals.map((petal, index) => (
         <span
           key={`finale-petal-${index}`}
-          className={`finale-petal finale-petal-${index} absolute top-0 will-change-transform`}
+          className={`finale-petal finale-petal-${index} absolute top-0`}
           style={{
             left: petal.left,
             width: petal.size,
@@ -251,10 +276,10 @@ export function FinalePetals({
         </span>
       ))}
 
-      {FLOWERS.map((flower, index) => (
+      {flowers.map((flower, index) => (
         <span
           key={`finale-flower-${index}`}
-          className={`finale-flower finale-flower-${index} absolute opacity-30 will-change-transform`}
+          className={`finale-flower finale-flower-${index} absolute opacity-30`}
           style={{
             left: flower.left,
             top: flower.top,
@@ -266,10 +291,10 @@ export function FinalePetals({
         </span>
       ))}
 
-      {LEAVES.map((leaf, index) => (
+      {leaves.map((leaf, index) => (
         <span
           key={`finale-leaf-${index}`}
-          className={`finale-leaf finale-leaf-${index} absolute opacity-35 will-change-transform`}
+          className={`finale-leaf finale-leaf-${index} absolute opacity-35`}
           style={{
             left: leaf.left,
             top: leaf.top,
@@ -281,10 +306,10 @@ export function FinalePetals({
         </span>
       ))}
 
-      {SPARKS.map((spark, index) => (
+      {sparks.map((spark, index) => (
         <span
           key={`finale-spark-${index}`}
-          className={`finale-spark finale-spark-${index} absolute rounded-full bg-antique-gold/70 opacity-25 will-change-transform`}
+          className={`finale-spark finale-spark-${index} absolute rounded-full bg-antique-gold/70 opacity-25`}
           style={{
             left: spark.left,
             top: spark.top,
