@@ -1,9 +1,9 @@
 export const SCENE_SCROLL = {
   /*
    * One pinned canvas: couple → groom → bride → festivities.
-   * Four readable holds on the shared atmosphere.
+   * Keep the pin short enough that auto-play / swipe don't linger ~10s per card.
    */
-  "grand-reveal": { end: "+=360%" },
+  "grand-reveal": { end: "+=200%" },
   "venue-reveal": { end: "+=180%" },
   /* Moderate pin — enough for unveil choreography without dominating the scroll. */
   "final-scene": { end: "+=160%" },

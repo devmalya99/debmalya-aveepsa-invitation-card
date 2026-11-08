@@ -1,14 +1,11 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import { ScrollExperience } from "@/components/experience/ScrollExperience";
 import { MobileOnlyGate } from "@/components/mobile/MobileOnlyGate";
 import { LanguagePreference } from "@/components/envelope/LanguagePreference";
 import { EnvelopeIntro } from "@/components/scenes/EnvelopeIntro";
-import { FinalScene } from "@/components/scenes/FinalScene";
-import { GrandReveal } from "@/components/scenes/GrandReveal";
-import { GuestBlessingScene } from "@/components/scenes/GuestBlessingScene";
-import { VenueReveal } from "@/components/scenes/VenueReveal";
 import { InvitationHeader } from "@/components/navigation/InvitationHeader";
 import { AudioProvider } from "@/hooks/useAudio";
 import { AutoPlayProvider, useAutoPlay } from "@/hooks/useAutoPlay";
@@ -19,6 +16,44 @@ import { registerGsap, ScrollTrigger } from "@/lib/gsap";
 const OPENED_KEY = "wedding-invite-opened";
 /** Let the couple card sequence play before auto-scroll resumes. */
 const INTRO_HOLD_MS = 2600;
+/** Mount later film scenes shortly after open so the first card paints sooner. */
+const LATER_SCENES_MS = 500;
+
+const sceneLoading = () => (
+  <div className="scene-shell surface-ivory min-h-svh" aria-hidden />
+);
+
+const GrandReveal = dynamic(
+  () =>
+    import("@/components/scenes/GrandReveal").then((mod) => ({
+      default: mod.GrandReveal,
+    })),
+  { ssr: false, loading: sceneLoading },
+);
+
+const VenueReveal = dynamic(
+  () =>
+    import("@/components/scenes/VenueReveal").then((mod) => ({
+      default: mod.VenueReveal,
+    })),
+  { ssr: false, loading: sceneLoading },
+);
+
+const FinalScene = dynamic(
+  () =>
+    import("@/components/scenes/FinalScene").then((mod) => ({
+      default: mod.FinalScene,
+    })),
+  { ssr: false, loading: sceneLoading },
+);
+
+const GuestBlessingScene = dynamic(
+  () =>
+    import("@/components/scenes/GuestBlessingScene").then((mod) => ({
+      default: mod.GuestBlessingScene,
+    })),
+  { ssr: false, loading: sceneLoading },
+);
 
 function ExperienceInner() {
   const { ready, hasChosenLocale } = useLanguage();
@@ -26,6 +61,7 @@ function ExperienceInner() {
   const [opened, setOpened] = useState(false);
   const [hydratedOpen, setHydratedOpen] = useState(false);
   const [introReady, setIntroReady] = useState(false);
+  const [laterScenes, setLaterScenes] = useState(false);
 
   useAutoScroll(opened && introReady);
 
@@ -37,30 +73,60 @@ function ExperienceInner() {
     window.localStorage.removeItem(OPENED_KEY);
     setOpened(false);
     setIntroReady(false);
+    setLaterScenes(false);
     setHydratedOpen(true);
   }, [ready]);
+
+  /* Warm the opening canvas chunk while the guest is still on the envelope. */
+  useEffect(() => {
+    if (opened || !hydratedOpen) return;
+    const warm = window.setTimeout(() => {
+      void import("@/components/scenes/GrandReveal");
+    }, 700);
+    return () => window.clearTimeout(warm);
+  }, [opened, hydratedOpen]);
 
   useEffect(() => {
     if (!opened) {
       setIntroReady(false);
+      setLaterScenes(false);
       return;
     }
+
     registerGsap();
+    void import("@/components/scenes/VenueReveal");
+    void import("@/components/scenes/FinalScene");
+    void import("@/components/scenes/GuestBlessingScene");
+
     const frame = window.requestAnimationFrame(() => ScrollTrigger.refresh());
-    /* One refresh after paint — avoid hammering refresh during the entrance. */
     const later = window.setTimeout(() => ScrollTrigger.refresh(), 180);
+    const rest = window.setTimeout(() => setLaterScenes(true), LATER_SCENES_MS);
     const intro = window.setTimeout(() => setIntroReady(true), INTRO_HOLD_MS);
+
     return () => {
       window.cancelAnimationFrame(frame);
       window.clearTimeout(later);
+      window.clearTimeout(rest);
       window.clearTimeout(intro);
     };
   }, [opened]);
+
+  useEffect(() => {
+    if (!laterScenes) return;
+    registerGsap();
+    const frame = window.requestAnimationFrame(() => ScrollTrigger.refresh());
+    const later = window.setTimeout(() => ScrollTrigger.refresh(), 120);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(later);
+    };
+  }, [laterScenes]);
 
   const openInvitation = useCallback(() => {
     markProgrammatic(INTRO_HOLD_MS + 400);
     setOpened(true);
     setIntroReady(false);
+    setLaterScenes(false);
     window.localStorage.setItem(OPENED_KEY, "1");
     window.requestAnimationFrame(() => {
       window.scrollTo({ top: 0, behavior: "auto" });
@@ -71,6 +137,7 @@ function ExperienceInner() {
   const replay = useCallback(() => {
     window.localStorage.removeItem(OPENED_KEY);
     setOpened(false);
+    setLaterScenes(false);
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
 
@@ -97,9 +164,13 @@ function ExperienceInner() {
           <InvitationHeader showProgress />
 
           <GrandReveal />
-          <VenueReveal />
-          <FinalScene />
-          <GuestBlessingScene onReplay={replay} />
+          {laterScenes ? (
+            <>
+              <VenueReveal />
+              <FinalScene />
+              <GuestBlessingScene onReplay={replay} />
+            </>
+          ) : null}
         </main>
       </ScrollExperience>
     </>

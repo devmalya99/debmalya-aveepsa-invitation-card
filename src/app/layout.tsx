@@ -18,6 +18,9 @@ export const viewport: Viewport = {
   themeColor: "#f6ebd6",
 };
 
+/** Keep the invitation shell fully prerendered for CDN delivery. */
+export const ensureStatic = "navigation";
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html

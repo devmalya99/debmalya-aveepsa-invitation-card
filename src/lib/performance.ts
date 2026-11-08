@@ -53,7 +53,10 @@ export function getAmbientDensity() {
   return isCoarseMobile() ? AMBIENT_DENSITY.mobile : AMBIENT_DENSITY.desktop;
 }
 
-/** Auto-scroll pixels per frame — slower on phones to cut sustained load. */
+/** Auto-scroll pixels per frame (used outside the opening pin). */
 export function getAutoScrollPxPerFrame() {
-  return isCoarseMobile() ? 3.6 : 5.8;
+  return isCoarseMobile() ? 5.2 : 5.8;
 }
+
+/** How long auto-play holds each opening card before snapping to the next. */
+export const OPENING_AUTO_HOLD_MS = 2600;
