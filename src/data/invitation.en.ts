@@ -37,8 +37,8 @@ export const invitationEN: InvitationContent = {
     brideLabelEn: "The Bride",
     groomLabelBn: "পাত্র",
     brideLabelBn: "পাত্রী",
-    groomName: "দেবমাল্য মজুমদার",
-    brideName: "অভীপ্সা চক্রবর্তী",
+    groomName: "Debmalya Mazumdar",
+    brideName: "Aveepsa Chakrabarti",
     groomRelation: "Youngest son",
     brideRelation: "Only daughter",
     groomDetails: [
@@ -57,7 +57,7 @@ export const invitationEN: InvitationContent = {
       { label: "P.O. & P.S.", value: "Raghunathganj" },
       { label: "District", value: "Murshidabad" },
     ],
-    unitedLine: "দেবমাল্য ও অভীপ্সা",
+    unitedLine: "Debmalya & Aveepsa",
   },
   events: {
     eyebrow: "The Wedding Festivities",
@@ -98,13 +98,14 @@ export const invitationEN: InvitationContent = {
       "Your presence and blessings will make this celebration truly special.",
     ],
     closing: "With love and blessings",
-    families: "Both families",
+    families: "Mazumdar & Chakrabarti Families",
     date: "25 November 2026",
   },
   venue: {
     greetingBn: "সাদর আমন্ত্রণ",
     greetingEn: "With warm regards",
     cordially: "You are cordially invited",
+    destinationEyebrow: "Our wedding destination",
     cityBn: "রঘুনাথগঞ্জ, মুর্শিদাবাদ",
     cityEn: "Raghunathganj, Murshidabad",
     heritageTagline: "West Bengal, India",
@@ -115,14 +116,18 @@ export const invitationEN: InvitationContent = {
     mapsLabel: "Open in Google Maps",
     mapsUrl:
       "https://www.google.com/maps/search/?api=1&query=Bhagirathi%20Lodge%20Sadarghat%20Raghunathganj%20Murshidabad",
-    blessing: "আপনাদের উপস্থিতি ও আশীর্বাদই আমাদের পরম প্রাপ্তি।",
+    blessing: "Your presence and blessings are our greatest gift.",
     coupleNames: "DEBMALYA ♥ AVEEPSA",
   },
   final: {
     blessing:
       "Your presence and blessings are our greatest gift.",
     closingTitle: "শুভ পরিণয়",
-    names: "Debmalya ♥ Aveepsa",
+    names: "DEBMALYA ♥ AVEEPSA",
     familyLines: ["Mazumdar Family", "Chakrabarti Family"],
+    weekdayEvening: "Wednesday · Evening",
+    signatureSub: "A beautiful beginning",
+    familiesBn: "মজুমদার ও চক্রবর্তী পরিবার",
+    familiesEn: "Mazumdar & Chakrabarti Families",
   },
 };

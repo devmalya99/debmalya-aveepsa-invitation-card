@@ -142,3 +142,37 @@ export function FestivityDateMedallion({
     </svg>
   );
 }
+
+/** Vertical timeline stroke — animated via strokeDashoffset on `.events-rail-line`. */
+export function FestivityTimelineRail({ className = "" }: OrnamentProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 4 400"
+      preserveAspectRatio="none"
+      aria-hidden
+      fill="none"
+    >
+      <defs>
+        <linearGradient id="festivity-rail-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#b99a58" />
+          <stop offset="55%" stopColor="#B99A58" stopOpacity="0.72" />
+          <stop offset="100%" stopColor="#741E26" stopOpacity="0.78" />
+        </linearGradient>
+      </defs>
+      <line
+        className="events-rail-line"
+        x1="2"
+        y1="8"
+        x2="2"
+        y2="392"
+        stroke="url(#festivity-rail-grad)"
+        strokeWidth="1.35"
+        strokeLinecap="round"
+        pathLength="1"
+        strokeDasharray="1"
+        strokeDashoffset="1"
+      />
+    </svg>
+  );
+}

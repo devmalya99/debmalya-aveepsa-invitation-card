@@ -14,7 +14,7 @@ function SoundBars({ animate }: { animate: boolean }) {
   const bars = [0.45, 0.85, 0.6];
 
   return (
-    <span className="flex h-3.5 items-end gap-[2px]" aria-hidden>
+    <span className="relative z-10 flex h-3.5 items-end gap-[2px]" aria-hidden>
       {bars.map((height, index) => (
         <motion.span
           key={index}
@@ -58,14 +58,22 @@ export function AudioToggle({ className = "" }: AudioToggleProps) {
       whileTap={{ scale: 0.94 }}
       whileHover={{ scale: 1.03 }}
       transition={{ type: "spring", stiffness: 420, damping: 28 }}
-      className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-antique-gold/45 bg-deep-burgundy text-antique-ivory shadow-[0_1px_2px_rgba(64,21,29,0.12)] transition-colors hover:bg-[#4d1a24] ${className}`}
+      className={`relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-antique-gold/45 bg-deep-burgundy text-antique-ivory shadow-[0_1px_2px_rgba(64,21,29,0.12)] transition-colors hover:bg-[#4d1a24] ${className}`}
       aria-pressed={playing}
       aria-label={content.common.music}
     >
+      {playing && !reducedMotion ? (
+        <>
+          <span className="audio-glow-halo" aria-hidden />
+          <span className="audio-glow-ring" aria-hidden />
+        </>
+      ) : null}
+
       <AnimatePresence mode="wait" initial={false}>
         {playing ? (
           <motion.span
             key="playing"
+            className="relative z-10"
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.85 }}
@@ -76,6 +84,7 @@ export function AudioToggle({ className = "" }: AudioToggleProps) {
         ) : (
           <motion.span
             key="muted"
+            className="relative z-10"
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.85 }}

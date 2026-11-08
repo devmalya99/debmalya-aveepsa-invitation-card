@@ -44,11 +44,13 @@ export function usePinnedScene({
 
       const timeline = gsap.timeline({
         scrollTrigger: {
+          id: `pin-${sceneId}`,
           trigger,
           start,
           end: end ?? SCENE_SCROLL[sceneId].end,
           scrub: SCROLL_SCRUB,
           pin,
+          pinSpacing: true,
           anticipatePin: pin ? 1 : 0,
           invalidateOnRefresh: true,
           /* Finish the pin cleanly on fast flicks so the next scene can take over. */

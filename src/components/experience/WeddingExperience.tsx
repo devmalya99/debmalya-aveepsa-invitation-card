@@ -32,11 +32,13 @@ function ExperienceInner() {
     if (!opened) return;
     registerGsap();
     const frame = window.requestAnimationFrame(() => ScrollTrigger.refresh());
-    /* Second refresh after pins mount — keeps letter→venue handoff in sync. */
+    /* Pins + progress trackers mount across sibling effects — refresh twice. */
     const later = window.setTimeout(() => ScrollTrigger.refresh(), 120);
+    const settled = window.setTimeout(() => ScrollTrigger.refresh(), 400);
     return () => {
       window.cancelAnimationFrame(frame);
       window.clearTimeout(later);
+      window.clearTimeout(settled);
     };
   }, [opened]);
 

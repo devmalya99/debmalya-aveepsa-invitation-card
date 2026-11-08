@@ -18,9 +18,11 @@ export function SectionIndicator({
 
   if (!enabled) return null;
 
-  const current = String(index + 1).padStart(2, "0");
+  const safeIndex = Math.min(Math.max(index, 0), total - 1);
+  const current = String(safeIndex + 1).padStart(2, "0");
   const totalLabel = String(total).padStart(2, "0");
-  const fill = Math.min(1, Math.max(0, (index + progress) / total));
+  /* Bar reflects overall journey; number is the active scene only. */
+  const fill = Math.min(1, Math.max(0, (safeIndex + progress) / total));
 
   return (
     <div className={`min-w-0 ${className}`}>

@@ -73,6 +73,7 @@ export type InvitationContent = {
     greetingBn: string;
     greetingEn: string;
     cordially: string;
+    destinationEyebrow: string;
     cityBn: string;
     cityEn: string;
     heritageTagline: string;
@@ -90,5 +91,10 @@ export type InvitationContent = {
     closingTitle: string;
     names: string;
     familyLines: string[];
+    /** e.g. "Wednesday · Evening" */
+    weekdayEvening: string;
+    signatureSub: string;
+    familiesBn: string;
+    familiesEn: string;
   };
 };

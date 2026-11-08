@@ -9,6 +9,7 @@ import { GoldenParticles } from "@/components/envelope/GoldenParticles";
 import { InvitationPaper } from "@/components/envelope/InvitationPaper";
 import { WaxSeal } from "@/components/envelope/WaxSeal";
 import { InvitationHeader } from "@/components/navigation/InvitationHeader";
+import { useAudio } from "@/hooks/useAudio";
 import { useLanguage } from "@/hooks/useLanguage";
 import { usePrefersReducedMotion } from "@/hooks/useReducedMotion";
 
@@ -20,6 +21,7 @@ type Stage = "enter" | "ready" | "seal" | "flap" | "paper" | "reveal" | "exit";
 
 export function EnvelopeIntro({ onOpen }: EnvelopeIntroProps) {
   const { content, locale } = useLanguage();
+  const { start: startMusic } = useAudio();
   const reducedMotion = usePrefersReducedMotion();
   const [stage, setStage] = useState<Stage>("enter");
   const timersRef = useRef<number[]>([]);
@@ -45,6 +47,9 @@ export function EnvelopeIntro({ onOpen }: EnvelopeIntroProps) {
   const runOpenSequence = useCallback(() => {
     if (opening) return;
 
+    /* First user gesture — unlock and start ambient music. */
+    startMusic();
+
     if (reducedMotion) {
       finish();
       return;
@@ -59,7 +64,7 @@ export function EnvelopeIntro({ onOpen }: EnvelopeIntroProps) {
       window.setTimeout(() => setStage("exit"), 2300),
       window.setTimeout(() => finish(), 2850),
     ];
-  }, [clearTimers, finish, opening, reducedMotion]);
+  }, [clearTimers, finish, opening, reducedMotion, startMusic]);
 
   const flapOpen =
     stage === "flap" || stage === "paper" || stage === "reveal" || stage === "exit";

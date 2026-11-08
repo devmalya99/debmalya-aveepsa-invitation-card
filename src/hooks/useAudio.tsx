@@ -19,6 +19,8 @@ type AudioContextValue = {
   isPlaying: boolean;
   ready: boolean;
   toggle: () => void;
+  /** Start playback after a user gesture (e.g. opening the envelope). */
+  start: () => void;
   pause: () => void;
 };
 
@@ -105,6 +107,12 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     });
   }, [fadeTo]);
 
+  const start = useCallback(() => {
+    window.localStorage.setItem(MUTE_KEY, "0");
+    setEnabled(true);
+    void fadeTo(0.35, true);
+  }, [fadeTo]);
+
   const pause = useCallback(() => {
     void fadeTo(0, false);
   }, [fadeTo]);
@@ -115,9 +123,10 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       isPlaying: enabled && isPlaying,
       ready,
       toggle,
+      start,
       pause,
     }),
-    [enabled, isPlaying, ready, toggle, pause],
+    [enabled, isPlaying, ready, toggle, start, pause],
   );
 
   return <AudioContext.Provider value={value}>{children}</AudioContext.Provider>;

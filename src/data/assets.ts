@@ -9,6 +9,9 @@ export const assets = {
   },
   decorations: {
     alpana: "/decorations/alpana/alpana-lotus.png",
+    festivityLotus: "/decorations/alpana/festivity-lotus.jpg",
+    festivityMandala: "/decorations/alpana/festivity-mandala.jpg",
+    unionMandala: "/decorations/alpana/union-mandala.jpg",
     shiuli: "/decorations/floral/shiuli.jpg",
     shankha: "/decorations/ornaments/shankha.jpg",
     topor: "/decorations/ornaments/topor.jpg",

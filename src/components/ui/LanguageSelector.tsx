@@ -12,7 +12,7 @@ export function LanguageSelector({ className = "" }: LanguageSelectorProps) {
 
   return (
     <div
-      className={`relative inline-grid h-9 grid-cols-2 items-center rounded-full border border-antique-gold/40 bg-antique-ivory p-[3px] ${className}`}
+      className={`relative inline-grid h-11 min-h-11 grid-cols-2 items-center rounded-full border border-antique-gold/45 bg-antique-ivory p-[3px] ${className}`}
       role="group"
       aria-label={content.common.languageLabel}
     >
@@ -32,7 +32,7 @@ export function LanguageSelector({ className = "" }: LanguageSelectorProps) {
             type="button"
             onClick={() => setLocale(code)}
             aria-pressed={active}
-            className={`relative z-10 flex h-full min-w-[2.75rem] items-center justify-center px-2.5 text-[0.68rem] leading-none transition-colors ${
+            className={`relative z-10 flex h-full min-h-[2.5rem] min-w-[2.75rem] items-center justify-center px-2.5 text-[0.7rem] leading-none transition-colors ${
               code === "bn" ? "font-bn-body" : "font-body tracking-[0.04em]"
             } ${active ? "text-antique-ivory" : "text-deep-burgundy/70"}`}
           >

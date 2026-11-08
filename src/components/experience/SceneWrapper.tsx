@@ -36,7 +36,7 @@ export const SceneWrapper = forwardRef<HTMLElement, SceneWrapperProps>(
           className={`relative h-svh min-h-svh w-full overflow-hidden ${className}`}
         >
           <div
-            className={`scene-inner relative mx-auto flex h-full min-h-0 w-full max-w-md flex-col px-5 pt-[max(4.25rem,calc(env(safe-area-inset-top)+3.25rem))] pb-6 sm:max-w-lg ${innerClassName}`}
+            className={`scene-inner relative mx-auto flex h-full min-h-0 w-full max-w-md touch-pan-y flex-col px-5 pt-[max(4.25rem,calc(env(safe-area-inset-top)+3.25rem))] pb-6 sm:max-w-lg ${innerClassName}`}
           >
             {children}
           </div>

@@ -17,6 +17,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { usePinnedScene } from "@/hooks/usePinnedScene";
 import { usePrefersReducedMotion } from "@/hooks/useReducedMotion";
 import { useScrollModeContext } from "@/hooks/useScrollModeContext";
+import { MOTION } from "@/lib/animation-config";
 import { gsap, registerGsap } from "@/lib/gsap";
 
 /**
@@ -45,17 +46,15 @@ export function GrandReveal() {
             ".reveal-particles",
             ".reveal-photo-mask",
             ".reveal-photo",
-            ".reveal-kicker",
-            ".reveal-names-bn",
-            ".reveal-names-en",
-            ".reveal-medallion",
-            ".reveal-location",
-            ".reveal-tagline",
+            ".reveal-portrait-stage",
+            ".reveal-text-line",
+            ".reveal-scene-fade",
             ".reveal-petals",
             ".reveal-draw-path",
             ".reveal-mandala-center",
+            ".reveal-lotus",
           ],
-          { opacity: 1, strokeDashoffset: 0 },
+          { autoAlpha: 1, strokeDashoffset: 0, clearProps: "clipPath,y,scale" },
         );
         gsap.set(".reveal-photo", { scale: 1 });
         gsap.set(".reveal-photo-mask", {
@@ -64,62 +63,122 @@ export function GrandReveal() {
         return;
       }
 
-      gsap.set(".reveal-atmosphere", { opacity: 0 });
-      gsap.set(".reveal-mandala", { opacity: 0 });
-      gsap.set(".reveal-particles", { opacity: 0 });
-      gsap.set(".reveal-petals", { opacity: 0 });
-      gsap.set(".reveal-photo-mask", {
-        opacity: 0,
-        clipPath: "inset(16% 12% 20% 12%)",
+      gsap.set(".reveal-atmosphere", { autoAlpha: 0 });
+      gsap.set(".reveal-mandala", { autoAlpha: 0, scale: 0.94 });
+      gsap.set(".reveal-particles", { autoAlpha: 0 });
+      gsap.set(".reveal-petals", { autoAlpha: 0 });
+      gsap.set(".reveal-lotus", { autoAlpha: 0 });
+      gsap.set(".reveal-portrait-stage", {
+        autoAlpha: 0,
+        y: MOTION.cardIn.y,
+        scale: MOTION.cardIn.scale,
       });
-      gsap.set(".reveal-photo", { scale: 1.08, opacity: 0 });
-      gsap.set(
-        [
-          ".reveal-kicker",
-          ".reveal-names-bn",
-          ".reveal-names-en",
-          ".reveal-medallion",
-          ".reveal-location",
-          ".reveal-tagline",
-        ],
-        { opacity: 0, y: 16 },
-      );
+      gsap.set(".reveal-photo-mask", {
+        autoAlpha: 0,
+        clipPath: "inset(18% 12% 22% 12%)",
+      });
+      gsap.set(".reveal-photo", {
+        scale: MOTION.imageZoom.from,
+        autoAlpha: 0,
+      });
+      /* Soft text start — small rise only, no scale/tracking tricks */
+      gsap.set(".reveal-text-line", {
+        autoAlpha: 0,
+        y: MOTION.bodyIn.y,
+      });
+      gsap.set(".reveal-names-bn", { y: MOTION.titleIn.y });
       gsap.set(".reveal-draw-path", { strokeDashoffset: 1 });
-      gsap.set(".reveal-mandala-center", { opacity: 0 });
+      gsap.set(".reveal-mandala-center", { autoAlpha: 0 });
+      gsap.set(".reveal-scene-fade", { autoAlpha: 1 });
 
-      const entrance = gsap.timeline({ defaults: { ease: "power2.out" } });
+      const entrance = gsap.timeline({
+        defaults: { ease: MOTION.easeTextIn },
+      });
+
       entrance
-        .to(".reveal-atmosphere", { opacity: 1, duration: 0.55 }, 0)
+        .to(".reveal-atmosphere", { autoAlpha: 1, duration: 0.85 }, 0)
+        .to(
+          ".reveal-mandala",
+          { autoAlpha: 0.22, scale: 1, duration: 1.2, ease: MOTION.easeSoft },
+          0.05,
+        )
         .to(
           ".reveal-draw-path",
-          { strokeDashoffset: 0, stagger: 0.028, duration: 1.05 },
-          0.12,
+          {
+            strokeDashoffset: 0,
+            stagger: MOTION.stagger.tight,
+            duration: 1.25,
+            ease: MOTION.easeSoft,
+          },
+          0.08,
         )
-        .to(".reveal-mandala", { opacity: 0.2, duration: 0.7 }, 0.15)
-        .to(".reveal-mandala-center", { opacity: 0.7, duration: 0.3 }, 0.7)
-        .to(".reveal-particles", { opacity: 1, duration: 0.45 }, 0.55)
+        .to(
+          ".reveal-mandala-center",
+          { autoAlpha: 0.75, duration: 0.45 },
+          0.85,
+        )
+        .to(
+          ".reveal-lotus",
+          {
+            autoAlpha: 0.7,
+            stagger: MOTION.stagger.tight,
+            duration: 0.65,
+          },
+          0.5,
+        )
+        .to(".reveal-particles", { autoAlpha: 1, duration: 0.7 }, 0.6)
+        .to(
+          ".reveal-portrait-stage",
+          {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            duration: MOTION.cardIn.duration,
+            ease: MOTION.easeOut,
+          },
+          0.35,
+        )
         .to(
           ".reveal-photo-mask",
           {
-            opacity: 1,
+            autoAlpha: 1,
             clipPath: "inset(0% 0% 0% 0%)",
-            duration: 1.05,
+            duration: 1.25,
+            ease: MOTION.easeInOut,
           },
-          0.55,
+          0.42,
         )
-        .to(".reveal-photo", { scale: 1, opacity: 1, duration: 1.15 }, 0.55)
-        .to(".reveal-kicker", { opacity: 1, y: 0, duration: 0.45 }, 1.15)
-        .to(".reveal-names-bn", { opacity: 1, y: 0, duration: 0.55 }, 1.3)
-        .to(".reveal-names-en", { opacity: 1, y: 0, duration: 0.45 }, 1.5)
-        .to(".reveal-medallion", { opacity: 1, y: 0, duration: 0.45 }, 1.65)
-        .to(".reveal-location", { opacity: 1, y: 0, duration: 0.4 }, 1.78)
-        .to(".reveal-tagline", { opacity: 1, y: 0, duration: 0.4 }, 1.88)
-        .to(".reveal-petals", { opacity: 1, duration: 0.5 }, 1.7);
+        .to(
+          ".reveal-photo",
+          {
+            scale: 1,
+            autoAlpha: 1,
+            duration: MOTION.imageZoom.duration,
+            ease: MOTION.easeOut,
+          },
+          0.42,
+        )
+        /* One silk cascade: each line fades + rises into place */
+        .to(
+          ".reveal-text-line",
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: MOTION.titleIn.duration,
+            stagger: MOTION.stagger.loose,
+            ease: MOTION.easeTextIn,
+          },
+          1.05,
+        )
+        .to(".reveal-petals", { autoAlpha: 1, duration: 0.7 }, 1.55);
     },
     { scope: sectionRef, dependencies: [cinematic, reducedMotion], revertOnUpdate: true },
   );
 
-  /* Scroll only handles parallax / soft exit — never remounts the header cover. */
+  /*
+   * Scroll timeline = page film strip:
+   * hold → text drifts out line by line → full page fade into next scene.
+   */
   usePinnedScene({
     sectionRef,
     sceneId: "grand-reveal",
@@ -128,21 +187,81 @@ export function GrandReveal() {
       timeline
         .fromTo(
           ".reveal-parallax-bg",
-          { y: 0 },
-          { y: -36, duration: 1, ease: "none" },
+          { y: 0, scale: 1 },
+          {
+            y: -40,
+            scale: 1.05,
+            duration: 1,
+            ease: MOTION.easeScrub,
+          },
           0,
         )
         .fromTo(
           ".reveal-parallax-photo",
           { y: 0 },
-          { y: 22, duration: 1, ease: "none" },
+          {
+            y: 20,
+            duration: 1,
+            ease: MOTION.easeScrub,
+          },
           0,
         )
         .fromTo(
-          ".reveal-copy-exit",
-          { y: 0, opacity: 1 },
-          { y: -20, opacity: 0.4, duration: 0.85, ease: "none" },
-          0.15,
+          ".reveal-photo",
+          { scale: 1 },
+          {
+            scale: 1.06,
+            duration: 1,
+            ease: MOTION.easeScrub,
+          },
+          0,
+        )
+        /* Text leaves first — staggered soft rise + fade */
+        .fromTo(
+          ".reveal-text-line",
+          { autoAlpha: 1, y: 0 },
+          {
+            autoAlpha: 0,
+            y: MOTION.textOut.y,
+            stagger: MOTION.stagger.normal,
+            duration: 0.55,
+            ease: MOTION.easeScrub,
+          },
+          0.38,
+        )
+        /* Portrait eases away */
+        .fromTo(
+          ".reveal-portrait-stage",
+          { autoAlpha: 1, y: 0, scale: 1 },
+          {
+            autoAlpha: 0,
+            y: -16,
+            scale: 0.97,
+            duration: 0.5,
+            ease: MOTION.easeScrub,
+          },
+          0.58,
+        )
+        /* Full page fade-out = transition into Scene 02 */
+        .fromTo(
+          ".reveal-scene-fade",
+          { autoAlpha: 1 },
+          {
+            autoAlpha: 0,
+            duration: MOTION.pageFade.duration,
+            ease: MOTION.easeScrub,
+          },
+          0.72,
+        )
+        .fromTo(
+          ".reveal-atmosphere",
+          { autoAlpha: 1 },
+          {
+            autoAlpha: 0,
+            duration: MOTION.pageFade.duration,
+            ease: MOTION.easeScrub,
+          },
+          0.72,
         );
     },
   });
@@ -169,23 +288,23 @@ export function GrandReveal() {
           style={{ width: 300, height: "auto" }}
           sizes="300px"
         />
-        <CornerLotus className="absolute top-[18%] left-2 h-12 w-12 opacity-70 sm:left-4" />
-        <CornerLotus className="absolute top-[18%] right-2 h-12 w-12 rotate-90 opacity-70 sm:right-4" />
-        <CornerLotus className="absolute bottom-[14%] left-3 h-10 w-10 -rotate-90 opacity-50" />
-        <CornerLotus className="absolute right-3 bottom-[14%] h-10 w-10 rotate-180 opacity-50" />
+        <CornerLotus className="reveal-lotus absolute top-[18%] left-2 h-12 w-12 opacity-70 sm:left-4" />
+        <CornerLotus className="reveal-lotus absolute top-[18%] right-2 h-12 w-12 rotate-90 opacity-70 sm:right-4" />
+        <CornerLotus className="reveal-lotus absolute bottom-[14%] left-3 h-10 w-10 -rotate-90 opacity-50" />
+        <CornerLotus className="reveal-lotus absolute right-3 bottom-[14%] h-10 w-10 rotate-180 opacity-50" />
         <GoldParticles />
         <FloatingPetals />
       </div>
 
-      <div className="relative z-10 flex w-full flex-col items-center text-center">
-        <div className="reveal-copy-exit flex w-full flex-col items-center">
-          <p className="reveal-kicker font-bn-display text-[1.05rem] leading-none text-sindoor-red sm:text-[1.15rem]">
+      <div className="reveal-scene-fade relative z-10 flex w-full flex-col items-center text-center">
+        <div className="flex w-full flex-col items-center">
+          <p className="reveal-text-line reveal-kicker font-bn-display text-[1.05rem] leading-none text-sindoor-red sm:text-[1.15rem]">
             {copy.kicker}
           </p>
-          <div className="mt-2 h-px w-14 bg-gradient-to-r from-transparent via-antique-gold to-transparent" />
+          <div className="reveal-text-line mt-2 h-px w-14 bg-gradient-to-r from-transparent via-antique-gold to-transparent" />
         </div>
 
-        <div className="reveal-parallax-photo relative mt-4 w-[min(78vw,19.5rem)] sm:w-[20.5rem]">
+        <div className="reveal-parallax-photo reveal-portrait-stage relative mt-4 w-[min(78vw,19.5rem)] sm:w-[20.5rem]">
           <div className="pointer-events-none absolute -inset-6 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(185,154,88,0.22)_0%,transparent_68%)]" />
 
           <div className="relative aspect-[7/9] w-full">
@@ -208,26 +327,26 @@ export function GrandReveal() {
           </div>
         </div>
 
-        <div className="reveal-copy-exit mt-5 w-full px-1">
-          <h1 className="reveal-names-bn font-bn-display text-[1.85rem] leading-[1.2] text-balance text-deep-burgundy sm:text-[2.15rem]">
+        <div className="mt-5 w-full px-1">
+          <h1 className="reveal-text-line reveal-names-bn font-bn-display text-[1.85rem] leading-[1.2] text-balance text-deep-burgundy sm:text-[2.15rem]">
             {copy.namesBn}
           </h1>
-          <p className="reveal-names-en mt-1.5 font-display text-[0.95rem] tracking-[0.12em] text-deep-burgundy/90 uppercase sm:text-base">
+          <p className="reveal-text-line reveal-names-en mt-1.5 font-display text-[0.95rem] tracking-[0.12em] text-deep-burgundy/90 uppercase sm:text-base">
             {copy.namesEn}
           </p>
 
           <DateMedallion
             dateBn={copy.date}
             dateEn={copy.dateEn}
-            className="mt-4"
+            className="reveal-text-line mt-4"
           />
 
-          <p className="reveal-location mt-3 font-display text-[0.82rem] tracking-[0.04em] text-deep-burgundy">
+          <p className="reveal-text-line reveal-location mt-3 font-display text-[0.82rem] tracking-[0.04em] text-deep-burgundy">
             {copy.location}
           </p>
 
           <p
-            className={`reveal-tagline mx-auto mt-2 max-w-[17rem] text-[0.8rem] leading-relaxed text-deep-burgundy/80 ${
+            className={`reveal-text-line reveal-tagline mx-auto mt-2 max-w-[17rem] text-[0.8rem] leading-relaxed text-deep-burgundy/80 ${
               isBengali ? "font-bn-body" : "font-display italic"
             }`}
           >
