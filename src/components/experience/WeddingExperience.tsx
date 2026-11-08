@@ -11,19 +11,23 @@ import { GuestBlessingScene } from "@/components/scenes/GuestBlessingScene";
 import { VenueReveal } from "@/components/scenes/VenueReveal";
 import { InvitationHeader } from "@/components/navigation/InvitationHeader";
 import { AudioProvider } from "@/hooks/useAudio";
-import { AutoPlayProvider } from "@/hooks/useAutoPlay";
+import { AutoPlayProvider, useAutoPlay } from "@/hooks/useAutoPlay";
 import { useAutoScroll } from "@/hooks/useAutoScroll";
 import { LanguageProvider, useLanguage } from "@/hooks/useLanguage";
 import { registerGsap, ScrollTrigger } from "@/lib/gsap";
 
 const OPENED_KEY = "wedding-invite-opened";
+/** Let the couple card sequence play before auto-scroll resumes. */
+const INTRO_HOLD_MS = 2600;
 
 function ExperienceInner() {
   const { ready, hasChosenLocale } = useLanguage();
+  const { markProgrammatic } = useAutoPlay();
   const [opened, setOpened] = useState(false);
   const [hydratedOpen, setHydratedOpen] = useState(false);
+  const [introReady, setIntroReady] = useState(false);
 
-  useAutoScroll(opened);
+  useAutoScroll(opened && introReady);
 
   useEffect(() => {
     if (!ready) return;
@@ -32,31 +36,37 @@ function ExperienceInner() {
     // cleared on replay) for in-session continuity only.
     window.localStorage.removeItem(OPENED_KEY);
     setOpened(false);
+    setIntroReady(false);
     setHydratedOpen(true);
   }, [ready]);
 
   useEffect(() => {
-    if (!opened) return;
+    if (!opened) {
+      setIntroReady(false);
+      return;
+    }
     registerGsap();
     const frame = window.requestAnimationFrame(() => ScrollTrigger.refresh());
-    /* Pins + progress trackers mount across sibling effects — refresh twice. */
-    const later = window.setTimeout(() => ScrollTrigger.refresh(), 120);
-    const settled = window.setTimeout(() => ScrollTrigger.refresh(), 400);
+    /* One refresh after paint — avoid hammering refresh during the entrance. */
+    const later = window.setTimeout(() => ScrollTrigger.refresh(), 180);
+    const intro = window.setTimeout(() => setIntroReady(true), INTRO_HOLD_MS);
     return () => {
       window.cancelAnimationFrame(frame);
       window.clearTimeout(later);
-      window.clearTimeout(settled);
+      window.clearTimeout(intro);
     };
   }, [opened]);
 
   const openInvitation = useCallback(() => {
+    markProgrammatic(INTRO_HOLD_MS + 400);
     setOpened(true);
+    setIntroReady(false);
     window.localStorage.setItem(OPENED_KEY, "1");
     window.requestAnimationFrame(() => {
       window.scrollTo({ top: 0, behavior: "auto" });
       ScrollTrigger.refresh();
     });
-  }, []);
+  }, [markProgrammatic]);
 
   const replay = useCallback(() => {
     window.localStorage.removeItem(OPENED_KEY);

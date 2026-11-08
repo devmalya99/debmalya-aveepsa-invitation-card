@@ -1,8 +1,11 @@
+import { toInvitationIdentities } from "@/config/familyHeritage";
+import { WEDDING_CARD_COPY } from "@/config/weddingCard";
 import type { InvitationContent } from "@/types/invitation";
 
 /**
  * Bengali invitation copy.
  * Unverified OCR-sensitive lines are marked in CONTENT_REVIEW.md.
+ * Celebrations → `weddingCard.ts`. Family heritage → `familyHeritage.ts`.
  */
 export const invitationBN: InvitationContent = {
   meta: {
@@ -32,63 +35,8 @@ export const invitationBN: InvitationContent = {
     location: "Murshidabad, West Bengal",
     tagline: "ঐতিহ্য, ভালোবাসা ও একসঙ্গে থাকার উৎসব",
   },
-  identities: {
-    groomLabelEn: "The Groom",
-    brideLabelEn: "The Bride",
-    groomLabelBn: "পাত্র",
-    brideLabelBn: "পাত্রী",
-    groomName: "দেবমাল্য মজুমদার",
-    brideName: "অভীপ্সা চক্রবর্তী",
-    groomRelation: "বনিষ্ঠ পুত্র",
-    brideRelation: "একমাত্র কন্যা",
-    groomDetails: [
-      { label: "পিতা", value: "শ্রী প্রশান্ত কুমার মজুমদার" },
-      { label: "মাতা", value: "শ্রীমতী নূতন মজুমদার" },
-      { label: "ভাই", value: "নির্মাল্য মজুমদার" },
-      { label: "নিবাস", value: "অরবিন্দপল্লী" },
-      { label: "পোঃ ও থানা", value: "রঘুনাথগঞ্জ" },
-      { label: "জেলা", value: "মুর্শিদাবাদ" },
-    ],
-    brideDetails: [
-      { label: "পিতা", value: "শ্রী বাসুদেব চক্রবর্তী" },
-      { label: "মাতা", value: "শ্রীমতী মধুছন্দা চক্রবর্তী" },
-      { label: "ভাই", value: "শ্রী অভিজিৎ চক্রবর্তী" },
-      { label: "ভাবী", value: "শ্রীমতী অমৃতা মজুমদার" },
-      { label: "নিবাস", value: "ওল্ড হাসপাতাল রোড" },
-      { label: "পোঃ ও থানা", value: "রঘুনাথগঞ্জ" },
-      { label: "জেলা", value: "মুর্শিদাবাদ" },
-    ],
-    unitedLine: "দেবমাল্য ও অভীপ্সা",
-  },
-  events: {
-    eyebrow: "The Wedding Festivities",
-    headingBn: "শুভ অনুষ্ঠান সূচী",
-    headingEn: "Wedding Celebrations",
-    subtitle: "দুই বিশেষ দিন · এক সুন্দর শুরু",
-    closingNames: "দেবমাল্য ও অভীপ্সা",
-    items: [
-      {
-        id: "wedding",
-        titleBn: "গাত্রহরিদ্রা ও শুভবিবাহ",
-        titleEn: "Gaye Holud & Wedding",
-        bengaliDate: "৮ই অগ্রহায়ণ, ১৪৩৩",
-        englishDate: "২৫ নভেম্বর ২০২৬",
-        day: "বুধবার",
-        time: "সন্ধ্যায়",
-        accent: "turmeric",
-      },
-      {
-        id: "reception",
-        titleBn: "প্রীতিভোজ",
-        titleEn: "Wedding Reception",
-        bengaliDate: "১০ই অগ্রহায়ণ, ১৪৩৩",
-        englishDate: "২৭ নভেম্বর ২০২৬",
-        day: "শুক্রবার",
-        time: "সন্ধ্যায়",
-        accent: "burgundy",
-      },
-    ],
-  },
+  identities: toInvitationIdentities("bn"),
+  events: WEDDING_CARD_COPY.bn,
   letter: {
     eyebrow: "দুই পরিবারের পক্ষ থেকে আমন্ত্রণ",
     salutation: "সবিনয় নিবেদন",

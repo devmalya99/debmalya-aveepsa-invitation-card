@@ -1,8 +1,11 @@
+import { toInvitationIdentities } from "@/config/familyHeritage";
+import { WEDDING_CARD_COPY } from "@/config/weddingCard";
 import type { InvitationContent } from "@/types/invitation";
 
 /**
  * English invitation copy.
  * Bengali names stay in original script where that better preserves identity.
+ * Celebrations → `weddingCard.ts`. Family heritage → `familyHeritage.ts`.
  */
 export const invitationEN: InvitationContent = {
   meta: {
@@ -32,63 +35,8 @@ export const invitationEN: InvitationContent = {
     location: "Murshidabad, West Bengal",
     tagline: "A celebration of Bengali heritage, love and togetherness",
   },
-  identities: {
-    groomLabelEn: "The Groom",
-    brideLabelEn: "The Bride",
-    groomLabelBn: "পাত্র",
-    brideLabelBn: "পাত্রী",
-    groomName: "Debmalya Mazumdar",
-    brideName: "Aveepsa Chakrabarti",
-    groomRelation: "Youngest son",
-    brideRelation: "Only daughter",
-    groomDetails: [
-      { label: "Father", value: "Sri Prashanta Kumar Mazumdar" },
-      { label: "Mother", value: "Srimati Nutan Mazumdar" },
-      { label: "Brother", value: "Nirmalya Mazumdar" },
-      { label: "Residence", value: "Aravindapalli" },
-      { label: "P.O. & P.S.", value: "Raghunathganj" },
-      { label: "District", value: "Murshidabad" },
-    ],
-    brideDetails: [
-      { label: "Father", value: "Sri Basudeb Chakrabarti" },
-      { label: "Mother", value: "Srimati Madhuchhanda Chakraborti" },
-      { label: "Brother", value: "Sri Abhijit Chakrabarti" },
-      { label: "Sister-in-law", value: "Srimati Amrita Mazumdar" },
-      { label: "Residence", value: "Old Hospital Road" },
-      { label: "P.O. & P.S.", value: "Raghunathganj" },
-      { label: "District", value: "Murshidabad" },
-    ],
-    unitedLine: "Debmalya & Aveepsa",
-  },
-  events: {
-    eyebrow: "The Wedding Festivities",
-    headingBn: "শুভ অনুষ্ঠান সূচী",
-    headingEn: "Wedding Celebrations",
-    subtitle: "Two special days · One beautiful beginning",
-    closingNames: "Debmalya & Aveepsa",
-    items: [
-      {
-        id: "wedding",
-        titleBn: "গাত্রহরিদ্রা ও শুভবিবাহ",
-        titleEn: "Gaye Holud & Wedding",
-        bengaliDate: "৮ই অগ্রহায়ণ, ১৪৩৩",
-        englishDate: "25 November 2026",
-        day: "Wednesday",
-        time: "Evening",
-        accent: "turmeric",
-      },
-      {
-        id: "reception",
-        titleBn: "প্রীতিভোজ",
-        titleEn: "Wedding Reception",
-        bengaliDate: "১০ই অগ্রহায়ণ, ১৪৩৩",
-        englishDate: "27 November 2026",
-        day: "Friday",
-        time: "Evening",
-        accent: "burgundy",
-      },
-    ],
-  },
+  identities: toInvitationIdentities("en"),
+  events: WEDDING_CARD_COPY.en,
   letter: {
     eyebrow: "An invitation from our families",
     salutation: "With warm regards",

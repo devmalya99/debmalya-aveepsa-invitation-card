@@ -238,4 +238,158 @@
       animation: none;
     }
   }
+
+  /* Family heritage cards — tokens from src/config/familyHeritage.ts */
+  .family-heritage {
+    --fh-bg: #f7eedc;
+    --fh-primary: #702632;
+    --fh-secondary: #54232c;
+    --fh-accent: #b58a50;
+    --fh-muted-gold: #d9bd8c;
+    --fh-body: #80634b;
+    --fh-border: #b58a50;
+    --fh-font-bn: var(--font-noto-serif-bengali), serif;
+    --fh-font-en: var(--font-cormorant), Georgia, serif;
+    --fh-heading-en-size: clamp(0.58rem, 1.7vw, 0.7rem);
+    --fh-heading-en-tracking: 0.2em;
+    --fh-heading-bn-size: clamp(0.82rem, 2.6vw, 0.98rem);
+    --fh-section-size: clamp(0.55rem, 1.5vw, 0.65rem);
+    --fh-section-tracking: 0.18em;
+    --fh-name-size: clamp(1.2rem, 4.2vw, 1.55rem);
+    --fh-name-lh: 1.28;
+    --fh-label-size: clamp(0.58rem, 1.6vw, 0.68rem);
+    --fh-value-size: clamp(0.82rem, 2.5vw, 0.95rem);
+    --fh-closing-size: clamp(0.55rem, 1.5vw, 0.65rem);
+    --fh-content-max: 21.5rem;
+    --fh-mandala-size: min(42vw, 9.75rem);
+    --fh-mandala-max-h: 16svh;
+    --fh-pad-x: 1.15rem;
+    --fh-pad-y: 1.05rem;
+    --fh-border-outer: 0.45rem;
+    --fh-border-inner: 0.7rem;
+    color: var(--fh-primary);
+    color-scheme: light only;
+  }
+
+  .family-heritage-paper {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .family-heritage-mandala-drift {
+    animation: family-heritage-mandala-drift 18s ease-in-out infinite;
+  }
+
+  .family-heritage-float {
+    animation: family-heritage-float 10s ease-in-out infinite;
+  }
+
+  .family-heritage-float-delayed {
+    animation: family-heritage-float 12s ease-in-out infinite;
+    animation-delay: -4s;
+  }
+
+  @keyframes family-heritage-mandala-drift {
+    0%,
+    100% {
+      transform: rotate(-2deg);
+    }
+    50% {
+      transform: rotate(2deg);
+    }
+  }
+
+  @keyframes family-heritage-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-6px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .family-heritage-mandala-drift,
+    .family-heritage-float,
+    .family-heritage-float-delayed {
+      animation: none;
+    }
+  }
+
+  /* Royal Wedding Celebrations card — tokens from src/config/weddingCard.ts */
+  .wedding-card {
+    --wc-bg: #f8f0e3;
+    --wc-primary: #702632;
+    --wc-secondary: #4a2028;
+    --wc-accent: #b58a50;
+    --wc-body: #665044;
+    --wc-border: #dcc69f;
+    --wc-plaque-bg: #702632;
+    --wc-plaque-text: #f8f0e3;
+    --wc-plaque-border: #b58a50;
+    --wc-font-bn: var(--font-noto-serif-bengali), serif;
+    --wc-font-en: var(--font-cormorant), Georgia, serif;
+    --wc-eyebrow-size: clamp(0.58rem, 1.6vw, 0.68rem);
+    --wc-heading-bn-size: clamp(1.55rem, 5.2vw, 2.05rem);
+    --wc-heading-en-size: clamp(0.95rem, 2.8vw, 1.15rem);
+    --wc-subtitle-size: clamp(0.72rem, 2.2vw, 0.85rem);
+    --wc-event-label-size: clamp(0.58rem, 1.6vw, 0.68rem);
+    --wc-event-title-size: clamp(1.15rem, 3.8vw, 1.4rem);
+    --wc-date-bn-size: clamp(0.82rem, 2.4vw, 0.95rem);
+    --wc-date-en-size: clamp(0.95rem, 2.8vw, 1.12rem);
+    --wc-meta-size: clamp(0.72rem, 2vw, 0.82rem);
+    --wc-footer-size: clamp(0.58rem, 1.6vw, 0.68rem);
+    --wc-section-gap: clamp(1.1rem, 3.2vw, 1.55rem);
+    --wc-event-gap: clamp(1.15rem, 3.4vw, 1.65rem);
+    --wc-content-max: 22.5rem;
+    color: var(--wc-primary);
+  }
+
+  .wedding-card-shimmer {
+    background: linear-gradient(
+      110deg,
+      transparent 35%,
+      color-mix(in srgb, var(--wc-accent) 18%, transparent) 50%,
+      transparent 65%
+    );
+    background-size: 220% 100%;
+    animation: wedding-card-shimmer 7.5s ease-in-out infinite;
+  }
+
+  .wedding-card-float {
+    animation: wedding-card-float 9s ease-in-out infinite;
+  }
+
+  .wedding-card-float-delayed {
+    animation: wedding-card-float 11s ease-in-out infinite;
+    animation-delay: -3.5s;
+  }
+
+  @keyframes wedding-card-shimmer {
+    0%,
+    100% {
+      background-position: 120% 0;
+    }
+    50% {
+      background-position: -20% 0;
+    }
+  }
+
+  @keyframes wedding-card-float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-7px) rotate(2deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wedding-card-shimmer,
+    .wedding-card-float,
+    .wedding-card-float-delayed {
+      animation: none;
+    }
+  }
 }

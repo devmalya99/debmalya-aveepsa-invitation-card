@@ -27,10 +27,11 @@ import { gsap, registerGsap } from "@/lib/gsap";
 const LAYER_EASE = [0.22, 1, 0.36, 1] as const;
 
 const LAYER_MOTION = {
+  /* Soft fade only — element sequence lives inside OpeningCoupleCard. */
   couple: {
-    initial: { opacity: 0, y: 56, scale: 0.96, filter: "blur(0px)" },
-    animate: { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" },
-    exit: { opacity: 0, y: -48, scale: 0.98, filter: "blur(4px)" },
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0, y: -36, filter: "blur(4px)" },
   },
   groom: {
     initial: { opacity: 0, x: -80, rotate: -2.5, scale: 0.97 },
@@ -48,10 +49,11 @@ const LAYER_MOTION = {
     animate: { opacity: 1, x: 0, rotate: 0, scale: 1, filter: "blur(0px)" },
     exit: { opacity: 0, x: -56, rotate: -1.5, scale: 0.98 },
   },
+  /* Soft fade + scale — element sequence lives inside FestivitiesCard. */
   festivities: {
-    initial: { opacity: 0, y: 72, scale: 0.96, filter: "blur(0px)" },
-    animate: { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" },
-    exit: { opacity: 0, y: -40, scale: 0.98, filter: "blur(4px)" },
+    initial: { opacity: 0, scale: 0.985, filter: "blur(6px)" },
+    animate: { opacity: 1, scale: 1, filter: "blur(0px)" },
+    exit: { opacity: 0, y: -28, filter: "blur(4px)" },
   },
 } as const;
 
@@ -73,53 +75,26 @@ export function GrandReveal() {
       if (!sectionRef.current) return;
       registerGsap();
 
-      const settledTargets = [
-        ".reveal-atmosphere",
-        ".reveal-mandala-wrap",
-        ".reveal-mandala",
-        ".reveal-mandala-art",
-        ".reveal-particles",
-        ".reveal-petals",
-        ".reveal-birds",
-        ".reveal-lotus",
-        ".reveal-heading-mask",
-        ".reveal-kicker",
-        ".reveal-portrait-stage",
-        ".reveal-arch-frame",
-        ".reveal-photo-reveal",
-        ".reveal-photo",
-        ".reveal-names-bn",
-        ".reveal-names-en",
-        ".reveal-date-plaque",
-        ".reveal-date-bn",
-        ".reveal-date-en",
-        ".reveal-location",
-        ".reveal-tagline",
-        ".reveal-scene-fade",
-        ".reveal-draw-path",
-        ".reveal-mandala-center",
-        ".reveal-frame-sweep",
-        ".reveal-plaque-lotus",
-      ];
-
+      /* Atmosphere only — couple card owns its own Framer sequence. */
       const showSettled = () => {
-        gsap.set(settledTargets, {
-          autoAlpha: 1,
-          clearProps: "clipPath,y,scale,letterSpacing,filter",
+        gsap.set(
+          [
+            ".reveal-atmosphere",
+            ".reveal-mandala-wrap",
+            ".reveal-mandala-art",
+            ".reveal-particles",
+            ".reveal-petals",
+            ".reveal-birds",
+            ".reveal-lotus",
+            ".reveal-mandala-center",
+          ],
+          { autoAlpha: 1, clearProps: "y,scale,rotate" },
+        );
+        gsap.set(".reveal-draw-path, .reveal-mandala-path", {
+          strokeDashoffset: 0,
         });
-        gsap.set(".reveal-draw-path", { strokeDashoffset: 0 });
-        gsap.set(".reveal-photo", { scale: 1 });
-        gsap.set(".reveal-photo-reveal", {
-          clipPath: "inset(0% 0% 0% 0%)",
-        });
-        gsap.set(".reveal-kicker", { y: "0%" });
-        gsap.set(".reveal-names-bn", { y: "0%" });
-        gsap.set(".reveal-names-en", { letterSpacing: "0.12em" });
-        gsap.set(".reveal-frame-sweep", {
-          autoAlpha: 0,
-          strokeDashoffset: 1,
-        });
-        gsap.set(".reveal-arch-frame", { filter: "brightness(1)" });
+        gsap.set(".reveal-mandala-art", { autoAlpha: 0.22 });
+        gsap.set(".reveal-lotus", { autoAlpha: 0.55 });
       };
 
       if (reducedMotion || !cinematic) {
@@ -134,130 +109,61 @@ export function GrandReveal() {
       }
       entrancePlayedRef.current = true;
 
-      gsap.set(".reveal-atmosphere", { autoAlpha: 0.85 });
+      gsap.set(".reveal-atmosphere", { autoAlpha: 0.7 });
       gsap.set(".reveal-mandala-wrap", {
-        autoAlpha: 0.7,
-        scale: 0.97,
+        autoAlpha: 0.45,
+        scale: 0.96,
         rotate: -2,
       });
-      gsap.set(".reveal-mandala-art", { autoAlpha: 0.12 });
+      gsap.set(".reveal-mandala-art", { autoAlpha: 0.08 });
       gsap.set(".reveal-particles", { autoAlpha: 0 });
       gsap.set(".reveal-petals", { autoAlpha: 0 });
       gsap.set(".reveal-birds", { autoAlpha: 0 });
-      gsap.set(".reveal-lotus", { autoAlpha: 0.25 });
-      gsap.set(".reveal-mandala-path", { strokeDashoffset: 0.25 });
-      gsap.set(".reveal-mandala-center", { autoAlpha: 0.35 });
-      gsap.set(".reveal-kicker", { y: "100%", autoAlpha: 1 });
-      gsap.set(".reveal-heading-mask", { autoAlpha: 1 });
-      gsap.set(".reveal-portrait-stage", { autoAlpha: 1 });
-      gsap.set(".reveal-arch-frame", { autoAlpha: 1 });
-      gsap.set(
-        ".reveal-arch-outer, .reveal-arch-inner, .reveal-arch-base, .reveal-frame-lotus",
-        { strokeDashoffset: 0 },
-      );
-      gsap.set(".reveal-photo-reveal", {
-        clipPath: "inset(0% 0% 0% 0%)",
-        autoAlpha: 1,
-      });
-      gsap.set(".reveal-photo", { scale: 1.06, autoAlpha: 1 });
-      gsap.set(".reveal-frame-sweep", { autoAlpha: 0, strokeDashoffset: 1 });
-      gsap.set(".reveal-names-bn-mask", { autoAlpha: 1 });
-      gsap.set(".reveal-names-bn", { y: "100%", autoAlpha: 1 });
-      gsap.set(".reveal-names-en", { autoAlpha: 0, letterSpacing: "0.2em" });
-      gsap.set(".reveal-date-plaque", { autoAlpha: 1 });
-      gsap.set(".reveal-plaque-border, .reveal-plaque-border-inner", {
-        strokeDashoffset: 0,
-      });
-      gsap.set(".reveal-plaque-lotus", { autoAlpha: 0.55 });
-      gsap.set(".reveal-date-bn", { autoAlpha: 0.7, y: 3 });
-      gsap.set(".reveal-date-en", { autoAlpha: 0.6, y: 2 });
-      gsap.set(".reveal-location", { autoAlpha: 0.4, y: 4 });
-      gsap.set(".reveal-tagline", { autoAlpha: 0.35, y: 4 });
-      gsap.set(".reveal-scene-fade", { autoAlpha: 1 });
+      gsap.set(".reveal-lotus", { autoAlpha: 0.15 });
+      gsap.set(".reveal-mandala-path", { strokeDashoffset: 0.35 });
+      gsap.set(".reveal-mandala-center", { autoAlpha: 0.25 });
 
-      const T = 1.35;
       const entrance = gsap.timeline({
         defaults: { ease: MOTION.easeTextIn },
       });
 
       entrance
-        .to(".reveal-atmosphere", { autoAlpha: 1, duration: T * 0.35 }, 0)
+        .to(".reveal-atmosphere", { autoAlpha: 1, duration: 0.55 }, 0)
         .to(
           ".reveal-mandala-wrap",
           {
             autoAlpha: 1,
             scale: 1,
             rotate: 0,
-            duration: T * 0.45,
+            duration: 0.7,
             ease: MOTION.easeSoft,
           },
-          0,
+          0.05,
         )
         .to(
           ".reveal-mandala-art",
-          { autoAlpha: 0.22, duration: T * 0.4, ease: MOTION.easeSoft },
-          0.04,
+          { autoAlpha: 0.22, duration: 0.55, ease: MOTION.easeSoft },
+          0.1,
         )
         .to(
           ".reveal-mandala-path",
           {
             strokeDashoffset: 0,
             stagger: 0.02,
-            duration: T * 0.5,
+            duration: 0.7,
             ease: MOTION.easeSoft,
           },
-          0,
+          0.08,
         )
-        .to(".reveal-mandala-center", { autoAlpha: 0.7, duration: 0.35 }, 0.08)
+        .to(".reveal-mandala-center", { autoAlpha: 0.7, duration: 0.4 }, 0.2)
         .to(
           ".reveal-lotus",
-          { autoAlpha: 0.55, stagger: 0.04, duration: 0.4 },
-          0.06,
+          { autoAlpha: 0.55, stagger: 0.05, duration: 0.45 },
+          0.15,
         )
-        .to(".reveal-particles", { autoAlpha: 1, duration: 0.4 }, 0.1)
-        .to(
-          ".reveal-photo",
-          { scale: 1, duration: T * 0.55, ease: MOTION.easeOut },
-          0,
-        )
-        .to(
-          ".reveal-kicker",
-          { y: "0%", duration: T * 0.32, ease: MOTION.easeOut },
-          0.05,
-        )
-        .to(
-          ".reveal-frame-sweep",
-          {
-            autoAlpha: 1,
-            strokeDashoffset: 0,
-            duration: 0.55,
-            ease: "power1.inOut",
-          },
-          0.2,
-        )
-        .to(".reveal-frame-sweep", { autoAlpha: 0, duration: 0.3 }, 0.55)
-        .to(
-          ".reveal-names-bn",
-          { y: "0%", duration: T * 0.3, ease: MOTION.easeOut },
-          0.18,
-        )
-        .to(
-          ".reveal-names-en",
-          {
-            autoAlpha: 1,
-            letterSpacing: "0.12em",
-            duration: T * 0.28,
-            ease: MOTION.easeSoft,
-          },
-          0.28,
-        )
-        .to(".reveal-plaque-lotus", { autoAlpha: 0.85, duration: 0.3 }, 0.4)
-        .to(".reveal-date-bn", { autoAlpha: 1, y: 0, duration: 0.35 }, 0.38)
-        .to(".reveal-date-en", { autoAlpha: 1, y: 0, duration: 0.32 }, 0.44)
-        .to(".reveal-location", { autoAlpha: 1, y: 0, duration: 0.35 }, 0.5)
-        .to(".reveal-tagline", { autoAlpha: 1, y: 0, duration: 0.4 }, 0.58)
-        .to(".reveal-birds", { autoAlpha: 1, duration: 0.45 }, 0.45)
-        .to(".reveal-petals", { autoAlpha: 1, duration: 0.4 }, 0.65);
+        .to(".reveal-particles", { autoAlpha: 1, duration: 0.5 }, 0.25)
+        .to(".reveal-birds", { autoAlpha: 1, duration: 0.55 }, 0.55)
+        .to(".reveal-petals", { autoAlpha: 1, duration: 0.5 }, 0.75);
     },
     {
       scope: sectionRef,
@@ -344,7 +250,7 @@ export function GrandReveal() {
               initial={motionOff ? false : LAYER_MOTION.couple.initial}
               animate={LAYER_MOTION.couple.animate}
               exit={motionOff ? undefined : LAYER_MOTION.couple.exit}
-              transition={{ duration: 0.55, ease: LAYER_EASE }}
+              transition={{ duration: 0.35, ease: LAYER_EASE }}
             >
               <OpeningCoupleCard />
             </motion.div>
@@ -383,7 +289,7 @@ export function GrandReveal() {
               initial={motionOff ? false : LAYER_MOTION.festivities.initial}
               animate={LAYER_MOTION.festivities.animate}
               exit={motionOff ? undefined : LAYER_MOTION.festivities.exit}
-              transition={{ duration: 0.62, ease: LAYER_EASE }}
+              transition={{ duration: 0.7, ease: LAYER_EASE }}
             >
               <FestivitiesCard />
             </motion.div>

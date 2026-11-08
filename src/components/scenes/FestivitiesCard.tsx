@@ -1,146 +1,266 @@
 "use client";
 
-import Image from "next/image";
+import { useEffect, useState } from "react";
+import { motion } from "motion/react";
+import { WeddingCardDivider } from "@/components/events/WeddingCardDivider";
+import { WeddingCardEventBlock } from "@/components/events/WeddingCardEventBlock";
 import {
-  FestivityDateMedallion,
-  FestivityHeaderOrnament,
-  FestivityTimelineRail,
-} from "@/components/events/FestivityOrnaments";
-import { assets } from "@/data/assets";
+  getWeddingCardCopy,
+  WEDDING_CARD_MOTION,
+} from "@/config/weddingCard";
 import { useLanguage } from "@/hooks/useLanguage";
-import type { InvitationEvent } from "@/types/invitation";
-
-function EventBlock({
-  event,
-  index,
-}: {
-  event: InvitationEvent;
-  index: number;
-}) {
-  const turmeric = event.accent === "turmeric";
-
-  return (
-    <article className="grid w-full grid-cols-[2.25rem_1fr] items-start gap-x-3.5 text-left">
-      <div className="relative z-10 flex justify-center pt-[1.15rem]">
-        <div className="relative flex h-9 w-9 items-center justify-center rounded-full">
-          <FestivityDateMedallion
-            className="h-9 w-9"
-            tone={turmeric ? "gold" : "burgundy"}
-          />
-        </div>
-      </div>
-
-      <div className="min-w-0">
-        <p
-          className={`font-body text-[0.58rem] leading-none tracking-[0.18em] uppercase ${
-            turmeric ? "text-[#6b5224]" : "text-sindoor-red"
-          }`}
-        >
-          {event.titleEn}
-        </p>
-
-        <h3 className="mt-1.5 font-bn-display text-[1.05rem] leading-snug text-deep-burgundy sm:text-[1.15rem]">
-          {event.titleBn}
-        </h3>
-
-        <p
-          className={`mt-2 font-bn-display text-[0.86rem] leading-snug sm:text-[0.92rem] ${
-            turmeric ? "text-[#5c451c]" : "text-sindoor-red"
-          }`}
-        >
-          {event.bengaliDate}
-        </p>
-        <div
-          className={`mt-1 h-px w-14 bg-gradient-to-r ${
-            turmeric
-              ? "from-[#b99a58] to-transparent"
-              : "from-sindoor-red/70 to-transparent"
-          }`}
-        />
-
-        <p className="mt-1.5 font-display text-[0.98rem] leading-snug text-deep-burgundy sm:text-[1.15rem]">
-          {event.englishDate}
-        </p>
-
-        <p className="mt-1 font-display text-[0.75rem] leading-snug tracking-[0.04em] text-deep-burgundy/85 sm:text-[0.8rem]">
-          {event.day}
-          <span className="mx-1.5 text-deep-burgundy/40">·</span>
-          {event.time}
-        </p>
-      </div>
-    </article>
-  );
-}
+import { usePrefersReducedMotion } from "@/hooks/useReducedMotion";
 
 type FestivitiesCardProps = {
   className?: string;
 };
 
 /**
- * Festivities programme for the shared opening canvas.
- * Atmosphere (birds/petals) stays on GrandReveal — this is content only.
+ * Royal editorial Wedding Celebrations card for the opening canvas.
+ * Copy + tokens: `src/config/weddingCard.ts`. Atmosphere stays on GrandReveal.
  */
 export function FestivitiesCard({ className = "" }: FestivitiesCardProps) {
-  const { content } = useLanguage();
-  const events = content.events;
-  const [wedding, reception] = events.items;
+  const { locale } = useLanguage();
+  const reducedMotion = usePrefersReducedMotion();
+  const [sequenceOn, setSequenceOn] = useState(false);
+  const copy = getWeddingCardCopy(locale);
+  const [wedding, reception] = copy.items;
+  const instant = reducedMotion;
+  const go = sequenceOn || instant;
+  const d = (delay: number) => (instant ? 0 : delay);
+
+  useEffect(() => {
+    if (instant) {
+      setSequenceOn(true);
+      return;
+    }
+    const timer = window.setTimeout(
+      () => setSequenceOn(true),
+      WEDDING_CARD_MOTION.sequenceStartMs,
+    );
+    return () => window.clearTimeout(timer);
+  }, [instant]);
 
   return (
-    <div
-      className={`flex h-full min-h-0 w-full flex-col justify-center ${className}`}
+    <motion.div
+      className={`wedding-card relative flex h-full min-h-0 w-full flex-col items-center justify-center ${className}`}
+      initial={
+        instant
+          ? false
+          : { opacity: 0, scale: 0.98, filter: "blur(8px)" }
+      }
+      animate={
+        go
+          ? { opacity: 1, scale: 1, filter: "blur(0px)" }
+          : { opacity: 0, scale: 0.98, filter: "blur(8px)" }
+      }
+      transition={{
+        duration: instant ? 0 : WEDDING_CARD_MOTION.shellDuration,
+        ease: WEDDING_CARD_MOTION.ease,
+      }}
+      style={{ maxWidth: "var(--wc-content-max)" }}
     >
-      <header className="w-full shrink-0 text-center">
-        <p className="font-body text-[0.58rem] tracking-[0.22em] text-[#6b5224] uppercase">
-          {events.eyebrow}
-        </p>
+      {/* Soft paper sheen — behind content */}
+      <div
+        className="wedding-card-shimmer pointer-events-none absolute inset-x-[-8%] inset-y-[-4%] z-0 opacity-60"
+        aria-hidden
+      />
 
-        <FestivityHeaderOrnament className="mx-auto mt-2 h-7 w-20 text-antique-gold sm:h-8 sm:w-24" />
+      {/* Sparse floating accents */}
+      <span
+        className="wedding-card-float pointer-events-none absolute top-[8%] left-[6%] z-0 h-2 w-2 rounded-full opacity-35"
+        style={{ background: "var(--wc-accent)" }}
+        aria-hidden
+      />
+      <span
+        className="wedding-card-float-delayed pointer-events-none absolute top-[18%] right-[8%] z-0 h-1.5 w-1.5 rounded-full opacity-30"
+        style={{ background: "var(--wc-primary)" }}
+        aria-hidden
+      />
+      <span
+        className="wedding-card-float pointer-events-none absolute bottom-[14%] left-[10%] z-0 h-1.5 w-1.5 rotate-45 opacity-25"
+        style={{ background: "var(--wc-accent)" }}
+        aria-hidden
+      />
 
-        <h2 className="mt-2 font-bn-display text-[1.3rem] leading-snug text-sindoor-red sm:text-[1.65rem]">
-          {events.headingBn}
-        </h2>
+      <div className="relative z-10 flex w-full flex-col items-center px-1">
+        <header className="w-full shrink-0 text-center">
+          <motion.p
+            className="uppercase"
+            style={{
+              fontFamily: "var(--wc-font-en)",
+              fontSize: "var(--wc-eyebrow-size)",
+              letterSpacing: "0.22em",
+              color: "var(--wc-accent)",
+            }}
+            initial={false}
+            animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            transition={{
+              duration: instant ? 0 : 0.45,
+              delay: d(0.08),
+              ease: WEDDING_CARD_MOTION.ease,
+            }}
+          >
+            {copy.eyebrow}
+          </motion.p>
 
-        <p className="mt-1.5 font-display text-[0.88rem] tracking-[0.04em] text-deep-burgundy sm:text-[0.95rem]">
-          {events.headingEn}
-        </p>
-
-        <p className="mt-1 font-display text-[0.58rem] tracking-[0.12em] text-deep-burgundy/80 uppercase sm:text-[0.62rem]">
-          {events.subtitle}
-        </p>
-      </header>
-
-      <div className="relative my-3 w-full shrink-0 py-2 sm:my-4 sm:py-3">
-        <FestivityTimelineRail className="pointer-events-none absolute top-6 bottom-6 left-[1.125rem] w-[4px] -translate-x-1/2" />
-
-        <EventBlock event={wedding} index={0} />
-
-        <div className="relative z-10 my-3 grid grid-cols-[2.25rem_1fr] items-center gap-x-3.5 sm:my-3.5">
-          <div className="flex justify-center">
-            <div className="relative flex h-7 w-7 items-center justify-center">
-              <div className="absolute inset-[-2px] rounded-full border border-antique-gold/45" />
-              <Image
-                src={assets.decorations.festivityLotus}
-                alt=""
-                width={28}
-                height={28}
-                className="h-6 w-6 rounded-full object-cover"
-                sizes="28px"
-              />
-            </div>
+          <div className="mt-2.5 overflow-hidden">
+            <motion.h2
+              className="text-balance"
+              style={{
+                fontFamily: "var(--wc-font-bn)",
+                fontSize: "var(--wc-heading-bn-size)",
+                lineHeight: 1.28,
+                color: "var(--wc-primary)",
+              }}
+              initial={false}
+              animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: "100%" }}
+              transition={{
+                duration: instant ? 0 : WEDDING_CARD_MOTION.headingDuration,
+                delay: d(0.18),
+                ease: WEDDING_CARD_MOTION.ease,
+              }}
+            >
+              {copy.headingBn}
+            </motion.h2>
           </div>
-          <div aria-hidden />
+
+          <motion.p
+            className="mt-1.5"
+            style={{
+              fontFamily: "var(--wc-font-en)",
+              fontSize: "var(--wc-heading-en-size)",
+              letterSpacing: "0.04em",
+              color: "var(--wc-secondary)",
+            }}
+            initial={false}
+            animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            transition={{
+              duration: instant ? 0 : 0.45,
+              delay: d(0.36),
+              ease: WEDDING_CARD_MOTION.ease,
+            }}
+          >
+            {copy.headingEn}
+          </motion.p>
+
+          <motion.p
+            className="mt-1.5 text-balance"
+            style={{
+              fontFamily: "var(--wc-font-bn)",
+              fontSize: "var(--wc-subtitle-size)",
+              color: "var(--wc-body)",
+              lineHeight: 1.4,
+            }}
+            initial={false}
+            animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+            transition={{
+              duration: instant ? 0 : 0.4,
+              delay: d(0.46),
+              ease: WEDDING_CARD_MOTION.ease,
+            }}
+          >
+            {copy.subtitle}
+          </motion.p>
+
+          <motion.div
+            className="mx-auto mt-3 flex justify-center"
+            style={{ color: "var(--wc-accent)" }}
+            initial={false}
+            animate={
+              go
+                ? { opacity: 1, scaleX: 1 }
+                : { opacity: 0, scaleX: 0.4 }
+            }
+            transition={{
+              duration: instant ? 0 : WEDDING_CARD_MOTION.ornamentDuration,
+              delay: d(0.56),
+              ease: WEDDING_CARD_MOTION.ease,
+            }}
+          >
+            <WeddingCardDivider className="h-4 w-[9.5rem]" />
+          </motion.div>
+        </header>
+
+        <div
+          className="flex w-full flex-col items-center"
+          style={{
+            marginTop: "var(--wc-section-gap)",
+            gap: "var(--wc-event-gap)",
+          }}
+        >
+          <WeddingCardEventBlock
+            event={wedding}
+            go={go}
+            instant={instant}
+            baseDelay={WEDDING_CARD_MOTION.eventBaseDelays[0]}
+          />
+
+          <motion.div
+            className="flex w-full flex-col items-center gap-2"
+            style={{ color: "var(--wc-accent)" }}
+            initial={false}
+            animate={go ? { opacity: 1 } : { opacity: 0 }}
+            transition={{
+              duration: instant ? 0 : 0.4,
+              delay: d(1.12),
+              ease: WEDDING_CARD_MOTION.ease,
+            }}
+          >
+            <div
+              className="h-px w-16 origin-center"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent, var(--wc-accent), transparent)",
+              }}
+            />
+          </motion.div>
+
+          <WeddingCardEventBlock
+            event={reception}
+            go={go}
+            instant={instant}
+            baseDelay={WEDDING_CARD_MOTION.eventBaseDelays[1]}
+          />
         </div>
 
-        <EventBlock event={reception} index={1} />
+        <motion.footer
+          className="w-full shrink-0 text-center"
+          style={{ marginTop: "var(--wc-section-gap)" }}
+          initial={false}
+          animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+          transition={{
+            duration: instant ? 0 : WEDDING_CARD_MOTION.footerDuration,
+            delay: d(WEDDING_CARD_MOTION.footerDelay),
+            ease: WEDDING_CARD_MOTION.ease,
+          }}
+        >
+          <WeddingCardDivider className="mx-auto h-3.5 w-[7.5rem]" />
+          <p
+            className="mt-2"
+            style={{
+              fontFamily: "var(--wc-font-en)",
+              fontSize: "1rem",
+              color: "var(--wc-accent)",
+              lineHeight: 1,
+            }}
+            aria-hidden
+          >
+            ♥
+          </p>
+          <p
+            className="mt-1.5 uppercase"
+            style={{
+              fontFamily: "var(--wc-font-en)",
+              fontSize: "var(--wc-footer-size)",
+              letterSpacing: "0.18em",
+              color: "var(--wc-body)",
+            }}
+          >
+            {copy.footer}
+          </p>
+        </motion.footer>
       </div>
-
-      <div className="w-full shrink-0 pb-1 text-center">
-        <div className="mx-auto h-px w-20 bg-gradient-to-r from-transparent via-antique-gold to-transparent" />
-        <p className="mt-2 font-display text-[0.7rem] text-antique-gold">♥</p>
-        <p className="mt-1 font-display text-[0.58rem] tracking-[0.16em] text-deep-burgundy/85 uppercase">
-          With love & blessings
-        </p>
-      </div>
-    </div>
+    </motion.div>
   );
 }

@@ -26,7 +26,7 @@ export const assets = {
     trifold: "/decorations/invitation/trifold-red-gold.png",
     kolkataHeritage: "/decorations/invitation/kolkata-heritage.jpg",
     balconyFrame: "/decorations/invitation/balcony-frame.jpg",
-    namasteFrame: "/decorations/invitation/namaste-frame.jpg",
+    namasteFrame: "/decorations/invitation/namaste-couple-frame.jpg",
     mandapCeremony: "/decorations/invitation/mandap-ceremony.jpg",
     murshidabadSketch: "/decorations/venue/murshidabad-heritage-sketch.png",
     hazarduari: "/decorations/venue/hazarduari-palace.jpg",

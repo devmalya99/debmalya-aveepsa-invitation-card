@@ -57,6 +57,7 @@ export type InvitationContent = {
     headingEn: string;
     subtitle: string;
     closingNames: string;
+    footer: string;
     items: InvitationEvent[];
   };
   letter: {

@@ -67,11 +67,12 @@ export function GuestBlessingScene({ onReplay }: GuestBlessingSceneProps) {
         />
 
         <div
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_42%,rgba(80,10,18,0.15)_0%,rgba(20,6,10,0.35)_70%,rgba(12,4,8,0.55)_100%)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_38%,rgba(80,10,18,0.08)_0%,rgba(20,6,10,0.18)_72%,rgba(12,4,8,0.4)_100%)]"
           aria-hidden
         />
 
-        <div className="absolute inset-x-[14%] top-[22%] bottom-[38%] z-10 flex flex-col items-center justify-center px-2 sm:inset-x-[16%] sm:top-[20%] sm:bottom-[36%]">
+        {/* Sit the form inside the maroon arch of the namaste illustration. */}
+        <div className="absolute inset-x-[18%] top-[19%] bottom-[42%] z-10 flex flex-col items-center justify-center px-2 sm:inset-x-[20%] sm:top-[18%] sm:bottom-[40%]">
           {status === "success" ? (
             <p
               className={`text-center text-[1.15rem] leading-snug text-[#F8E7B0] ${
