@@ -12,6 +12,7 @@ import {
   OPENING_AUTO_HOLD_MS,
   OPENING_EXIT_HOLD_MS,
   SCENE_READ_HOLD_MS,
+  VENUE_READ_HOLD_MS,
 } from "@/lib/performance";
 
 /** Instant Y write — avoids CSS smooth scroll fighting RAF. */
@@ -25,11 +26,18 @@ type SceneReadStop = {
   /** Pin progress where the scene is readable enough to pause. */
   readAt: number;
   holdMs: number;
+  /** Softer approach so the unveil doesn’t blur past. */
+  approachPx?: number;
 };
 
 /** Pause mid-pin so venue / finale can be read — then continue past. */
 const SCENE_READ_STOPS: SceneReadStop[] = [
-  { pinId: "pin-venue-reveal", readAt: 0.58, holdMs: SCENE_READ_HOLD_MS },
+  {
+    pinId: "pin-venue-reveal",
+    readAt: 0.62,
+    holdMs: VENUE_READ_HOLD_MS,
+    approachPx: 4.2,
+  },
   { pinId: "pin-final-scene", readAt: 0.62, holdMs: SCENE_READ_HOLD_MS + 400 },
 ];
 
@@ -58,7 +66,8 @@ export function useAutoScroll(enabled: boolean) {
     const heldPins = new Set<string>();
     const holdStartedAt = new Map<string, number>();
     const pxPerFrame = getAutoScrollPxPerFrame();
-    const exitPxPerFrame = Math.max(pxPerFrame * 1.75, 12);
+    /* Leave festivities gently — a fast exit made the schedule card feel skipped. */
+    const exitPxPerFrame = Math.max(pxPerFrame * 1.15, 8);
 
     const tick = () => {
       if (!active) return;
@@ -121,7 +130,8 @@ export function useAutoScroll(enabled: boolean) {
 
         if (pin.progress < stop.readAt - 0.02) {
           markProgrammatic(200);
-          scrollYTo(Math.min(readTop, window.scrollY + pxPerFrame));
+          const approach = stop.approachPx ?? pxPerFrame;
+          scrollYTo(Math.min(readTop, window.scrollY + approach));
           raf = window.requestAnimationFrame(tick);
           return;
         }

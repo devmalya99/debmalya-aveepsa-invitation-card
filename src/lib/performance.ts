@@ -64,8 +64,11 @@ export function getAutoScrollPxPerFrame() {
 /** How long auto-play holds each opening card before snapping to the next. */
 export const OPENING_AUTO_HOLD_MS = 3200;
 
-/** Hold on festivities before leaving toward venue. */
-export const OPENING_EXIT_HOLD_MS = 2800;
+/** Festivities has more copy (two dates) — hold longer before leaving. */
+export const OPENING_EXIT_HOLD_MS = 5200;
 
-/** How long auto-play pauses on venue / finale once the card is readable. */
+/** Default pause on later scenes once readable. */
 export const SCENE_READ_HOLD_MS = 3800;
+
+/** Venue folio needs extra time for greeting + address. */
+export const VENUE_READ_HOLD_MS = 5600;
