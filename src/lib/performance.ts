@@ -53,10 +53,16 @@ export function getAmbientDensity() {
   return isCoarseMobile() ? AMBIENT_DENSITY.mobile : AMBIENT_DENSITY.desktop;
 }
 
-/** Auto-scroll pixels per frame (used outside the opening pin). */
+/**
+ * Auto-scroll pixels per frame (after the opening pin).
+ * Brisk on purpose — venue / finale pins must not feel like a crawl on phones.
+ */
 export function getAutoScrollPxPerFrame() {
-  return isCoarseMobile() ? 5.2 : 5.8;
+  return isCoarseMobile() ? 20 : 22;
 }
 
 /** How long auto-play holds each opening card before snapping to the next. */
-export const OPENING_AUTO_HOLD_MS = 2600;
+export const OPENING_AUTO_HOLD_MS = 2200;
+
+/** Shorter hold on festivities before leaving toward venue. */
+export const OPENING_EXIT_HOLD_MS = 1400;

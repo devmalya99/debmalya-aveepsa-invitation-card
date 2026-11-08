@@ -34,26 +34,30 @@ export function progressForBeat(beat: OpeningBeat): number {
   }
 }
 
+/** Instant scroll — CSS smooth + options behavior fight GSAP pins on mobile. */
+function scrollYInstant(top: number) {
+  window.scrollTo(0, top);
+  ScrollTrigger.update();
+}
+
 export function scrollPinToProgress(
   progress: number,
-  behavior: ScrollBehavior = "smooth",
+  _behavior: ScrollBehavior = "auto",
 ) {
   const st = ScrollTrigger.getById("pin-grand-reveal");
   if (!st) return false;
   const span = st.end - st.start;
   const top = st.start + span * Math.min(1, Math.max(0, progress));
-  window.scrollTo({ top, behavior });
-  ScrollTrigger.update();
+  scrollYInstant(top);
   return true;
 }
 
-export function scrollPastOpeningPin(behavior: ScrollBehavior = "smooth") {
+export function scrollPastOpeningPin(_behavior: ScrollBehavior = "auto") {
   const st = ScrollTrigger.getById("pin-grand-reveal");
   if (!st) return false;
-  /* Jump clearly past pin spacing so venue can take over on phones. */
-  const top = st.end + Math.max(48, window.innerHeight * 0.2);
-  window.scrollTo({ top, behavior });
-  ScrollTrigger.update();
+  /* Past pin end + into venue so auto-scroll cannot flicker on the boundary. */
+  const top = st.end + Math.max(80, window.innerHeight * 0.35);
+  scrollYInstant(top);
   return true;
 }
 

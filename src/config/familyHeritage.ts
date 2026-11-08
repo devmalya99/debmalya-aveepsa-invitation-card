@@ -55,7 +55,7 @@ export const FAMILY_HERITAGE_COPY: Record<Locale, FamilyHeritageCopy> = {
       allDetails: [
         { label: "পিতা", value: "শ্রী প্রশান্ত কুমার মজুমদার" },
         { label: "মাতা", value: "শ্রীমতী নূতন মজুমদার" },
-        { label: "ভাই", value: "নির্মাল্য মজুমদার" },
+        { label: "দাদা", value: "নির্মাল্য মজুমদার" },
         { label: "নিবাস", value: "অরবিন্দপল্লী" },
         { label: "পোঃ ও থানা", value: "রঘুনাথগঞ্জ" },
         { label: "জেলা", value: "মুর্শিদাবাদ" },
@@ -68,7 +68,7 @@ export const FAMILY_HERITAGE_COPY: Record<Locale, FamilyHeritageCopy> = {
       members: [
         { label: "পিতা", value: "শ্রী বাসুদেব চক্রবর্তী" },
         { label: "মাতা", value: "শ্রীমতী মধুছন্দা চক্রবর্তী" },
-        { label: "ভাই", value: "শ্রী অভিজিৎ চক্রবর্তী" },
+        { label: "দাদা", value: "শ্রী অভিজিৎ চক্রবর্তী" },
         { label: "ভাবী", value: "শ্রীমতী অমৃতা মজুমদার" },
       ],
       allDetails: [

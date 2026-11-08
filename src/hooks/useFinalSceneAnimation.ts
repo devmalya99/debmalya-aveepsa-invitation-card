@@ -154,7 +154,8 @@ export function useFinalSceneAnimation({
     sectionRef,
     sceneId: "final-scene",
     enabled,
-    scrub: 0.8,
+    /* 1:1 scrub — lagged scrub made phones feel stuck mid-card. */
+    scrub: true,
     build: (timeline) => {
       if (reducedMotion) {
         timeline.to(".rx-glow", { duration: 1 });
@@ -163,14 +164,17 @@ export function useFinalSceneAnimation({
 
       const clearBlur = { filter: "blur(0px)" };
 
+      /*
+       * Front-load the unveil so the settled card appears by ~55% pin progress.
+       * Remaining pin is a short hold before guest blessing — not a long crawl.
+       */
       timeline
-        /* 0–20% Photograph unveil */
         .to(
           ".rx-glow",
           {
             autoAlpha: 0.55,
             scale: 1,
-            duration: 0.18,
+            duration: 0.12,
             ease: MOTION.easeScrub,
           },
           0,
@@ -179,7 +183,7 @@ export function useFinalSceneAnimation({
           ".rx-photo-mask",
           {
             clipPath: "inset(0% 0% 0% 0%)",
-            duration: 0.2,
+            duration: 0.14,
             ease: MOTION.easeScrub,
           },
           0,
@@ -188,7 +192,7 @@ export function useFinalSceneAnimation({
           ".rx-photo",
           {
             scale: 1,
-            duration: 0.2,
+            duration: 0.14,
             ease: MOTION.easeScrub,
           },
           0,
@@ -197,71 +201,67 @@ export function useFinalSceneAnimation({
           ".rx-frame-path",
           {
             strokeDashoffset: 0,
-            stagger: 0.02,
-            duration: 0.16,
+            stagger: 0.015,
+            duration: 0.1,
             ease: MOTION.easeScrub,
           },
-          0.06,
+          0.04,
         )
         .to(
           ".rx-frame-sweep",
           {
             autoAlpha: 0.55,
             xPercent: 120,
-            duration: 0.12,
+            duration: 0.08,
             ease: MOTION.easeScrub,
           },
-          0.1,
+          0.06,
         )
         .to(
           ".rx-frame-sweep",
-          { autoAlpha: 0, duration: 0.04, ease: MOTION.easeScrub },
-          0.18,
+          { autoAlpha: 0, duration: 0.03, ease: MOTION.easeScrub },
+          0.12,
         )
-
-        /* 20–35% Families meet */
         .to(
           ".rx-family-left",
           {
             autoAlpha: 1,
             x: 0,
-            duration: 0.1,
+            duration: 0.08,
             ease: MOTION.easeScrub,
           },
-          0.2,
+          0.12,
         )
         .to(
           ".rx-family-right",
           {
             autoAlpha: 1,
             x: 0,
-            duration: 0.1,
+            duration: 0.08,
             ease: MOTION.easeScrub,
           },
-          0.2,
+          0.12,
         )
         .to(
           ".rx-family-ornament",
           {
             autoAlpha: 1,
             scale: 1,
-            duration: 0.08,
+            duration: 0.06,
             ease: MOTION.easeScrub,
           },
-          0.26,
+          0.16,
         )
         .to(
           ".rx-family-divider",
           {
             scaleX: 1,
             autoAlpha: 1,
-            duration: 0.08,
+            duration: 0.06,
             ease: MOTION.easeScrub,
           },
-          0.28,
+          0.17,
         )
-
-        /* 35–50% Card entrance */
         .to(
           ".rx-card",
           {
@@ -269,31 +269,29 @@ export function useFinalSceneAnimation({
             y: 0,
             scale: 1,
             boxShadow: "0 12px 28px rgba(0,0,0,0.28)",
-            duration: 0.14,
+            duration: 0.1,
             ease: MOTION.easeScrub,
           },
-          0.35,
+          0.2,
         )
         .to(
           ".rx-card-border",
           {
             autoAlpha: 1,
-            duration: 0.1,
+            duration: 0.06,
             ease: MOTION.easeScrub,
           },
-          0.4,
+          0.24,
         )
-
-        /* 50–75% Heading + blessing */
         .to(
           ".rx-lotus",
           {
             autoAlpha: 1,
             scale: 1,
-            duration: 0.08,
+            duration: 0.06,
             ease: MOTION.easeScrub,
           },
-          0.5,
+          0.28,
         )
         .to(
           ".rx-heading",
@@ -302,45 +300,43 @@ export function useFinalSceneAnimation({
             y: 0,
             clipPath: "inset(0% 0% 0% 0%)",
             ...clearBlur,
-            duration: 0.1,
+            duration: 0.07,
             ease: MOTION.easeScrub,
           },
-          0.54,
+          0.3,
         )
         .to(
           ".rx-subtitle-word",
           {
             autoAlpha: 1,
             y: 0,
-            stagger: 0.02,
-            duration: 0.08,
+            stagger: 0.015,
+            duration: 0.06,
             ease: MOTION.easeScrub,
           },
-          0.6,
+          0.34,
         )
         .to(
           ".rx-blessing-phrase",
           {
             autoAlpha: 1,
             y: 0,
-            stagger: 0.03,
-            duration: 0.08,
+            stagger: 0.02,
+            duration: 0.06,
             ease: MOTION.easeScrub,
           },
-          0.66,
+          0.38,
         )
-
-        /* 75–90% Attribution + signature */
         .to(
           ".rx-attr",
           {
             autoAlpha: 1,
             y: 0,
-            stagger: 0.02,
-            duration: 0.08,
+            stagger: 0.015,
+            duration: 0.06,
             ease: MOTION.easeScrub,
           },
-          0.75,
+          0.44,
         )
         .to(
           ".rx-signature",
@@ -348,36 +344,34 @@ export function useFinalSceneAnimation({
             autoAlpha: 1,
             y: 0,
             ...clearBlur,
-            duration: 0.08,
+            duration: 0.06,
             ease: MOTION.easeScrub,
           },
-          0.82,
+          0.48,
         )
         .to(
           ".rx-shimmer",
           {
             autoAlpha: 0.45,
             xPercent: 120,
-            duration: 0.08,
+            duration: 0.06,
             ease: MOTION.easeScrub,
           },
-          0.84,
+          0.5,
         )
         .to(
           ".rx-shimmer",
           { autoAlpha: 0, duration: 0.03, ease: MOTION.easeScrub },
-          0.9,
+          0.54,
         )
-
-        /* 90–100% Soft settle before guest blessing */
         .to(
           ".rx-glow",
           {
             autoAlpha: 0.48,
-            duration: 0.06,
+            duration: 0.2,
             ease: MOTION.easeScrub,
           },
-          0.92,
+          0.56,
         );
     },
   });

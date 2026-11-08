@@ -64,8 +64,12 @@
     color-scheme: only light;
   }
 
+  /*
+   * Instant scrolling only — CSS `smooth` fights GSAP pins and RAF auto-scroll
+   * (festivities → venue looked like the page was being held back).
+   */
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
     background-color: #f6ebd6;
   }
 

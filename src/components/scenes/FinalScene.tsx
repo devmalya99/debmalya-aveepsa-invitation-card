@@ -133,7 +133,7 @@ export function FinalScene() {
       ref={sectionRef}
       id="final-scene"
       tone="burgundy"
-      innerClassName="max-w-[26rem] justify-center gap-0 overflow-y-auto touch-pan-y sm:max-w-lg"
+      innerClassName="max-w-[26rem] justify-center gap-0 sm:max-w-lg"
     >
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="rx-glow absolute top-[8%] left-1/2 h-[min(48vw,12rem)] w-[min(48vw,12rem)] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(185,154,88,0.3)_0%,transparent_70%)]" />

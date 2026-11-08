@@ -11,13 +11,12 @@ import { AudioProvider } from "@/hooks/useAudio";
 import { AutoPlayProvider, useAutoPlay } from "@/hooks/useAutoPlay";
 import { useAutoScroll } from "@/hooks/useAutoScroll";
 import { LanguageProvider, useLanguage } from "@/hooks/useLanguage";
+import { assets } from "@/data/assets";
 import { registerGsap, ScrollTrigger } from "@/lib/gsap";
 
 const OPENED_KEY = "wedding-invite-opened";
 /** Let the couple card sequence play before auto-scroll resumes. */
-const INTRO_HOLD_MS = 2600;
-/** Mount later scenes right after open so document scroll height is never a single viewport. */
-const LATER_SCENES_MS = 0;
+const INTRO_HOLD_MS = 2200;
 
 const sceneLoading = () => (
   <div className="scene-shell surface-ivory min-h-svh" aria-hidden />
@@ -77,12 +76,23 @@ function ExperienceInner() {
     setHydratedOpen(true);
   }, [ready]);
 
-  /* Warm the opening canvas chunk while the guest is still on the envelope. */
+  /* Warm scene chunks + venue hero while the guest is still on the envelope. */
   useEffect(() => {
     if (opened || !hydratedOpen) return;
     const warm = window.setTimeout(() => {
       void import("@/components/scenes/GrandReveal");
-    }, 700);
+      void import("@/components/scenes/VenueReveal");
+      void import("@/components/scenes/FinalScene");
+      void import("@/components/scenes/GuestBlessingScene");
+      const warmImage = (src: string) => {
+        const img = new window.Image();
+        img.decoding = "async";
+        img.src = src;
+      };
+      warmImage(assets.decorations.bhagirathiBoat);
+      warmImage(assets.couple.finalBlessing);
+      warmImage(assets.decorations.namasteFrame);
+    }, 400);
     return () => window.clearTimeout(warm);
   }, [opened, hydratedOpen]);
 
@@ -94,19 +104,19 @@ function ExperienceInner() {
     }
 
     registerGsap();
+    /* Mount venue+ immediately — delayed mount left auto-scroll stranded at pin end. */
+    setLaterScenes(true);
     void import("@/components/scenes/VenueReveal");
     void import("@/components/scenes/FinalScene");
     void import("@/components/scenes/GuestBlessingScene");
 
     const frame = window.requestAnimationFrame(() => ScrollTrigger.refresh());
     const later = window.setTimeout(() => ScrollTrigger.refresh(), 180);
-    const rest = window.setTimeout(() => setLaterScenes(true), LATER_SCENES_MS);
     const intro = window.setTimeout(() => setIntroReady(true), INTRO_HOLD_MS);
 
     return () => {
       window.cancelAnimationFrame(frame);
       window.clearTimeout(later);
-      window.clearTimeout(rest);
       window.clearTimeout(intro);
     };
   }, [opened]);
@@ -128,10 +138,10 @@ function ExperienceInner() {
     document.body.style.overflow = "";
     setOpened(true);
     setIntroReady(false);
-    setLaterScenes(false);
+    setLaterScenes(true);
     window.localStorage.setItem(OPENED_KEY, "1");
     window.requestAnimationFrame(() => {
-      window.scrollTo({ top: 0, behavior: "auto" });
+      window.scrollTo(0, 0);
       ScrollTrigger.refresh();
     });
   }, [markProgrammatic]);

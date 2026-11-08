@@ -62,7 +62,8 @@ export function usePinnedScene({
           scrub,
           pin,
           pinSpacing: true,
-          anticipatePin: pin ? 1 : 0,
+          /* anticipatePin repositions early and fights RAF auto-scroll at scene edges. */
+          anticipatePin: 0,
           invalidateOnRefresh: true,
           /* Finish the pin cleanly on fast flicks so the next scene can take over. */
           fastScrollEnd: true,
