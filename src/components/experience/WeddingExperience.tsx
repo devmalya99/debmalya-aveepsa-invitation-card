@@ -16,8 +16,8 @@ import { registerGsap, ScrollTrigger } from "@/lib/gsap";
 const OPENED_KEY = "wedding-invite-opened";
 /** Let the couple card sequence play before auto-scroll resumes. */
 const INTRO_HOLD_MS = 2600;
-/** Mount later film scenes shortly after open so the first card paints sooner. */
-const LATER_SCENES_MS = 500;
+/** Mount later scenes right after open so document scroll height is never a single viewport. */
+const LATER_SCENES_MS = 0;
 
 const sceneLoading = () => (
   <div className="scene-shell surface-ivory min-h-svh" aria-hidden />
@@ -124,6 +124,8 @@ function ExperienceInner() {
 
   const openInvitation = useCallback(() => {
     markProgrammatic(INTRO_HOLD_MS + 400);
+    /* CoverSplash locks body scroll — clear defensively so pin scrub always works. */
+    document.body.style.overflow = "";
     setOpened(true);
     setIntroReady(false);
     setLaterScenes(false);

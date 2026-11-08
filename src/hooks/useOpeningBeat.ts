@@ -91,14 +91,24 @@ export function useOpeningBeat() {
 
       if (index >= OPENING_BEATS.length - 1) {
         /* Leave the opening pin toward venue. */
-        if (!scrollPastOpeningPin("smooth")) {
-          window.scrollBy({ top: window.innerHeight * 0.85, behavior: "smooth" });
+        if (!scrollPastOpeningPin("auto")) {
+          window.scrollBy({
+            top: window.innerHeight * 0.85,
+            behavior: "auto",
+          });
         }
         return current;
       }
 
       const next = OPENING_BEATS[index + 1];
-      scrollPinToProgress(progressForBeat(next), "smooth");
+      /* Instant scroll — smooth lag made phones feel stuck on couple. */
+      if (!scrollPinToProgress(progressForBeat(next), "auto")) {
+        /* Pin not ready yet — still advance the Framer card. */
+        window.scrollBy({
+          top: window.innerHeight * 0.35,
+          behavior: "auto",
+        });
+      }
       return next;
     });
   }, []);
@@ -107,11 +117,16 @@ export function useOpeningBeat() {
     setBeat((current) => {
       const index = OPENING_BEATS.indexOf(current);
       if (index <= 0) {
-        scrollPinToProgress(progressForBeat("couple"), "smooth");
+        scrollPinToProgress(progressForBeat("couple"), "auto");
         return "couple";
       }
       const prev = OPENING_BEATS[index - 1];
-      scrollPinToProgress(progressForBeat(prev), "smooth");
+      if (!scrollPinToProgress(progressForBeat(prev), "auto")) {
+        window.scrollBy({
+          top: -window.innerHeight * 0.35,
+          behavior: "auto",
+        });
+      }
       return prev;
     });
   }, []);

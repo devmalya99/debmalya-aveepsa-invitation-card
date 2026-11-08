@@ -9,30 +9,14 @@ type UseOpeningLayerSwipeOptions = {
   onPrev: () => void;
 };
 
-const MIN_DISTANCE = 36;
-const AXIS_LOCK_DISTANCE = 18;
-const MAX_DURATION_MS = 1000;
-
-function isScrollableY(el: HTMLElement) {
-  return el.scrollHeight > el.clientHeight + 4;
-}
-
-function findScrollParent(target: EventTarget | null, root: HTMLElement) {
-  let el: Element | null = target instanceof Element ? target : null;
-  while (el && el !== root) {
-    if (el instanceof HTMLElement && isScrollableY(el)) return el;
-    el = el.parentElement;
-  }
-  if (isScrollableY(root)) return root;
-  const card = root.querySelector(".wedding-card");
-  if (card instanceof HTMLElement && isScrollableY(card)) return card;
-  return null;
-}
+const MIN_DISTANCE = 48;
+const MIN_VELOCITY = 0.35; /* px per ms — clear flick, not a slow drag */
+const MAX_DURATION_MS = 700;
 
 /**
- * Mobile swipe / flick:
- * up or left → next, down or right → previous.
- * Does not steal gestures from an inner scrollable list until it hits an edge.
+ * Optional card snap on a clear flick.
+ * Never blocks vertical page scroll — that was freezing the couple screen.
+ * Horizontal flicks may preventDefault; vertical always uses native scroll + optional snap.
  */
 export function useOpeningLayerSwipe(
   ref: RefObject<HTMLElement | null>,
@@ -48,15 +32,13 @@ export function useOpeningLayerSwipe(
     let startY = 0;
     let startTime = 0;
     let tracking = false;
-    let locked: "x" | "y" | null = null;
+    let horizontalIntent = false;
     let fired = false;
-    let scrollParent: HTMLElement | null = null;
 
     const reset = () => {
       tracking = false;
-      locked = null;
+      horizontalIntent = false;
       fired = false;
-      scrollParent = null;
     };
 
     const onStart = (event: TouchEvent) => {
@@ -64,11 +46,10 @@ export function useOpeningLayerSwipe(
       const touch = event.touches[0];
       tracking = true;
       fired = false;
-      locked = null;
+      horizontalIntent = false;
       startX = touch.clientX;
       startY = touch.clientY;
       startTime = Date.now();
-      scrollParent = findScrollParent(event.target, node);
     };
 
     const onMove = (event: TouchEvent) => {
@@ -79,23 +60,11 @@ export function useOpeningLayerSwipe(
       const absX = Math.abs(dx);
       const absY = Math.abs(dy);
 
-      if (!locked) {
-        if (absX < AXIS_LOCK_DISTANCE && absY < AXIS_LOCK_DISTANCE) return;
-        locked = absX > absY ? "x" : "y";
+      /* Only claim horizontal swipes — never lock the vertical pin scroll. */
+      if (!horizontalIntent && absX > 24 && absX > absY * 1.25) {
+        horizontalIntent = true;
       }
-
-      if (locked === "y" && scrollParent) {
-        const atTop = scrollParent.scrollTop <= 0;
-        const atBottom =
-          scrollParent.scrollTop + scrollParent.clientHeight >=
-          scrollParent.scrollHeight - 2;
-        /* Let the festivities list scroll until an edge. */
-        if ((dy < 0 && !atBottom) || (dy > 0 && !atTop)) {
-          return;
-        }
-      }
-
-      if (locked) {
+      if (horizontalIntent) {
         event.preventDefault();
       }
     };
@@ -104,31 +73,32 @@ export function useOpeningLayerSwipe(
       if (fired) return;
       const absX = Math.abs(dx);
       const absY = Math.abs(dy);
-      const elapsed = Date.now() - startTime;
+      const elapsed = Math.max(1, Date.now() - startTime);
       if (elapsed > MAX_DURATION_MS) return;
-      if (absX < MIN_DISTANCE && absY < MIN_DISTANCE) return;
 
-      const horizontal = locked === "x" || (locked == null && absX > absY);
-
-      if (!horizontal && scrollParent) {
-        const atTop = scrollParent.scrollTop <= 0;
-        const atBottom =
-          scrollParent.scrollTop + scrollParent.clientHeight >=
-          scrollParent.scrollHeight - 2;
-        if ((dy < 0 && !atBottom) || (dy > 0 && !atTop)) {
-          return;
-        }
-      }
-
-      fired = true;
-      notifyUserActivity();
-      markProgrammatic(900);
+      const velocityX = absX / elapsed;
+      const velocityY = absY / elapsed;
+      const horizontal = horizontalIntent || (absX > absY && absX >= MIN_DISTANCE);
+      const verticalFlick =
+        !horizontal &&
+        absY >= MIN_DISTANCE &&
+        velocityY >= MIN_VELOCITY;
 
       if (horizontal) {
+        if (absX < MIN_DISTANCE && velocityX < MIN_VELOCITY) return;
+        fired = true;
+        notifyUserActivity();
+        markProgrammatic(900);
         if (dx < 0) onNext();
         else onPrev();
         return;
       }
+
+      if (!verticalFlick) return;
+
+      fired = true;
+      notifyUserActivity();
+      markProgrammatic(900);
       if (dy < 0) onNext();
       else onPrev();
     };

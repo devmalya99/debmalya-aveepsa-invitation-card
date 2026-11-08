@@ -247,7 +247,7 @@ export function GrandReveal() {
 
       <div
         ref={layerRef}
-        className="relative z-10 h-full min-h-0 w-full touch-pan-y"
+        className="relative z-10 h-full min-h-0 w-full"
         style={{ touchAction: "pan-y" }}
         role="group"
         aria-roledescription="carousel"
