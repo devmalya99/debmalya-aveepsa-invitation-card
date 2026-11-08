@@ -13,6 +13,8 @@ import { VenueReveal } from "@/components/scenes/VenueReveal";
 import { WeddingEvents } from "@/components/scenes/WeddingEvents";
 import { InvitationHeader } from "@/components/navigation/InvitationHeader";
 import { AudioProvider } from "@/hooks/useAudio";
+import { AutoPlayProvider } from "@/hooks/useAutoPlay";
+import { useAutoScroll } from "@/hooks/useAutoScroll";
 import { LanguageProvider, useLanguage } from "@/hooks/useLanguage";
 import { registerGsap, ScrollTrigger } from "@/lib/gsap";
 
@@ -22,6 +24,8 @@ function ExperienceInner() {
   const { ready, hasChosenLocale } = useLanguage();
   const [opened, setOpened] = useState(false);
   const [hydratedOpen, setHydratedOpen] = useState(false);
+
+  useAutoScroll(opened);
 
   useEffect(() => {
     if (!ready) return;
@@ -97,9 +101,11 @@ export function WeddingExperience() {
   return (
     <LanguageProvider>
       <AudioProvider>
-        <MobileOnlyGate>
-          <ExperienceInner />
-        </MobileOnlyGate>
+        <AutoPlayProvider>
+          <MobileOnlyGate>
+            <ExperienceInner />
+          </MobileOnlyGate>
+        </AutoPlayProvider>
       </AudioProvider>
     </LanguageProvider>
   );

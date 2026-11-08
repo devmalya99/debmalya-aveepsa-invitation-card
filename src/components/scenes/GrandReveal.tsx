@@ -88,39 +88,9 @@ export function GrandReveal() {
         gsap.set(".reveal-arch-frame", { filter: "brightness(1)" });
       };
 
-      if (reducedMotion) {
+      if (reducedMotion || !cinematic) {
         showSettled();
         entrancePlayedRef.current = true;
-        return;
-      }
-
-      if (!cinematic) {
-        if (!entrancePlayedRef.current) {
-          gsap.set(
-            [
-              ".reveal-atmosphere",
-              ".reveal-mandala-wrap",
-              ".reveal-particles",
-              ".reveal-petals",
-              ".reveal-birds",
-              ".reveal-lotus",
-              ".reveal-kicker",
-              ".reveal-portrait-stage",
-              ".reveal-arch-frame",
-              ".reveal-photo",
-              ".reveal-names-bn",
-              ".reveal-names-en",
-              ".reveal-date-plaque",
-              ".reveal-date-bn",
-              ".reveal-date-en",
-              ".reveal-location",
-              ".reveal-tagline",
-              ".reveal-mandala-center",
-              ".reveal-plaque-lotus",
-            ],
-            { autoAlpha: 0 },
-          );
-        }
         return;
       }
 
@@ -130,264 +100,159 @@ export function GrandReveal() {
       }
       entrancePlayedRef.current = true;
 
-      /* ── Initial states ── */
-      gsap.set(".reveal-atmosphere", { autoAlpha: 0 });
-      gsap.set(".reveal-mandala-wrap", { autoAlpha: 0, scale: 0.94, rotate: -4 });
+      /*
+       * Keep the couple portrait on screen from frame one — a 4s staged hide
+       * made Scene 01 look empty after the envelope opened. Polish around it.
+       */
+      gsap.set(".reveal-atmosphere", { autoAlpha: 0.85 });
+      gsap.set(".reveal-mandala-wrap", { autoAlpha: 0.7, scale: 0.97, rotate: -2 });
       gsap.set(".reveal-mandala", { autoAlpha: 0.35 });
-      gsap.set(".reveal-mandala-art", { autoAlpha: 0 });
+      gsap.set(".reveal-mandala-art", { autoAlpha: 0.12 });
       gsap.set(".reveal-particles", { autoAlpha: 0 });
       gsap.set(".reveal-petals", { autoAlpha: 0 });
       gsap.set(".reveal-birds", { autoAlpha: 0 });
-      gsap.set(".reveal-lotus", { autoAlpha: 0 });
-      gsap.set(".reveal-draw-path", { strokeDashoffset: 1 });
-      gsap.set(".reveal-mandala-center", { autoAlpha: 0 });
+      gsap.set(".reveal-lotus", { autoAlpha: 0.25 });
+      gsap.set(".reveal-mandala-path", { strokeDashoffset: 0.25 });
+      gsap.set(".reveal-mandala-center", { autoAlpha: 0.35 });
 
-      gsap.set(".reveal-kicker", { y: "110%", autoAlpha: 1 });
+      gsap.set(".reveal-kicker", { y: "100%", autoAlpha: 1 });
       gsap.set(".reveal-heading-mask", { autoAlpha: 1 });
 
       gsap.set(".reveal-portrait-stage", { autoAlpha: 1 });
-      gsap.set(".reveal-arch-frame", { autoAlpha: 0 });
+      gsap.set(".reveal-arch-frame", { autoAlpha: 1 });
+      /* Frame + photo already drawn — never leave a blank hole in the card. */
+      gsap.set(
+        ".reveal-arch-outer, .reveal-arch-inner, .reveal-arch-base, .reveal-frame-lotus",
+        { strokeDashoffset: 0 },
+      );
       gsap.set(".reveal-photo-reveal", {
-        clipPath: "inset(0% 0% 100% 0%)",
+        clipPath: "inset(0% 0% 0% 0%)",
         autoAlpha: 1,
       });
-      gsap.set(".reveal-photo", { scale: 1.18, autoAlpha: 1 });
+      gsap.set(".reveal-photo", { scale: 1.06, autoAlpha: 1 });
       gsap.set(".reveal-frame-sweep", {
         autoAlpha: 0,
         strokeDashoffset: 1,
       });
 
       gsap.set(".reveal-names-bn-mask", { autoAlpha: 1 });
-      gsap.set(".reveal-names-bn", { y: "110%", autoAlpha: 1 });
+      gsap.set(".reveal-names-bn", { y: "100%", autoAlpha: 1 });
       gsap.set(".reveal-names-en", {
         autoAlpha: 0,
-        letterSpacing: "0.28em",
+        letterSpacing: "0.2em",
       });
 
       gsap.set(".reveal-date-plaque", { autoAlpha: 1 });
-      gsap.set(".reveal-plaque-lotus", { autoAlpha: 0 });
-      gsap.set(".reveal-date-bn", { autoAlpha: 0, y: 8 });
-      gsap.set(".reveal-date-en", { autoAlpha: 0, y: 6 });
+      gsap.set(".reveal-plaque-border, .reveal-plaque-border-inner", {
+        strokeDashoffset: 0,
+      });
+      gsap.set(".reveal-plaque-lotus", { autoAlpha: 0.55 });
+      gsap.set(".reveal-date-bn", { autoAlpha: 0.7, y: 3 });
+      gsap.set(".reveal-date-en", { autoAlpha: 0.6, y: 2 });
 
-      gsap.set(".reveal-location", { autoAlpha: 0, y: 8 });
-      gsap.set(".reveal-tagline", { autoAlpha: 0, y: 8 });
+      gsap.set(".reveal-location", { autoAlpha: 0.4, y: 4 });
+      gsap.set(".reveal-tagline", { autoAlpha: 0.35, y: 4 });
       gsap.set(".reveal-scene-fade", { autoAlpha: 1 });
 
-      /*
-       * Master entrance — relative positions map to brief percentages.
-       * Total duration ~4.2s → 0–15% bg, 15–30% heading, 30–55% portrait,
-       * 55–68% names, 68–85% date, 85–100% location.
-       */
-      const T = 4.2;
+      const T = 1.35;
       const entrance = gsap.timeline({
         defaults: { ease: MOTION.easeTextIn },
       });
 
-      /* 0–15%: atmosphere + mandala */
       entrance
-        .to(".reveal-atmosphere", { autoAlpha: 1, duration: T * 0.12 }, 0)
+        .to(".reveal-atmosphere", { autoAlpha: 1, duration: T * 0.35 }, 0)
         .to(
           ".reveal-mandala-wrap",
           {
             autoAlpha: 1,
             scale: 1,
             rotate: 0,
-            duration: T * 0.15,
+            duration: T * 0.45,
             ease: MOTION.easeSoft,
           },
-          0.02,
+          0,
         )
         .to(
           ".reveal-mandala-art",
-          { autoAlpha: 0.22, duration: T * 0.12, ease: MOTION.easeSoft },
-          0.05,
+          { autoAlpha: 0.22, duration: T * 0.4, ease: MOTION.easeSoft },
+          0.04,
         )
         .to(
           ".reveal-mandala-path",
           {
             strokeDashoffset: 0,
-            stagger: 0.03,
-            duration: T * 0.18,
+            stagger: 0.02,
+            duration: T * 0.5,
             ease: MOTION.easeSoft,
           },
-          0.04,
+          0,
         )
-        .to(
-          ".reveal-mandala-center",
-          { autoAlpha: 0.7, duration: 0.35 },
-          T * 0.1,
-        )
+        .to(".reveal-mandala-center", { autoAlpha: 0.7, duration: 0.35 }, 0.08)
         .to(
           ".reveal-lotus",
-          {
-            autoAlpha: 0.55,
-            stagger: 0.06,
-            duration: 0.5,
-          },
-          T * 0.06,
+          { autoAlpha: 0.55, stagger: 0.04, duration: 0.4 },
+          0.06,
         )
-        .to(".reveal-particles", { autoAlpha: 1, duration: 0.45 }, T * 0.08)
-
-        /* 15–30%: Bengali heading (vertical mask) */
-        .to(
-          ".reveal-kicker",
-          {
-            y: "0%",
-            duration: T * 0.14,
-            ease: MOTION.easeOut,
-          },
-          T * 0.15,
-        )
-
-        /* 30–55%: gold arch draw → photo bottom-up → scale settle → sweep */
-        .to(
-          ".reveal-arch-frame",
-          { autoAlpha: 1, duration: 0.35 },
-          T * 0.3,
-        )
-        .to(
-          ".reveal-arch-outer",
-          {
-            strokeDashoffset: 0,
-            duration: T * 0.14,
-            ease: MOTION.easeSoft,
-          },
-          T * 0.3,
-        )
-        .to(
-          ".reveal-arch-inner",
-          {
-            strokeDashoffset: 0,
-            duration: T * 0.12,
-            ease: MOTION.easeSoft,
-          },
-          T * 0.34,
-        )
-        .to(
-          ".reveal-arch-base",
-          {
-            strokeDashoffset: 0,
-            duration: 0.4,
-            ease: MOTION.easeSoft,
-          },
-          T * 0.36,
-        )
-        .to(
-          ".reveal-frame-lotus",
-          {
-            strokeDashoffset: 0,
-            duration: 0.45,
-            ease: MOTION.easeSoft,
-          },
-          T * 0.38,
-        )
-        .to(
-          ".reveal-photo-reveal",
-          {
-            clipPath: "inset(0% 0% 0% 0%)",
-            duration: T * 0.16,
-            ease: MOTION.easeInOut,
-          },
-          T * 0.36,
-        )
+        .to(".reveal-particles", { autoAlpha: 1, duration: 0.4 }, 0.1)
         .to(
           ".reveal-photo",
-          {
-            scale: 1,
-            duration: T * 0.18,
-            ease: MOTION.easeOut,
-          },
-          T * 0.36,
+          { scale: 1, duration: T * 0.55, ease: MOTION.easeOut },
+          0,
+        )
+        .to(
+          ".reveal-kicker",
+          { y: "0%", duration: T * 0.32, ease: MOTION.easeOut },
+          0.05,
         )
         .to(
           ".reveal-frame-sweep",
           {
             autoAlpha: 1,
             strokeDashoffset: 0,
-            duration: 0.7,
+            duration: 0.55,
             ease: "power1.inOut",
           },
-          T * 0.48,
+          0.2,
         )
-        .to(
-          ".reveal-frame-sweep",
-          { autoAlpha: 0, duration: 0.35 },
-          T * 0.48 + 0.55,
-        )
-        .to(
-          ".reveal-arch-frame",
-          {
-            filter: "brightness(1.06)",
-            duration: 0.35,
-            yoyo: true,
-            repeat: 1,
-          },
-          T * 0.5,
-        )
-
-        /* 55–68%: couple names */
+        .to(".reveal-frame-sweep", { autoAlpha: 0, duration: 0.3 }, 0.55)
         .to(
           ".reveal-names-bn",
-          {
-            y: "0%",
-            duration: T * 0.1,
-            ease: MOTION.easeOut,
-          },
-          T * 0.55,
+          { y: "0%", duration: T * 0.3, ease: MOTION.easeOut },
+          0.18,
         )
         .to(
           ".reveal-names-en",
           {
             autoAlpha: 1,
             letterSpacing: "0.12em",
-            duration: T * 0.1,
+            duration: T * 0.28,
             ease: MOTION.easeSoft,
           },
-          T * 0.58,
+          0.28,
         )
-
-        /* 68–85%: date plaque */
         .to(
           ".reveal-plaque-border, .reveal-plaque-border-inner",
           {
             strokeDashoffset: 0,
-            duration: T * 0.1,
-            stagger: 0.05,
+            duration: T * 0.28,
+            stagger: 0.04,
             ease: MOTION.easeSoft,
           },
-          T * 0.68,
+          0.32,
         )
-        .to(
-          ".reveal-plaque-lotus",
-          { autoAlpha: 0.85, duration: 0.35 },
-          T * 0.72,
-        )
-        .to(
-          ".reveal-date-bn",
-          { autoAlpha: 1, y: 0, duration: 0.45 },
-          T * 0.74,
-        )
-        .to(
-          ".reveal-date-en",
-          { autoAlpha: 1, y: 0, duration: 0.4 },
-          T * 0.78,
-        )
-
-        /* 85–100%: location + tagline */
-        .to(
-          ".reveal-location",
-          { autoAlpha: 1, y: 0, duration: 0.45 },
-          T * 0.85,
-        )
-        .to(
-          ".reveal-tagline",
-          { autoAlpha: 1, y: 0, duration: 0.5 },
-          T * 0.9,
-        )
-        .to(".reveal-birds", { autoAlpha: 1, duration: 0.55 }, T * 0.72)
-        .to(".reveal-petals", { autoAlpha: 1, duration: 0.5 }, T * 0.88);
+        .to(".reveal-plaque-lotus", { autoAlpha: 0.85, duration: 0.3 }, 0.4)
+        .to(".reveal-date-bn", { autoAlpha: 1, y: 0, duration: 0.35 }, 0.38)
+        .to(".reveal-date-en", { autoAlpha: 1, y: 0, duration: 0.32 }, 0.44)
+        .to(".reveal-location", { autoAlpha: 1, y: 0, duration: 0.35 }, 0.5)
+        .to(".reveal-tagline", { autoAlpha: 1, y: 0, duration: 0.4 }, 0.58)
+        .to(".reveal-birds", { autoAlpha: 1, duration: 0.45 }, 0.45)
+        .to(".reveal-petals", { autoAlpha: 1, duration: 0.4 }, 0.65);
     },
-    { scope: sectionRef, dependencies: [cinematic, reducedMotion] },
+    {
+      scope: sectionRef,
+      dependencies: [cinematic, reducedMotion],
+      revertOnUpdate: false,
+    },
   );
 
   usePinnedScene({
@@ -395,13 +260,18 @@ export function GrandReveal() {
     sceneId: "grand-reveal",
     enabled: cinematic,
     build: (timeline) => {
+      /*
+       * Keep the full composition on screen for most of the pin.
+       * Only soft-exit in the final beat so we never hold a blank ivory frame
+       * before Scene 02 arrives.
+       */
       timeline
         .fromTo(
           ".reveal-parallax-bg",
           { y: 0, scale: 1 },
           {
-            y: -28,
-            scale: 1.04,
+            y: -16,
+            scale: 1.02,
             duration: 1,
             ease: MOTION.easeScrub,
           },
@@ -411,7 +281,7 @@ export function GrandReveal() {
           ".reveal-parallax-photo",
           { y: 0 },
           {
-            y: 14,
+            y: 8,
             duration: 1,
             ease: MOTION.easeScrub,
           },
@@ -422,45 +292,36 @@ export function GrandReveal() {
           { autoAlpha: 1, y: 0 },
           {
             autoAlpha: 0,
-            y: MOTION.textOut.y,
-            stagger: MOTION.stagger.normal,
-            duration: 0.55,
+            y: -8,
+            stagger: 0.04,
+            duration: 0.22,
             ease: MOTION.easeScrub,
           },
-          0.38,
+          0.78,
         )
         .fromTo(
           ".reveal-portrait-stage",
           { autoAlpha: 1, y: 0, scale: 1 },
           {
             autoAlpha: 0,
-            y: -14,
-            scale: 0.98,
-            duration: 0.5,
+            y: -10,
+            scale: 0.985,
+            duration: 0.22,
             ease: MOTION.easeScrub,
           },
-          0.58,
+          0.8,
         )
         .fromTo(
           ".reveal-scene-fade",
           { autoAlpha: 1 },
           {
             autoAlpha: 0,
-            duration: MOTION.pageFade.duration,
+            duration: 0.18,
             ease: MOTION.easeScrub,
           },
-          0.72,
-        )
-        .fromTo(
-          ".reveal-atmosphere",
-          { autoAlpha: 1 },
-          {
-            autoAlpha: 0,
-            duration: MOTION.pageFade.duration,
-            ease: MOTION.easeScrub,
-          },
-          0.72,
+          0.84,
         );
+      /* Atmosphere stays — prevents a dead flat empty screen during unpin. */
     },
   });
 
@@ -470,7 +331,7 @@ export function GrandReveal() {
       id="grand-reveal"
       tone="ivory"
       className="overflow-hidden"
-      innerClassName="max-w-[26rem] justify-start sm:max-w-lg"
+      innerClassName="max-w-[26rem] justify-center sm:max-w-lg"
     >
       {/* Ambient atmosphere */}
       <div className="reveal-atmosphere pointer-events-none absolute inset-0">
@@ -514,10 +375,10 @@ export function GrandReveal() {
         <FloatingPetals />
       </div>
 
-      {/* Editorial composition */}
-      <div className="reveal-scene-fade relative z-10 flex w-full flex-1 flex-col items-center text-center">
+      {/* Editorial composition — no flex-1 grow, so content stays a tight stack */}
+      <div className="reveal-scene-fade relative z-10 flex w-full flex-col items-center text-center">
         {/* B. Wedding identity / Bengali heading */}
-        <div className="reveal-heading-mask relative z-10 mt-0.5 overflow-hidden pb-0.5">
+        <div className="reveal-heading-mask relative z-10 overflow-hidden pb-0.5">
           <p
             className={`reveal-kicker reveal-exit-line text-[1.15rem] leading-none text-sindoor-red sm:text-[1.25rem] ${
               isBengali ? "font-bn-display" : "font-display tracking-[0.06em]"

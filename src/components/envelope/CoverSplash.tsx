@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { assets } from "@/data/assets";
 import { useAudio } from "@/hooks/useAudio";
+import { useAutoPlay } from "@/hooks/useAutoPlay";
 import { useLanguage } from "@/hooks/useLanguage";
 import { usePrefersReducedMotion } from "@/hooks/useReducedMotion";
 import { gsap, registerGsap } from "@/lib/gsap";
@@ -21,6 +22,7 @@ const COVER_SRC = assets.decorations.kolkataCover;
 export function CoverSplash({ onComplete }: CoverSplashProps) {
   const { locale } = useLanguage();
   const { start: startMusic } = useAudio();
+  const { isAutoPlaying, markProgrammatic } = useAutoPlay();
   const reducedMotion = usePrefersReducedMotion();
   const rootRef = useRef<HTMLDivElement>(null);
   const leavingRef = useRef(false);
@@ -62,6 +64,7 @@ export function CoverSplash({ onComplete }: CoverSplashProps) {
   const dismiss = useCallback(() => {
     if (!readyRef.current || leavingRef.current) return;
     leavingRef.current = true;
+    markProgrammatic(2500);
     startMusic();
 
     if (reducedMotion || !rootRef.current) {
@@ -84,7 +87,13 @@ export function CoverSplash({ onComplete }: CoverSplashProps) {
       )
       .to(".cover-splash-veil", { autoAlpha: 1, duration: 0.85 }, 0.15)
       .to(root, { yPercent: -108, autoAlpha: 0, duration: 1.05 }, 0.35);
-  }, [onComplete, reducedMotion, startMusic]);
+  }, [markProgrammatic, onComplete, reducedMotion, startMusic]);
+
+  /* Idle auto-play: lift the cover once ready. */
+  useEffect(() => {
+    if (!isAutoPlaying || !ready) return;
+    dismiss();
+  }, [dismiss, isAutoPlaying, ready]);
 
   useEffect(() => {
     const onWheel = (event: WheelEvent) => {

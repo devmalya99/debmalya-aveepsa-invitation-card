@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import { CoverSplash } from "@/components/envelope/CoverSplash";
 import { LanguagePreference } from "@/components/envelope/LanguagePreference";
@@ -11,6 +11,7 @@ import { GoldenParticles } from "@/components/envelope/GoldenParticles";
 import { InvitationPaper } from "@/components/envelope/InvitationPaper";
 import { WaxSeal } from "@/components/envelope/WaxSeal";
 import { InvitationHeader } from "@/components/navigation/InvitationHeader";
+import { useAutoPlay } from "@/hooks/useAutoPlay";
 import { useLanguage } from "@/hooks/useLanguage";
 import { usePrefersReducedMotion } from "@/hooks/useReducedMotion";
 import { gsap, registerGsap } from "@/lib/gsap";
@@ -19,15 +20,20 @@ type EnvelopeIntroProps = {
   onOpen: () => void;
 };
 
+const INTRO_TARGETS =
+  ".env-intro-heading, .env-intro-names, .env-intro-date, .env-intro-rule, .env-intro-instruction, .env-intro-skip, .env-scene, .env-seal";
+
 /**
  * Cover illustration → envelope homepage composition.
  */
 export function EnvelopeIntro({ onOpen }: EnvelopeIntroProps) {
   const { content, locale, hasChosenLocale } = useLanguage();
+  const { isAutoPlaying, markProgrammatic } = useAutoPlay();
   const reducedMotion = usePrefersReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const openingRef = useRef(false);
   const enteredRef = useRef(false);
+  const enterTlRef = useRef<gsap.core.Timeline | null>(null);
   const openTimelineRef = useRef<gsap.core.Timeline | null>(null);
   const [coverDone, setCoverDone] = useState(false);
   const [opening, setOpening] = useState(false);
@@ -41,99 +47,105 @@ export function EnvelopeIntro({ onOpen }: EnvelopeIntroProps) {
     onOpen();
   }, [onOpen]);
 
+  /* Keep the envelope composition invisible under Language/Cover overlays.
+     Otherwise the cover lift reveals a fully painted page, then GSAP fromTo
+     hides it and fades it in again — which reads as the page "loading twice". */
+  useLayoutEffect(() => {
+    if (!sectionRef.current || enteredRef.current) return;
+    registerGsap();
+    gsap.set(INTRO_TARGETS, { autoAlpha: 0 });
+    gsap.set(".env-flap-top", { rotateX: 0, transformOrigin: "50% 0%" });
+    gsap.set(".env-flap-left", {
+      rotateY: 0,
+      autoAlpha: 0,
+      transformOrigin: "0% 50%",
+    });
+    gsap.set(".env-flap-right", {
+      rotateY: 0,
+      autoAlpha: 0,
+      transformOrigin: "100% 50%",
+    });
+    gsap.set(".env-flap-bottom", { rotateX: 0, autoAlpha: 0 });
+    gsap.set(".env-paper", { y: 40, scale: 0.96, autoAlpha: 0 });
+    gsap.set(".env-inner-glow", { autoAlpha: 0, scale: 0.72 });
+    gsap.set(".env-rim-glow", { autoAlpha: 0, scale: 0.92 });
+  }, []);
+
   useGSAP(
     () => {
       if (!sectionRef.current || !coverDone) return;
       registerGsap();
 
       // Closed envelope — side/bottom flaps + letter stay hidden until open.
-      gsap.set(".env-flap-top", { rotateX: 0 });
-      gsap.set(".env-flap-left", { rotateY: 0, autoAlpha: 0 });
-      gsap.set(".env-flap-right", { rotateY: 0, autoAlpha: 0 });
+      gsap.set(".env-flap-top", { rotateX: 0, transformOrigin: "50% 0%" });
+      gsap.set(".env-flap-left", {
+        rotateY: 0,
+        autoAlpha: 0,
+        transformOrigin: "0% 50%",
+      });
+      gsap.set(".env-flap-right", {
+        rotateY: 0,
+        autoAlpha: 0,
+        transformOrigin: "100% 50%",
+      });
       gsap.set(".env-flap-bottom", { rotateX: 0, autoAlpha: 0 });
       gsap.set(".env-paper", { y: 40, scale: 0.96, autoAlpha: 0 });
       gsap.set(".env-inner-glow", { autoAlpha: 0, scale: 0.72 });
       gsap.set(".env-rim-glow", { autoAlpha: 0, scale: 0.92 });
 
-      if (reducedMotion) {
+      if (enteredRef.current) {
+        gsap.set(INTRO_TARGETS, { autoAlpha: 1, y: 0, scale: 1 });
+        gsap.set(".env-intro-skip", { autoAlpha: 0.7 });
         setEntered(true);
-        enteredRef.current = true;
         return;
       }
 
-      // Play entrance once after the cover lifts away.
-      if (enteredRef.current) {
-        gsap.set(
-          ".env-intro-heading, .env-intro-names, .env-intro-date, .env-intro-rule, .env-intro-instruction, .env-intro-skip, .env-scene, .env-seal",
-          { autoAlpha: 1, y: 0, scale: 1 },
-        );
+      enteredRef.current = true;
+      enterTlRef.current?.kill();
+
+      if (reducedMotion) {
+        gsap.set(INTRO_TARGETS, { autoAlpha: 1, y: 0, scale: 1 });
+        gsap.set(".env-intro-skip", { autoAlpha: 0.7 });
         setEntered(true);
         return;
       }
-      enteredRef.current = true;
+
+      // Offset while still hidden, then fade/slide in — never flash full opacity first.
+      gsap.set(".env-intro-heading", { y: 10 });
+      gsap.set(".env-intro-names", { y: 8 });
+      gsap.set(".env-intro-date", { y: 6 });
+      gsap.set(".env-scene", { y: 20 });
+      gsap.set(".env-seal", { scale: 0.92 });
+      gsap.set(".env-intro-rule", { scaleX: 0, autoAlpha: 1 });
 
       const enter = gsap.timeline({
         defaults: { ease: "power2.out" },
         onComplete: () => setEntered(true),
       });
+      enterTlRef.current = enter;
 
       enter
-        .fromTo(
-          ".env-intro-heading",
-          { autoAlpha: 0, y: 10 },
-          { autoAlpha: 1, y: 0, duration: 0.7 },
-          0.05,
-        )
-        .fromTo(
-          ".env-intro-rule",
-          { scaleX: 0 },
-          { scaleX: 1, duration: 0.45 },
-          0.18,
-        )
-        .fromTo(
-          ".env-intro-names",
-          { autoAlpha: 0, y: 8 },
-          { autoAlpha: 1, y: 0, duration: 0.6 },
-          0.22,
-        )
-        .fromTo(
-          ".env-intro-date",
-          { autoAlpha: 0, y: 6 },
-          { autoAlpha: 1, y: 0, duration: 0.5 },
-          0.34,
-        )
-        .fromTo(
-          ".env-scene",
-          { autoAlpha: 0, y: 20 },
-          { autoAlpha: 1, y: 0, duration: 0.85 },
-          0.24,
-        )
-        .fromTo(
-          ".env-seal",
-          { autoAlpha: 0, scale: 0.92 },
-          { autoAlpha: 1, scale: 1, duration: 0.55 },
-          0.55,
-        )
-        .fromTo(
-          ".env-intro-instruction",
-          { autoAlpha: 0 },
-          { autoAlpha: 1, duration: 0.45 },
-          0.7,
-        )
-        .fromTo(
-          ".env-intro-skip",
-          { autoAlpha: 0 },
-          { autoAlpha: 0.7, duration: 0.35 },
-          0.78,
-        );
+        .to(".env-intro-heading", { autoAlpha: 1, y: 0, duration: 0.7 }, 0.05)
+        .to(".env-intro-rule", { scaleX: 1, duration: 0.45 }, 0.18)
+        .to(".env-intro-names", { autoAlpha: 1, y: 0, duration: 0.6 }, 0.22)
+        .to(".env-intro-date", { autoAlpha: 1, y: 0, duration: 0.5 }, 0.34)
+        .to(".env-scene", { autoAlpha: 1, y: 0, duration: 0.85 }, 0.24)
+        .to(".env-seal", { autoAlpha: 1, scale: 1, duration: 0.55 }, 0.55)
+        .to(".env-intro-instruction", { autoAlpha: 1, duration: 0.45 }, 0.7)
+        .to(".env-intro-skip", { autoAlpha: 0.7, duration: 0.35 }, 0.78);
     },
-    { scope: sectionRef, dependencies: [reducedMotion, coverDone] },
+    {
+      scope: sectionRef,
+      dependencies: [reducedMotion, coverDone],
+      revertOnUpdate: false,
+    },
   );
 
   const runOpenSequence = useCallback(() => {
     if (openingRef.current) return;
     openingRef.current = true;
     setOpening(true);
+    markProgrammatic(5000);
 
     if (reducedMotion) {
       finish();
@@ -280,7 +292,13 @@ export function EnvelopeIntro({ onOpen }: EnvelopeIntroProps) {
         { autoAlpha: 0.55, duration: 0.35, yoyo: true, repeat: 1 },
         3.55,
       );
-  }, [finish, reducedMotion]);
+  }, [finish, markProgrammatic, reducedMotion]);
+
+  /* Idle auto-play: open the seal once the envelope entrance has settled. */
+  useEffect(() => {
+    if (!isAutoPlaying || !coverDone || !entered || opening) return;
+    runOpenSequence();
+  }, [coverDone, entered, isAutoPlaying, opening, runOpenSequence]);
 
   return (
     <>

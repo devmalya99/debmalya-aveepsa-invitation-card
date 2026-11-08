@@ -20,7 +20,7 @@ type LanguageContextValue = {
   setLocale: (locale: Locale) => void;
   /** True after hydration. */
   ready: boolean;
-  /** True only after the guest explicitly chose a language (or had one stored). */
+  /** True only after the guest chooses a language in this page load. */
   hasChosenLocale: boolean;
 };
 
@@ -32,12 +32,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    /* Remember last preference as default highlight, but always ask again
+       on a full reload so the language card appears every visit. */
     const stored = window.localStorage.getItem(STORAGE_KEY);
     if (stored === "en" || stored === "bn") {
       setLocaleState(stored);
-      setHasChosenLocale(true);
       document.documentElement.lang = stored === "bn" ? "bn" : "en";
     }
+    setHasChosenLocale(false);
     setReady(true);
   }, []);
 

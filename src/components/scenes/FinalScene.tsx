@@ -227,7 +227,7 @@ export function FinalScene() {
         {/* Welcome card — GSAP owns .rx-card transform; press lives on inner shell */}
         <article className="rx-card relative mt-3 w-full will-change-transform">
           <motion.div
-            className="relative w-full bg-[linear-gradient(168deg,#fff9ed_0%,#f4e6cf_55%,#e8d4b0_100%)] px-4 pt-3.5 pb-3.5 text-center text-deep-burgundy"
+            className="stationery-sheet relative w-full px-4 pt-3.5 pb-3.5 text-center"
             whileTap={reducedMotion ? undefined : { scale: 0.985 }}
             transition={pressSpring}
           >

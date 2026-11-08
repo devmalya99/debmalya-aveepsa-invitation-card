@@ -66,9 +66,10 @@ export function InvitationHeader({
     <header className="pointer-events-none fixed inset-x-0 top-0 z-40">
       <div className="mx-auto w-full max-w-lg px-3 pt-[max(0.35rem,env(safe-area-inset-top))] sm:px-4">
         <div
-          className={`pointer-events-auto flex min-h-[2.7rem] items-center gap-2 rounded-[0.65rem] border border-antique-gold/35 bg-antique-ivory/92 px-2.5 py-1 shadow-[0_1px_3px_rgba(64,21,29,0.04)] backdrop-blur-md ${
+          className={`pointer-events-auto flex min-h-[2.7rem] items-center gap-2 rounded-[0.65rem] border border-antique-gold/35 bg-[#f6ebd6] px-2.5 py-1 text-deep-burgundy shadow-[0_1px_3px_rgba(64,21,29,0.04)] backdrop-blur-md ${
             showLeft ? "justify-between" : "justify-end"
           }`}
+          style={{ colorScheme: "light" }}
         >
           {staticProgress ? (
             <StaticProgress

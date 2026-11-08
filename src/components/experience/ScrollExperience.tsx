@@ -13,9 +13,15 @@ export function ScrollExperience({ children }: ScrollExperienceProps) {
   const { mode, ready, cinematic } = useScrollMode();
   useSmoothScroll(mode);
 
-  // Never blank the invitation while detecting scroll mode — show content immediately.
+  // Optimistic cinematic while detecting — GrandReveal used to hide the whole
+  // card until ready flipped, which left Scene 01 empty for a beat.
   return (
-    <ScrollModeProvider value={{ mode: ready ? mode : false, cinematic: ready ? cinematic : false }}>
+    <ScrollModeProvider
+      value={{
+        mode: ready ? mode : true,
+        cinematic: ready ? cinematic : true,
+      }}
+    >
       {children}
     </ScrollModeProvider>
   );

@@ -1,13 +1,14 @@
 export const SCENE_SCROLL = {
-  /* Short pin so Scene 02 arrives quickly after the cover settles. */
-  "grand-reveal": { end: "+=110%" },
-  "groom-bride": { end: "+=260%" },
-  "venue-reveal": { end: "+=220%" },
-  "wedding-events": { end: "+=220%" },
+  /* Very short pin — hold hero, then hand off before a blank ivory frame appears. */
+  "grand-reveal": { end: "+=45%" },
+  /* Identity choreography needs room, but avoid long blank holds. */
+  "groom-bride": { end: "+=150%" },
+  "venue-reveal": { end: "+=180%" },
+  "wedding-events": { end: "+=200%" },
   /* Moderate pin — enough for unveil choreography without dominating the scroll. */
-  "final-scene": { end: "+=180%" },
+  "final-scene": { end: "+=160%" },
   /* Guest name form — one viewport, light hold */
-  "guest-blessing": { end: "+=100%" },
+  "guest-blessing": { end: "+=90%" },
 } as const;
 
 export type SceneId = keyof typeof SCENE_SCROLL;

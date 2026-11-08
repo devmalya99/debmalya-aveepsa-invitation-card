@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import { assets } from "@/data/assets";
+import { useAutoPlay } from "@/hooks/useAutoPlay";
 import { useLanguage } from "@/hooks/useLanguage";
 import type { Locale } from "@/types/invitation";
 
@@ -8,14 +10,22 @@ const COVER_SRC = assets.decorations.kolkataCover;
 
 /**
  * Blurred Kolkata cover + explicit language choice (no guessing).
- * Choice is persisted via useLanguage → localStorage.
+ * Shown on every full page reload; last choice is only a default for later toggles.
+ * After idle auto-play engages, continues with the current (last) locale.
  */
 export function LanguagePreference() {
-  const { setLocale } = useLanguage();
+  const { locale, setLocale } = useLanguage();
+  const { isAutoPlaying, markProgrammatic } = useAutoPlay();
 
-  const choose = (locale: Locale) => {
-    setLocale(locale);
+  const choose = (next: Locale) => {
+    setLocale(next);
   };
+
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+    markProgrammatic(200);
+    setLocale(locale);
+  }, [isAutoPlaying, locale, markProgrammatic, setLocale]);
 
   return (
     <div

@@ -58,7 +58,7 @@ export function AudioToggle({ className = "" }: AudioToggleProps) {
       whileTap={{ scale: 0.94 }}
       whileHover={{ scale: 1.03 }}
       transition={{ type: "spring", stiffness: 420, damping: 28 }}
-      className={`relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-antique-gold/40 bg-deep-burgundy text-antique-ivory shadow-[0_1px_2px_rgba(64,21,29,0.1)] transition-colors hover:bg-[#4d1a24] active:scale-[0.96] ${className}`}
+      className={`relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-antique-gold/40 bg-deep-burgundy text-antique-ivory shadow-[0_1px_2px_rgba(64,21,29,0.1)] transition-colors hover:bg-[#4d1a24] active:scale-[0.96] ${className}`}
       aria-pressed={playing}
       aria-label={content.common.music}
     >

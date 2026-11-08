@@ -328,7 +328,7 @@ export function GroomBride() {
         tone="parchment"
         innerClassName="max-w-[26rem] justify-start sm:max-w-lg"
       >
-        <article className="w-full space-y-5 rounded-[1rem] bg-[linear-gradient(165deg,#fff8ea_0%,#f6ebd7_55%,#ead9b8_100%)] px-5 py-6 text-center text-deep-burgundy">
+        <article className="stationery-sheet w-full space-y-5 rounded-[1rem] px-5 py-6 text-center">
           <Image
             src={assets.decorations.unionMandala}
             alt=""
@@ -376,7 +376,7 @@ export function GroomBride() {
       tone="parchment"
       innerClassName="max-w-[26rem] justify-center sm:max-w-lg"
     >
-      <article className="identity-sheet relative flex max-h-[calc(100svh-6.5rem)] w-full flex-col overflow-hidden rounded-[1rem] bg-[linear-gradient(165deg,#fff8ea_0%,#f6ebd7_52%,#ead9b8_100%)] px-4 py-3 text-deep-burgundy shadow-[0_16px_36px_rgba(64,21,29,0.12)] will-change-transform">
+      <article className="identity-sheet stationery-sheet relative flex max-h-[calc(100svh-6.5rem)] w-full flex-col overflow-hidden rounded-[1rem] px-4 py-3 shadow-[0_16px_36px_rgba(64,21,29,0.12)] will-change-transform">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_35%,rgba(185,154,88,0.14),transparent_60%)]" />
         <div className="identity-border pointer-events-none absolute inset-[7px] rounded-[0.75rem] border border-antique-gold/50" />
         <div className="identity-border pointer-events-none absolute inset-[11px] rounded-[0.55rem] border border-antique-gold/25" />
