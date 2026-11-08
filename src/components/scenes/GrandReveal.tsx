@@ -301,5 +301,7 @@ export function GrandReveal() {
         {isBengali ? "শুভ বিবাহ আমন্ত্রণ" : "Wedding invitation opening"}
       </span>
     </SceneWrapper>
+
+    
   );
 }
