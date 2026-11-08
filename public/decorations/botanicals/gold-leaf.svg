@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 36" fill="none">
+  <!-- Original botanical · free for project use -->
+  <defs>
+    <linearGradient id="leafFill" x1="4" y1="18" x2="60" y2="18" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E5D1AE" stop-opacity="0.35"/>
+      <stop offset="0.5" stop-color="#C5A365" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#E5D1AE" stop-opacity="0.3"/>
+    </linearGradient>
+  </defs>
+  <path d="M4 18C16 4 36 2 60 18C36 34 16 32 4 18Z" fill="url(#leafFill)" stroke="#C5A365" stroke-width="1.1" opacity="0.9"/>
+  <path d="M10 18H52" stroke="#79504A" stroke-width="0.8" opacity="0.45"/>
+  <path d="M22 12C26 16 30 16 34 12" stroke="#C5A365" stroke-width="0.7" opacity="0.5"/>
+  <path d="M22 24C26 20 30 20 34 24" stroke="#C5A365" stroke-width="0.7" opacity="0.5"/>
+</svg>

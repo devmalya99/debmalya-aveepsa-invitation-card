@@ -1,32 +1,35 @@
 @import "tailwindcss";
 
 :root {
-  /* Final creative palette */
-  --color-sindoor-red: #741e26;
-  --color-antique-ivory: #f6ebd7;
-  --color-antique-gold: #b99a58;
-  --color-deep-burgundy: #40151d;
-  --color-parchment: #e8d9bd;
+  /* Premium Bengali stationery palette — 2026 */
+  --color-oxblood: #4b151f;
+  --color-deep-wine: #681f2b;
+  --color-sindoor-red: #681f2b;
+  --color-antique-ivory: #f6ebd6;
+  --color-antique-gold: #c5a365;
+  --color-deep-burgundy: #4b151f;
+  --color-parchment: #e5d1ae;
+  --color-rosewood: #79504a;
   --color-botanical-green: #596747;
 
   --background: var(--color-antique-ivory);
   --foreground: var(--color-deep-burgundy);
 
   --gradient-ivory: radial-gradient(
-      ellipse 70% 50% at 50% 0%,
-      rgba(185, 154, 88, 0.18),
-      transparent 60%
+      ellipse 65% 48% at 50% 8%,
+      rgba(197, 163, 101, 0.14),
+      transparent 58%
     ),
-    linear-gradient(180deg, #fff8ec 0%, var(--color-antique-ivory) 55%, var(--color-parchment) 100%);
+    linear-gradient(180deg, #fbf5ea 0%, var(--color-antique-ivory) 52%, var(--color-parchment) 100%);
 
   --gradient-burgundy: radial-gradient(
       ellipse 80% 55% at 50% 15%,
-      rgba(185, 154, 88, 0.2),
+      rgba(197, 163, 101, 0.18),
       transparent 55%
     ),
-    linear-gradient(165deg, #40151d 0%, #741e26 48%, #2a0e14 100%);
+    linear-gradient(165deg, #4b151f 0%, #681f2b 48%, #2f0d14 100%);
 
-  --shadow-soft-gold: 0 18px 48px rgba(64, 21, 29, 0.18);
+  --shadow-soft-gold: 0 18px 48px rgba(75, 21, 31, 0.18);
 }
 
 @theme inline {
@@ -36,6 +39,9 @@
   --color-deep-burgundy: var(--color-deep-burgundy);
   --color-parchment: var(--color-parchment);
   --color-botanical-green: var(--color-botanical-green);
+  --color-oxblood: var(--color-oxblood);
+  --color-deep-wine: var(--color-deep-wine);
+  --color-rosewood: var(--color-rosewood);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -44,7 +50,7 @@
   --font-body: var(--font-dm-sans);
   --font-letter: var(--font-lora);
   --font-bengali-display: var(--font-noto-serif-bengali);
-  --font-bengali-body: var(--font-noto-sans-bengali);
+  --font-bengali-body: var(--font-hind-siliguri);
   --font-sans: var(--font-dm-sans);
 }
 
@@ -97,7 +103,7 @@
   }
 
   .font-bn-body {
-    font-family: var(--font-noto-sans-bengali), sans-serif;
+    font-family: var(--font-hind-siliguri), var(--font-noto-sans-bengali), sans-serif;
   }
 
   .surface-ivory {

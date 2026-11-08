@@ -1,6 +1,7 @@
 import {
   Cormorant_Garamond,
   DM_Sans,
+  Hind_Siliguri,
   Lora,
   Noto_Sans_Bengali,
   Noto_Serif_Bengali,
@@ -34,10 +35,19 @@ export const notoSerifBengali = Noto_Serif_Bengali({
   display: "swap",
 });
 
+/** Fallback Bengali sans — kept for compatibility */
 export const notoSansBengali = Noto_Sans_Bengali({
   subsets: ["bengali", "latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-noto-sans-bengali",
+  display: "swap",
+});
+
+/** Bengali UI — Hind Siliguri */
+export const hindSiliguri = Hind_Siliguri({
+  subsets: ["bengali", "latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-hind-siliguri",
   display: "swap",
 });
 
@@ -47,4 +57,5 @@ export const fontVariables = [
   lora.variable,
   notoSerifBengali.variable,
   notoSansBengali.variable,
+  hindSiliguri.variable,
 ].join(" ");

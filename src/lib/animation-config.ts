@@ -1,6 +1,6 @@
 export const SCENE_SCROLL = {
-  /* Keep pins short enough that handoff to the next scene stays reachable. */
-  "grand-reveal": { end: "+=200%" },
+  /* Short pin so Scene 02 arrives quickly after the cover settles. */
+  "grand-reveal": { end: "+=110%" },
   "groom-bride": { end: "+=260%" },
   "grand-invitation": { end: "+=220%" },
   "venue-reveal": { end: "+=220%" },

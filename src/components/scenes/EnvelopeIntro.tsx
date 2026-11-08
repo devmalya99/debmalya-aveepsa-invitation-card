@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { motion } from "motion/react";
+import { useCallback, useRef, useState } from "react";
+import { useGSAP } from "@gsap/react";
+import { CoverSplash } from "@/components/envelope/CoverSplash";
 import { Envelope } from "@/components/envelope/Envelope";
 import { EnvelopeAtmosphere } from "@/components/envelope/EnvelopeAtmosphere";
 import { EnvelopeFlap } from "@/components/envelope/EnvelopeFlap";
@@ -9,187 +10,383 @@ import { GoldenParticles } from "@/components/envelope/GoldenParticles";
 import { InvitationPaper } from "@/components/envelope/InvitationPaper";
 import { WaxSeal } from "@/components/envelope/WaxSeal";
 import { InvitationHeader } from "@/components/navigation/InvitationHeader";
-import { useAudio } from "@/hooks/useAudio";
 import { useLanguage } from "@/hooks/useLanguage";
 import { usePrefersReducedMotion } from "@/hooks/useReducedMotion";
+import { gsap, registerGsap } from "@/lib/gsap";
 
 type EnvelopeIntroProps = {
   onOpen: () => void;
 };
 
-type Stage = "enter" | "ready" | "seal" | "flap" | "paper" | "reveal" | "exit";
-
+/**
+ * Cover illustration → envelope homepage composition.
+ */
 export function EnvelopeIntro({ onOpen }: EnvelopeIntroProps) {
   const { content, locale } = useLanguage();
-  const { start: startMusic } = useAudio();
   const reducedMotion = usePrefersReducedMotion();
-  const [stage, setStage] = useState<Stage>("enter");
-  const timersRef = useRef<number[]>([]);
-  const opening = stage !== "enter" && stage !== "ready";
-
-  const clearTimers = useCallback(() => {
-    timersRef.current.forEach((timer) => window.clearTimeout(timer));
-    timersRef.current = [];
-  }, []);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setStage("ready"), reducedMotion ? 0 : 650);
-    return () => window.clearTimeout(timer);
-  }, [reducedMotion]);
-
-  useEffect(() => () => clearTimers(), [clearTimers]);
+  const sectionRef = useRef<HTMLElement>(null);
+  const openingRef = useRef(false);
+  const enteredRef = useRef(false);
+  const openTimelineRef = useRef<gsap.core.Timeline | null>(null);
+  const [coverDone, setCoverDone] = useState(false);
+  const [opening, setOpening] = useState(false);
+  const [entered, setEntered] = useState(false);
+  const [burst, setBurst] = useState(false);
 
   const finish = useCallback(() => {
-    clearTimers();
+    openTimelineRef.current?.kill();
+    openTimelineRef.current = null;
+    openingRef.current = false;
     onOpen();
-  }, [clearTimers, onOpen]);
+  }, [onOpen]);
+
+  useGSAP(
+    () => {
+      if (!sectionRef.current || !coverDone) return;
+      registerGsap();
+
+      // Closed envelope — side/bottom flaps + letter stay hidden until open.
+      gsap.set(".env-flap-top", { rotateX: 0 });
+      gsap.set(".env-flap-left", { rotateY: 0, autoAlpha: 0 });
+      gsap.set(".env-flap-right", { rotateY: 0, autoAlpha: 0 });
+      gsap.set(".env-flap-bottom", { rotateX: 0, autoAlpha: 0 });
+      gsap.set(".env-paper", { y: 40, scale: 0.96, autoAlpha: 0 });
+      gsap.set(".env-inner-glow", { autoAlpha: 0, scale: 0.72 });
+      gsap.set(".env-rim-glow", { autoAlpha: 0, scale: 0.92 });
+
+      if (reducedMotion) {
+        setEntered(true);
+        enteredRef.current = true;
+        return;
+      }
+
+      // Play entrance once after the cover lifts away.
+      if (enteredRef.current) {
+        gsap.set(
+          ".env-intro-heading, .env-intro-names, .env-intro-date, .env-intro-rule, .env-intro-instruction, .env-intro-skip, .env-scene, .env-seal",
+          { autoAlpha: 1, y: 0, scale: 1 },
+        );
+        setEntered(true);
+        return;
+      }
+      enteredRef.current = true;
+
+      const enter = gsap.timeline({
+        defaults: { ease: "power2.out" },
+        onComplete: () => setEntered(true),
+      });
+
+      enter
+        .fromTo(
+          ".env-intro-heading",
+          { autoAlpha: 0, y: 10 },
+          { autoAlpha: 1, y: 0, duration: 0.7 },
+          0.05,
+        )
+        .fromTo(
+          ".env-intro-rule",
+          { scaleX: 0 },
+          { scaleX: 1, duration: 0.45 },
+          0.18,
+        )
+        .fromTo(
+          ".env-intro-names",
+          { autoAlpha: 0, y: 8 },
+          { autoAlpha: 1, y: 0, duration: 0.6 },
+          0.22,
+        )
+        .fromTo(
+          ".env-intro-date",
+          { autoAlpha: 0, y: 6 },
+          { autoAlpha: 1, y: 0, duration: 0.5 },
+          0.34,
+        )
+        .fromTo(
+          ".env-scene",
+          { autoAlpha: 0, y: 20 },
+          { autoAlpha: 1, y: 0, duration: 0.85 },
+          0.24,
+        )
+        .fromTo(
+          ".env-seal",
+          { autoAlpha: 0, scale: 0.92 },
+          { autoAlpha: 1, scale: 1, duration: 0.55 },
+          0.55,
+        )
+        .fromTo(
+          ".env-intro-instruction",
+          { autoAlpha: 0 },
+          { autoAlpha: 1, duration: 0.45 },
+          0.7,
+        )
+        .fromTo(
+          ".env-intro-skip",
+          { autoAlpha: 0 },
+          { autoAlpha: 0.7, duration: 0.35 },
+          0.78,
+        );
+    },
+    { scope: sectionRef, dependencies: [reducedMotion, coverDone] },
+  );
 
   const runOpenSequence = useCallback(() => {
-    if (opening) return;
-
-    /* First user gesture — unlock and start ambient music. */
-    startMusic();
+    if (openingRef.current) return;
+    openingRef.current = true;
+    setOpening(true);
 
     if (reducedMotion) {
       finish();
       return;
     }
 
-    clearTimers();
-    setStage("seal");
-    timersRef.current = [
-      window.setTimeout(() => setStage("flap"), 420),
-      window.setTimeout(() => setStage("paper"), 1050),
-      window.setTimeout(() => setStage("reveal"), 1750),
-      window.setTimeout(() => setStage("exit"), 2300),
-      window.setTimeout(() => finish(), 2850),
-    ];
-  }, [clearTimers, finish, opening, reducedMotion, startMusic]);
+    registerGsap();
+    openTimelineRef.current?.kill();
+    setBurst(true);
 
-  const flapOpen =
-    stage === "flap" || stage === "paper" || stage === "reveal" || stage === "exit";
-  const paperStage =
-    stage === "paper" || stage === "reveal" || stage === "exit"
-      ? stage === "exit" || stage === "reveal"
-        ? "revealed"
-        : "emerging"
-      : "idle";
+    const tl = gsap.timeline({
+      defaults: { ease: "power2.inOut" },
+      onComplete: () => {
+        setBurst(false);
+        finish();
+      },
+    });
+    openTimelineRef.current = tl;
+
+    // Slow, ceremonial open — ~4.2s total
+    tl.to(".env-seal", { scale: 0.92, duration: 0.22, ease: "power2.out" }, 0)
+      .fromTo(
+        ".env-seal-ripple",
+        { scale: 0.65, autoAlpha: 0.85 },
+        { scale: 2.15, autoAlpha: 0, duration: 0.85, ease: "power1.out" },
+        0,
+      )
+      .to(".env-seal-glow", { autoAlpha: 1, duration: 0.4 }, 0)
+      .to(".env-scene", { y: -3, duration: 0.55, ease: "sine.out" }, 0.06)
+      .to(".env-seal", { scale: 1.04, duration: 0.4, ease: "power2.out" }, 0.24)
+      .fromTo(
+        ".env-rim-glow",
+        { autoAlpha: 0, scale: 0.92 },
+        { autoAlpha: 1, scale: 1.04, duration: 1.15, ease: "power2.out" },
+        0.28,
+      )
+      .fromTo(
+        ".env-inner-glow",
+        { autoAlpha: 0, scale: 0.72 },
+        { autoAlpha: 1, scale: 1, duration: 1.1, ease: "power2.out" },
+        0.35,
+      )
+      .fromTo(
+        ".env-glow-rays",
+        { rotate: 0, scale: 0.85 },
+        { rotate: 56, scale: 1.2, duration: 2.2, ease: "sine.out" },
+        0.4,
+      )
+      .fromTo(
+        ".env-glow-core",
+        { scale: 0.55, autoAlpha: 0.4 },
+        { scale: 1.25, autoAlpha: 1, duration: 1.35, ease: "power2.out" },
+        0.38,
+      )
+      .to(
+        ".env-glow-edge",
+        {
+          boxShadow:
+            "inset 0 0 34px rgba(255,220,120,0.8), inset 0 0 72px rgba(197,163,101,0.55), 0 0 32px rgba(255,220,120,0.4)",
+          duration: 1.2,
+        },
+        0.45,
+      )
+      .to(
+        ".env-flap-top",
+        {
+          rotateX: -148,
+          duration: 1.45,
+          ease: "power3.inOut",
+          transformOrigin: "50% 0%",
+        },
+        0.55,
+      )
+      .to(
+        ".env-flap-left",
+        {
+          autoAlpha: 1,
+          rotateY: 100,
+          duration: 1.1,
+          ease: "power2.inOut",
+          transformOrigin: "0% 50%",
+        },
+        0.95,
+      )
+      .to(
+        ".env-flap-right",
+        {
+          autoAlpha: 1,
+          rotateY: -100,
+          duration: 1.1,
+          ease: "power2.inOut",
+          transformOrigin: "100% 50%",
+        },
+        0.95,
+      )
+      .to(
+        ".env-flap-bottom",
+        {
+          autoAlpha: 1,
+          rotateX: 28,
+          duration: 0.95,
+          ease: "power2.inOut",
+          transformOrigin: "50% 100%",
+        },
+        1.05,
+      )
+      .to(".env-pocket", { autoAlpha: 0.35, duration: 0.65 }, 1.25)
+      .to(".env-inner-glow", { autoAlpha: 0.85, duration: 0.65 }, 1.35)
+      .to(
+        ".env-paper",
+        {
+          y: -18,
+          scale: 1.02,
+          autoAlpha: 1,
+          duration: 1.2,
+          ease: "power3.out",
+        },
+        1.55,
+      )
+      .to(
+        ".env-paper",
+        { y: -52, scale: 1.05, duration: 1.05, ease: "power2.inOut" },
+        2.55,
+      )
+      .to(
+        ".env-scene",
+        {
+          y: -16,
+          scale: 1.08,
+          autoAlpha: 0,
+          duration: 0.95,
+          ease: "power2.inOut",
+        },
+        3.25,
+      )
+      .to(
+        ".env-intro-heading, .env-intro-names, .env-intro-date, .env-intro-instruction, .env-intro-rule, .env-intro-skip",
+        { autoAlpha: 0, y: -6, duration: 0.55, stagger: 0.03 },
+        3.3,
+      )
+      .fromTo(
+        ".env-reveal-flash",
+        { autoAlpha: 0 },
+        { autoAlpha: 0.55, duration: 0.35, yoyo: true, repeat: 1 },
+        3.55,
+      );
+  }, [finish, reducedMotion]);
 
   return (
     <section
+      ref={sectionRef}
       id="envelope"
-      className="relative flex min-h-svh flex-col overflow-hidden px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1.25rem,env(safe-area-inset-bottom))]"
+      className="relative flex h-svh min-h-svh flex-col overflow-hidden px-5 pt-[max(0.35rem,env(safe-area-inset-top))] pb-[max(0.5rem,env(safe-area-inset-bottom))]"
     >
       <EnvelopeAtmosphere />
-      <GoldenParticles burst={stage === "seal"} />
+      <GoldenParticles burst={burst} />
 
-      <InvitationHeader showProgress={false} />
+      {!coverDone ? (
+        <CoverSplash onComplete={() => setCoverDone(true)} />
+      ) : null}
 
-      <div className="relative z-10 mx-auto flex w-full max-w-[430px] flex-1 flex-col">
-        {/* Zone A — Header / identity */}
-        <header className="relative z-20 flex flex-col items-center pt-[4.75rem]">
-          <div className="flex w-full justify-end px-1">
-            <button
-              type="button"
-              onClick={finish}
-              className={`text-[0.7rem] text-deep-burgundy/55 underline-offset-2 hover:underline ${
-                locale === "bn" ? "font-bn-body" : "font-body"
-              }`}
-            >
-              {content.common.skipIntro}
-            </button>
-          </div>
+      <InvitationHeader
+        showProgress={false}
+        staticProgress={{ current: 1, total: 6 }}
+      />
 
-          <div className="relative mt-4 w-full px-6 text-center">
-            <div className="pointer-events-none absolute inset-x-8 -top-4 h-28 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(255,248,236,0.95),transparent_70%)]" />
+      <div className="relative z-10 mx-auto flex w-full max-w-[24rem] flex-1 flex-col justify-center gap-0">
+        <header className="relative z-20 flex shrink-0 flex-col items-center pt-[3.4rem] text-center">
+          <button
+            type="button"
+            onClick={finish}
+            className={`env-intro-skip absolute top-1 right-0 text-[0.62rem] text-[#79504A]/7 underline-offset-2 hover:underline ${
+              locale === "bn" ? "font-bn-body" : "font-body"
+            }`}
+          >
+            {content.common.skipIntro}
+          </button>
 
-            <motion.h1
-              className="relative font-bn-display text-[1.85rem] leading-[1.35] text-sindoor-red sm:text-[2.1rem]"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.12, duration: 0.55 }}
-            >
-              <span className="relative inline-block">
-                {content.common.wedding}
-                <motion.span
-                  className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-[#f0d9a0]/35 to-transparent"
-                  initial={{ x: "-120%", opacity: 0 }}
-                  animate={{ x: "120%", opacity: [0, 0.7, 0] }}
-                  transition={{ delay: 0.8, duration: 1.4, ease: "easeInOut" }}
-                />
-              </span>
-            </motion.h1>
+          <h1
+            className={`env-intro-heading relative text-[2rem] leading-[1.3] font-bold text-[#6B1D2A] sm:text-[2.25rem] ${
+              locale === "bn"
+                ? "font-bn-display"
+                : "font-display tracking-[0.03em]"
+            }`}
+          >
+            {content.common.wedding}
+          </h1>
 
-            <motion.div
-              className="relative mx-auto mt-2.5 h-px w-16 bg-gradient-to-r from-transparent via-antique-gold to-transparent"
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 0.3, duration: 0.45 }}
-            />
+          <div className="env-intro-rule mx-auto mt-2.5 h-px w-16 origin-center bg-gradient-to-r from-transparent via-[#E8CD96] to-transparent" />
 
-            <motion.p
-              className="relative mt-2.5 font-display text-[1.05rem] tracking-[0.06em] text-deep-burgundy uppercase sm:text-[1.15rem]"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35, duration: 0.5 }}
-            >
-              {content.grandReveal.namesEn}
-            </motion.p>
+          <p
+            className={`env-intro-names mt-2.5 font-semibold text-[#5c1824] ${
+              locale === "bn"
+                ? "font-bn-display text-[1.2rem] leading-snug tracking-normal"
+                : "font-display text-[1.05rem] tracking-[0.08em] uppercase sm:text-[1.15rem]"
+            }`}
+          >
+            {locale === "bn"
+              ? content.grandReveal.namesBn
+              : content.grandReveal.namesEn}
+          </p>
 
-            <motion.p
-              className={`relative mt-1 text-[0.9rem] leading-relaxed text-antique-gold ${
-                locale === "bn" ? "font-bn-body" : "font-body"
-              }`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.48, duration: 0.45 }}
-            >
-              {content.grandReveal.date}
-            </motion.p>
-          </div>
+          <p
+            className={`env-intro-date mt-1.5 text-[0.92rem] leading-relaxed font-medium text-[#A67C3D] sm:text-[1rem] ${
+              locale === "bn" ? "font-bn-body" : "font-body"
+            }`}
+          >
+            {locale === "bn"
+              ? content.grandReveal.date
+              : content.grandReveal.dateEn}
+          </p>
         </header>
 
-        {/* Zone B — Envelope */}
-        <div className="relative z-10 mt-5 flex flex-1 items-center justify-center">
-          <Envelope expand={stage === "exit"}>
+        <div className="relative z-10 mt-5 flex shrink-0 items-center justify-center pb-6">
+          <Envelope>
             <InvitationPaper
-              stage={paperStage}
               title={content.grandReveal.kicker}
-              subtitle={content.grandReveal.namesEn}
+              subtitle={
+                locale === "bn"
+                  ? content.grandReveal.namesBn
+                  : content.grandReveal.namesEn
+              }
             />
-
-            <EnvelopeFlap open={flapOpen}>
+            <EnvelopeFlap>
               <WaxSeal
-                pressed={stage === "seal"}
                 onPress={runOpenSequence}
                 label={content.envelope.sealLabel}
-                disabled={opening}
+                disabled={opening || !coverDone}
+                idle={entered && !opening}
               />
             </EnvelopeFlap>
           </Envelope>
         </div>
 
-        {/* Zone C — Single opening instruction */}
-        <motion.p
-          className={`relative z-10 mx-auto mt-4 mb-2 max-w-[16rem] text-center text-[0.9rem] leading-relaxed text-deep-burgundy/75 ${
+        <p
+          className={`env-intro-instruction relative z-10 mx-auto -mt-0.5 max-w-[15rem] shrink-0 text-center text-[0.76rem] leading-relaxed text-[#79504A] ${
             locale === "bn" ? "font-bn-body" : "font-body"
           }`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: opening ? 0.45 : 1 }}
-          transition={{ delay: 0.55, duration: 0.4 }}
         >
-          {content.envelope.instruction}
-        </motion.p>
+          <button
+            type="button"
+            onClick={runOpenSequence}
+            disabled={opening || !coverDone}
+            className="border-0 bg-transparent p-0 text-inherit disabled:opacity-50"
+          >
+            {content.envelope.instruction}
+          </button>
+        </p>
       </div>
 
-      {stage === "reveal" || stage === "exit" ? (
-        <motion.div
-          className="pointer-events-none absolute inset-0 z-30 bg-[radial-gradient(circle_at_center,rgba(185,154,88,0.42),transparent_55%)]"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0, 0.85, 0] }}
-          transition={{ duration: 1.05, ease: "easeOut" }}
-        />
-      ) : null}
+      <div
+        className="env-reveal-flash pointer-events-none absolute inset-0 z-30 bg-[radial-gradient(circle_at_center,rgba(232,205,150,0.4),transparent_55%)] opacity-0"
+        aria-hidden
+      />
     </section>
   );
 }

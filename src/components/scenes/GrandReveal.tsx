@@ -32,13 +32,15 @@ export function GrandReveal() {
   const copy = content.grandReveal;
   const isBengali = locale === "bn";
 
-  /* Entrance plays once on mount so the cover is complete before scroll. */
+  const entrancePlayedRef = useRef(false);
+
+  /* Entrance plays once — wait for scroll mode so cinematic flip cannot re-run it. */
   useGSAP(
     () => {
       if (!sectionRef.current) return;
       registerGsap();
 
-      if (reducedMotion || !cinematic) {
+      const showSettled = () => {
         gsap.set(
           [
             ".reveal-atmosphere",
@@ -60,33 +62,64 @@ export function GrandReveal() {
         gsap.set(".reveal-photo-mask", {
           clipPath: "inset(0% 0% 0% 0%)",
         });
+      };
+
+      if (reducedMotion) {
+        showSettled();
+        entrancePlayedRef.current = true;
         return;
       }
 
+      // Still detecting scroll mode — keep cover hidden (no flash-then-replay).
+      if (!cinematic) {
+        if (!entrancePlayedRef.current) {
+          gsap.set(
+            [
+              ".reveal-atmosphere",
+              ".reveal-mandala",
+              ".reveal-particles",
+              ".reveal-photo-mask",
+              ".reveal-photo",
+              ".reveal-portrait-stage",
+              ".reveal-text-line",
+              ".reveal-petals",
+              ".reveal-lotus",
+              ".reveal-mandala-center",
+            ],
+            { autoAlpha: 0 },
+          );
+        }
+        return;
+      }
+
+      if (entrancePlayedRef.current) {
+        showSettled();
+        return;
+      }
+      entrancePlayedRef.current = true;
+
       gsap.set(".reveal-atmosphere", { autoAlpha: 0 });
-      gsap.set(".reveal-mandala", { autoAlpha: 0, scale: 0.94 });
+      gsap.set(".reveal-mandala", { autoAlpha: 0, scale: 0.96 });
       gsap.set(".reveal-particles", { autoAlpha: 0 });
       gsap.set(".reveal-petals", { autoAlpha: 0 });
       gsap.set(".reveal-lotus", { autoAlpha: 0 });
       gsap.set(".reveal-portrait-stage", {
         autoAlpha: 0,
-        y: MOTION.cardIn.y,
-        scale: MOTION.cardIn.scale,
+        y: 14,
+        scale: 0.985,
       });
       gsap.set(".reveal-photo-mask", {
         autoAlpha: 0,
-        clipPath: "inset(18% 12% 22% 12%)",
+        clipPath: "inset(10% 8% 12% 8%)",
       });
       gsap.set(".reveal-photo", {
-        scale: MOTION.imageZoom.from,
+        scale: 1.04,
         autoAlpha: 0,
       });
-      /* Soft text start — small rise only, no scale/tracking tricks */
       gsap.set(".reveal-text-line", {
         autoAlpha: 0,
-        y: MOTION.bodyIn.y,
+        y: 10,
       });
-      gsap.set(".reveal-names-bn", { y: MOTION.titleIn.y });
       gsap.set(".reveal-draw-path", { strokeDashoffset: 1 });
       gsap.set(".reveal-mandala-center", { autoAlpha: 0 });
       gsap.set(".reveal-scene-fade", { autoAlpha: 1 });
@@ -96,83 +129,82 @@ export function GrandReveal() {
       });
 
       entrance
-        .to(".reveal-atmosphere", { autoAlpha: 1, duration: 0.85 }, 0)
+        .to(".reveal-atmosphere", { autoAlpha: 1, duration: 0.7 }, 0)
         .to(
           ".reveal-mandala",
-          { autoAlpha: 0.22, scale: 1, duration: 1.2, ease: MOTION.easeSoft },
-          0.05,
+          { autoAlpha: 0.22, scale: 1, duration: 1, ease: MOTION.easeSoft },
+          0.04,
         )
         .to(
           ".reveal-draw-path",
           {
             strokeDashoffset: 0,
             stagger: MOTION.stagger.tight,
-            duration: 1.25,
+            duration: 1.05,
             ease: MOTION.easeSoft,
           },
-          0.08,
+          0.06,
         )
         .to(
           ".reveal-mandala-center",
-          { autoAlpha: 0.75, duration: 0.45 },
-          0.85,
+          { autoAlpha: 0.75, duration: 0.4 },
+          0.7,
         )
         .to(
           ".reveal-lotus",
           {
             autoAlpha: 0.7,
             stagger: MOTION.stagger.tight,
-            duration: 0.65,
+            duration: 0.55,
           },
-          0.5,
+          0.4,
         )
-        .to(".reveal-particles", { autoAlpha: 1, duration: 0.7 }, 0.6)
+        .to(".reveal-particles", { autoAlpha: 1, duration: 0.55 }, 0.5)
         .to(
           ".reveal-portrait-stage",
           {
             autoAlpha: 1,
             y: 0,
             scale: 1,
-            duration: MOTION.cardIn.duration,
+            duration: 0.75,
             ease: MOTION.easeOut,
           },
-          0.35,
+          0.28,
         )
         .to(
           ".reveal-photo-mask",
           {
             autoAlpha: 1,
             clipPath: "inset(0% 0% 0% 0%)",
-            duration: 1.25,
+            duration: 1.05,
             ease: MOTION.easeInOut,
           },
-          0.42,
+          0.32,
         )
         .to(
           ".reveal-photo",
           {
             scale: 1,
             autoAlpha: 1,
-            duration: MOTION.imageZoom.duration,
+            duration: 1.05,
             ease: MOTION.easeOut,
           },
-          0.42,
+          0.32,
         )
-        /* One silk cascade: each line fades + rises into place */
         .to(
           ".reveal-text-line",
           {
             autoAlpha: 1,
             y: 0,
-            duration: MOTION.titleIn.duration,
-            stagger: MOTION.stagger.loose,
+            duration: 0.75,
+            stagger: MOTION.stagger.normal,
             ease: MOTION.easeTextIn,
           },
-          1.05,
+          0.9,
         )
-        .to(".reveal-petals", { autoAlpha: 1, duration: 0.7 }, 1.55);
+        .to(".reveal-petals", { autoAlpha: 1, duration: 0.55 }, 1.25);
     },
-    { scope: sectionRef, dependencies: [cinematic, reducedMotion], revertOnUpdate: true },
+    { scope: sectionRef, dependencies: [cinematic, reducedMotion] },
   );
 
   /*

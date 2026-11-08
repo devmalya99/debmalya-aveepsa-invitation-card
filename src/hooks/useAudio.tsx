@@ -19,7 +19,7 @@ type AudioContextValue = {
   isPlaying: boolean;
   ready: boolean;
   toggle: () => void;
-  /** Start playback after a user gesture (e.g. opening the envelope). */
+  /** Start playback after a user gesture (e.g. dismissing the cover). */
   start: () => void;
   pause: () => void;
 };

@@ -45,8 +45,9 @@ function ExperienceInner() {
   const openInvitation = useCallback(() => {
     setOpened(true);
     window.localStorage.setItem(OPENED_KEY, "1");
+    // Land at the top of Scene 01 immediately — no smooth scroll dead-zone.
     window.requestAnimationFrame(() => {
-      document.getElementById("grand-reveal")?.scrollIntoView({ behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: "auto" });
       ScrollTrigger.refresh();
     });
   }, []);

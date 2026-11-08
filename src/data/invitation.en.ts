@@ -11,7 +11,7 @@ export const invitationEN: InvitationContent = {
       "A digital Bengali wedding invitation for Debmalya & Aveepsa — 25 November 2026.",
   },
   common: {
-    wedding: "শুভ বিবাহ",
+    wedding: "Our Wedding",
     openInvite: "Open invitation",
     skipIntro: "Skip",
     scrollHint: "Scroll to continue",
@@ -24,7 +24,7 @@ export const invitationEN: InvitationContent = {
     sealLabel: "Wax seal",
   },
   grandReveal: {
-    kicker: "শুভ বিবাহ",
+    kicker: "Our Wedding",
     namesBn: "দেবমাল্য ও অভীপ্সা",
     namesEn: "DEBMALYA & AVEEPSA",
     date: "২৫ নভেম্বর ২০২৬",

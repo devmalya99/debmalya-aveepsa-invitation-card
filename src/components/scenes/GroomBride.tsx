@@ -8,6 +8,7 @@ import { LetterCorner } from "@/components/letter/LetterOrnaments";
 import { assets } from "@/data/assets";
 import { useLanguage } from "@/hooks/useLanguage";
 import { usePinnedScene } from "@/hooks/usePinnedScene";
+import { usePrefersReducedMotion } from "@/hooks/useReducedMotion";
 import { useScrollModeContext } from "@/hooks/useScrollModeContext";
 import { MOTION } from "@/lib/animation-config";
 import { gsap, registerGsap } from "@/lib/gsap";
@@ -70,6 +71,7 @@ function FamilyEditorial({
 export function GroomBride() {
   const { content, locale } = useLanguage();
   const { cinematic } = useScrollModeContext();
+  const reducedMotion = usePrefersReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const copy = content.identities;
   const isBengali = locale === "bn";
@@ -89,7 +91,7 @@ export function GroomBride() {
       gsap.set(".identity-border", { autoAlpha: 1 });
       gsap.set(".union-glow", { autoAlpha: 0.35, scale: 0.85 });
       gsap.set(".union-mandala-mask", {
-        clipPath: "circle(18% at 50% 50%)",
+        clipPath: "circle(12% at 50% 50%)",
       });
       gsap.set(".union-mandala-art", { scale: 1.04, autoAlpha: 0.95 });
       gsap.set(".union-shimmer", { rotate: 0, autoAlpha: 0 });
@@ -102,8 +104,22 @@ export function GroomBride() {
       gsap.set(".union-bridge", { autoAlpha: 0, scaleX: 0 });
       gsap.set(".union-finale", { autoAlpha: 0, y: 10 });
       gsap.set(".union-particle", { autoAlpha: 0.4 });
+
+      if (!reducedMotion) {
+        gsap.to(".union-mandala-spin", {
+          rotate: 360,
+          duration: 80,
+          repeat: -1,
+          ease: "none",
+          transformOrigin: "50% 50%",
+        });
+      }
     },
-    { scope: sectionRef, dependencies: [cinematic], revertOnUpdate: true },
+    {
+      scope: sectionRef,
+      dependencies: [cinematic, reducedMotion],
+      revertOnUpdate: true,
+    },
   );
 
   usePinnedScene({
@@ -164,7 +180,8 @@ export function GroomBride() {
         .to(
           ".union-mandala-mask",
           {
-            clipPath: "circle(78% at 50% 50%)",
+            /* 50% = inscribed circle — never open far enough to show square corners */
+            clipPath: "circle(50% at 50% 50%)",
             duration: 1.35,
             ease: MOTION.easeScrub,
           },
@@ -379,16 +396,19 @@ export function GroomBride() {
           <div className="union-mandala-stage relative flex w-full flex-col items-center will-change-transform">
             <div className="union-glow pointer-events-none absolute top-1/2 left-1/2 h-[88%] w-[88%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(185,154,88,0.35)_0%,transparent_68%)]" />
 
-            <div className="union-mandala-mask relative mx-auto aspect-square w-[min(58vw,13.5rem)] max-h-[22svh] overflow-hidden will-change-[clip-path]">
-              <Image
-                src={assets.decorations.unionMandala}
-                alt="Golden mandala — union of two families"
-                fill
-                priority
-                className="union-mandala-art object-contain mix-blend-multiply will-change-transform"
-                sizes="(max-width: 430px) 78vw, 296px"
-              />
-              <div className="union-shimmer pointer-events-none absolute inset-[-10%] bg-[conic-gradient(from_180deg,transparent_0%,rgba(255,248,234,0.35)_12%,transparent_28%)] mix-blend-soft-light" />
+            <div className="union-mandala-mask relative mx-auto aspect-square w-[min(58vw,13.5rem)] max-h-[22svh] overflow-hidden rounded-full will-change-[clip-path]">
+              <div className="union-mandala-spin absolute inset-0 will-change-transform">
+                <Image
+                  src={assets.decorations.unionMandala}
+                  alt="Golden mandala — union of two families"
+                  fill
+                  priority
+                  unoptimized
+                  className="union-mandala-art object-contain will-change-transform"
+                  sizes="(max-width: 430px) 78vw, 296px"
+                />
+              </div>
+              <div className="union-shimmer pointer-events-none absolute inset-[-10%] rounded-full bg-[conic-gradient(from_180deg,transparent_0%,rgba(255,248,234,0.35)_12%,transparent_28%)] mix-blend-soft-light" />
             </div>
           </div>
 
