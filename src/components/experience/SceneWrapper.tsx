@@ -30,6 +30,7 @@ export const SceneWrapper = forwardRef<HTMLElement, SceneWrapperProps>(
         id={id}
         data-scene={id}
         className={`relative z-0 w-full ${toneClass[tone]}`}
+        style={{ colorScheme: "only light" }}
       >
         <section
           ref={ref}

@@ -61,7 +61,7 @@
    */
   :root,
   html {
-    color-scheme: light only;
+    color-scheme: only light;
   }
 
   html {
@@ -88,7 +88,7 @@
     background: var(--color-antique-ivory);
     color: var(--foreground);
     font-family: var(--font-dm-sans), system-ui, sans-serif;
-    color-scheme: light only;
+    color-scheme: only light;
   }
 
   ::selection {
@@ -122,7 +122,7 @@
     background-color: #f6ebd6;
     background-image: var(--gradient-ivory);
     color: var(--color-deep-burgundy);
-    color-scheme: light only;
+    color-scheme: only light;
   }
 
   .surface-burgundy {
@@ -140,7 +140,7 @@
       #e5d1ae 100%
     );
     color: var(--color-deep-burgundy);
-    color-scheme: light only;
+    color-scheme: only light;
   }
 
   /* Explicit stationery sheet — survives mobile auto-dark inversion attempts */
@@ -153,7 +153,7 @@
       #ead9b8 100%
     );
     color: #4b151f;
-    color-scheme: light only;
+    color-scheme: only light;
   }
 
   .ornament-border {
@@ -268,7 +268,8 @@
     --fh-border-outer: 0.45rem;
     --fh-border-inner: 0.7rem;
     color: var(--fh-primary);
-    color-scheme: light only;
+    background-color: #f7eedc;
+    color-scheme: only light;
   }
 
   .family-heritage-paper {
@@ -343,6 +344,7 @@
     --wc-event-gap: clamp(1.15rem, 3.4vw, 1.65rem);
     --wc-content-max: 22.5rem;
     color: var(--wc-primary);
+    color-scheme: only light;
   }
 
   .wedding-card-shimmer {

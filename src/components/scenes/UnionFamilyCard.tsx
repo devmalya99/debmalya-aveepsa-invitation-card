@@ -51,7 +51,8 @@ export function UnionFamilyCard({ side, className = "" }: UnionFamilyCardProps) 
     <article
       className={`family-heritage relative flex max-h-[calc(100svh-6.5rem)] w-full flex-col overflow-hidden ${className}`}
       style={{
-        backgroundColor: "var(--fh-bg)",
+        colorScheme: "only light",
+        backgroundColor: "#F7EEDC",
         paddingLeft: "var(--fh-pad-x)",
         paddingRight: "var(--fh-pad-x)",
         paddingTop: "var(--fh-pad-y)",

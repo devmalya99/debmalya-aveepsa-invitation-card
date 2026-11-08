@@ -90,7 +90,10 @@ function ExperienceInner() {
     <>
       {!hasChosenLocale ? <LanguagePreference /> : null}
       <ScrollExperience>
-        <main className="relative bg-antique-ivory">
+        <main
+          className="relative bg-antique-ivory"
+          style={{ colorScheme: "only light", backgroundColor: "#f6ebd6" }}
+        >
           <InvitationHeader showProgress />
 
           <GrandReveal />
