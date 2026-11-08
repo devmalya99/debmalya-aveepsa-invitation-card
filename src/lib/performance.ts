@@ -54,15 +54,18 @@ export function getAmbientDensity() {
 }
 
 /**
- * Auto-scroll pixels per frame (after the opening pin).
- * Brisk on purpose — venue / finale pins must not feel like a crawl on phones.
+ * Auto-scroll pixels per frame while moving between readable stops.
+ * Soft cruise — not a blur, not a multi-minute crawl.
  */
 export function getAutoScrollPxPerFrame() {
-  return isCoarseMobile() ? 20 : 22;
+  return isCoarseMobile() ? 7.5 : 8.5;
 }
 
 /** How long auto-play holds each opening card before snapping to the next. */
-export const OPENING_AUTO_HOLD_MS = 2200;
+export const OPENING_AUTO_HOLD_MS = 3200;
 
-/** Shorter hold on festivities before leaving toward venue. */
-export const OPENING_EXIT_HOLD_MS = 1400;
+/** Hold on festivities before leaving toward venue. */
+export const OPENING_EXIT_HOLD_MS = 2800;
+
+/** How long auto-play pauses on venue / finale once the card is readable. */
+export const SCENE_READ_HOLD_MS = 3800;

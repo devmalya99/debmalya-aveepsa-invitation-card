@@ -15,8 +15,8 @@ import { assets } from "@/data/assets";
 import { registerGsap, ScrollTrigger } from "@/lib/gsap";
 
 const OPENED_KEY = "wedding-invite-opened";
-/** Let the couple card sequence play before auto-scroll resumes. */
-const INTRO_HOLD_MS = 2200;
+/** Let guests read the couple card before auto-scroll starts. */
+const INTRO_HOLD_MS = 3200;
 
 const sceneLoading = () => (
   <div className="scene-shell surface-ivory min-h-svh" aria-hidden />

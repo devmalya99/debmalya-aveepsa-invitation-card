@@ -11,6 +11,7 @@ import {
   getAutoScrollPxPerFrame,
   OPENING_AUTO_HOLD_MS,
   OPENING_EXIT_HOLD_MS,
+  SCENE_READ_HOLD_MS,
 } from "@/lib/performance";
 
 /** Instant Y write — avoids CSS smooth scroll fighting RAF. */
@@ -19,11 +20,24 @@ function scrollYTo(top: number) {
   ScrollTrigger.update();
 }
 
+type SceneReadStop = {
+  pinId: string;
+  /** Pin progress where the scene is readable enough to pause. */
+  readAt: number;
+  holdMs: number;
+};
+
+/** Pause mid-pin so venue / finale can be read — then continue past. */
+const SCENE_READ_STOPS: SceneReadStop[] = [
+  { pinId: "pin-venue-reveal", readAt: 0.58, holdMs: SCENE_READ_HOLD_MS },
+  { pinId: "pin-final-scene", readAt: 0.62, holdMs: SCENE_READ_HOLD_MS + 400 },
+];
+
 /**
  * Auto-play scroll:
- * - Opening pin: snap card → card on a fixed timer.
- * - Leaving opening: faster crawl past the pin, then cruise later scenes.
- * - Keeps ticking at document end briefly so late-mounted venue pins are caught.
+ * - Opening: snap card → card with readable holds.
+ * - Venue / finale: cruise to a readable frame, pause, then leave.
+ * - Never dies at a temporary document end (late-mounted scenes).
  */
 export function useAutoScroll(enabled: boolean) {
   const { isAutoPlaying, markProgrammatic } = useAutoPlay();
@@ -41,8 +55,10 @@ export function useAutoScroll(enabled: boolean) {
     let leavingOpening = false;
     let endWaitStartedAt: number | null = null;
     let lastEndRefreshAt = 0;
+    const heldPins = new Set<string>();
+    const holdStartedAt = new Map<string, number>();
     const pxPerFrame = getAutoScrollPxPerFrame();
-    const exitPxPerFrame = Math.max(pxPerFrame * 2.2, 14);
+    const exitPxPerFrame = Math.max(pxPerFrame * 1.75, 12);
 
     const tick = () => {
       if (!active) return;
@@ -51,10 +67,6 @@ export function useAutoScroll(enabled: boolean) {
       const atEnd = max <= 0 || window.scrollY >= max - 2;
 
       if (atEnd) {
-        /*
-         * Venue / finale chunks can mount after we reach the opening pin end.
-         * Keep polling + refreshing so auto-play resumes when height grows.
-         */
         if (endWaitStartedAt == null) endWaitStartedAt = Date.now();
         const waited = Date.now() - endWaitStartedAt;
         if (waited < 8000) {
@@ -96,6 +108,37 @@ export function useAutoScroll(enabled: boolean) {
           raf = window.requestAnimationFrame(tick);
           return;
         }
+      }
+
+      /* Venue / finale — pause once readable, then leave the pin. */
+      for (const stop of SCENE_READ_STOPS) {
+        if (heldPins.has(stop.pinId)) continue;
+        const pin = ScrollTrigger.getById(stop.pinId);
+        if (!pin?.isActive) continue;
+
+        const span = pin.end - pin.start;
+        const readTop = pin.start + span * stop.readAt;
+
+        if (pin.progress < stop.readAt - 0.02) {
+          markProgrammatic(200);
+          scrollYTo(Math.min(readTop, window.scrollY + pxPerFrame));
+          raf = window.requestAnimationFrame(tick);
+          return;
+        }
+
+        if (!holdStartedAt.has(stop.pinId)) {
+          holdStartedAt.set(stop.pinId, Date.now());
+          scrollYTo(readTop);
+        }
+
+        const heldFor = Date.now() - (holdStartedAt.get(stop.pinId) ?? 0);
+        if (heldFor < stop.holdMs) {
+          markProgrammatic(200);
+          raf = window.requestAnimationFrame(tick);
+          return;
+        }
+
+        heldPins.add(stop.pinId);
       }
 
       markProgrammatic(200);

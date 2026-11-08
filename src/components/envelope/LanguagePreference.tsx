@@ -1,6 +1,7 @@
 "use client";
 
 import { assets } from "@/data/assets";
+import { useAudio } from "@/hooks/useAudio";
 import { useLanguage } from "@/hooks/useLanguage";
 import type { Locale } from "@/types/invitation";
 
@@ -10,12 +11,15 @@ const COVER_SRC = assets.decorations.kolkataCover;
  * Blurred Kolkata cover + explicit language choice (no guessing).
  * Shown on every full page reload; last choice is only a default for later toggles.
  * Auto-open / auto-scroll never start until the guest taps a language here.
+ * Music starts on this tap — browsers allow playback only after a user gesture.
  */
 export function LanguagePreference() {
   const { setLocale } = useLanguage();
+  const { start: startMusic } = useAudio();
 
   const choose = (next: Locale) => {
     setLocale(next);
+    startMusic();
   };
 
   return (

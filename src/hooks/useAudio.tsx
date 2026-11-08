@@ -19,7 +19,7 @@ type AudioContextValue = {
   isPlaying: boolean;
   ready: boolean;
   toggle: () => void;
-  /** Start playback after a user gesture (e.g. dismissing the cover). */
+  /** Start playback after a user gesture (language pick / cover). */
   start: () => void;
   pause: () => void;
 };
@@ -35,8 +35,10 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const audio = new Audio(assets.audio.ambient);
     audio.loop = true;
-    audio.preload = "metadata";
+    /* Ready by language tap — metadata-only often delayed first play on mobile. */
+    audio.preload = "auto";
     audio.volume = 0;
+    void audio.load();
     audioRef.current = audio;
 
     const onPlay = () => setIsPlaying(true);

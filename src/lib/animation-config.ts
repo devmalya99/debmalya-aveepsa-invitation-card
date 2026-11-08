@@ -4,11 +4,11 @@ export const SCENE_SCROLL = {
    * Keep the pin short enough that auto-play / swipe don't linger ~10s per card.
    */
   "grand-reveal": { end: "+=200%" },
-  /* Short pins — long spacers made post-festivities auto-play feel endless on phones. */
-  "venue-reveal": { end: "+=90%" },
-  "final-scene": { end: "+=70%" },
-  /* Guest form is a normal screen — minimal hold, no long pin crawl. */
-  "guest-blessing": { end: "+=40%" },
+  /* Enough pin for unveil, short enough that auto-play can pause mid-scene to read. */
+  "venue-reveal": { end: "+=120%" },
+  "final-scene": { end: "+=100%" },
+  /* Guest form is interactive — light scroll range only. */
+  "guest-blessing": { end: "+=45%" },
 } as const;
 
 export type SceneId = keyof typeof SCENE_SCROLL;
