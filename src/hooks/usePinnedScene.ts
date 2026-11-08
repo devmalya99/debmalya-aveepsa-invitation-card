@@ -1,7 +1,7 @@
 "use client";
 
 import { useGSAP } from "@gsap/react";
-import type { RefObject } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import {
   SCENE_SCROLL,
   SCROLL_SCRUB,
@@ -21,6 +21,8 @@ type UsePinnedSceneOptions = {
   end?: string;
   /** Override global SCROLL_SCRUB (e.g. 0.8 for softer finale lag). */
   scrub?: number | boolean;
+  /** Fired with the pin ScrollTrigger progress (0–1). */
+  onProgress?: (progress: number) => void;
 };
 
 /**
@@ -36,7 +38,13 @@ export function usePinnedScene({
   start = "top top",
   end,
   scrub = SCROLL_SCRUB,
+  onProgress,
 }: UsePinnedSceneOptions) {
+  const onProgressRef = useRef(onProgress);
+  useEffect(() => {
+    onProgressRef.current = onProgress;
+  }, [onProgress]);
+
   useGSAP(
     () => {
       if (!enabled || !sectionRef.current) return;
@@ -58,10 +66,17 @@ export function usePinnedScene({
           invalidateOnRefresh: true,
           /* Finish the pin cleanly on fast flicks so the next scene can take over. */
           fastScrollEnd: true,
+          onUpdate: (self) => {
+            onProgressRef.current?.(self.progress);
+          },
+          onRefresh: (self) => {
+            onProgressRef.current?.(self.progress);
+          },
         },
       });
 
       build(timeline);
+      onProgressRef.current?.(timeline.scrollTrigger?.progress ?? 0);
     },
     {
       scope: sectionRef,
