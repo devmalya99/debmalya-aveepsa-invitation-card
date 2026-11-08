@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import {
+  PROGRESS_STEPS,
   SCENE_ORDER,
   SCENE_SCROLL,
   type SceneId,
@@ -10,14 +11,28 @@ import { registerGsap, ScrollTrigger } from "@/lib/gsap";
 
 type ProgressBinding = {
   sceneId: SceneId;
-  sceneIndex: number;
   trigger: ScrollTrigger;
 };
 
+function stepIndexFor(sceneId: SceneId, pinProgress: number) {
+  const steps = PROGRESS_STEPS;
+  for (let i = 0; i < steps.length; i += 1) {
+    const step = steps[i];
+    if (step.sceneId !== sceneId) continue;
+    const atEnd = pinProgress >= 0.999 && step.pinEnd >= 1;
+    if (
+      atEnd ||
+      (pinProgress >= step.pinStart && pinProgress < step.pinEnd)
+    ) {
+      return i;
+    }
+  }
+  return steps.findIndex((step) => step.sceneId === sceneId);
+}
+
 /**
  * Scene counter must use the same trigger + end as each scene's pin.
- * Tracking the outer wrapper with end:"bottom top" desyncs once pin-spacers
- * resize the layout — the UI can show 06/06 while still on scene 02.
+ * Opening canvas subdivides into couple / groom / bride progress steps.
  */
 export function useSceneProgress(enabled: boolean) {
   const [activeScene, setActiveScene] = useState<SceneId>(SCENE_ORDER[0]);
@@ -30,23 +45,30 @@ export function useSceneProgress(enabled: boolean) {
     registerGsap();
     const bindings: ProgressBinding[] = [];
 
-    const activate = (sceneId: SceneId, sceneIndex: number, value: number) => {
+    const activate = (sceneId: SceneId, pinProgress: number) => {
+      const stepIndex = Math.max(0, stepIndexFor(sceneId, pinProgress));
+      const step = PROGRESS_STEPS[stepIndex];
+      const span = Math.max(0.0001, step.pinEnd - step.pinStart);
+      const local = Math.min(
+        1,
+        Math.max(0, (pinProgress - step.pinStart) / span),
+      );
       setActiveScene(sceneId);
-      setIndex(sceneIndex);
-      setProgress(value);
+      setIndex(stepIndex);
+      setProgress(local);
     };
 
     const syncActive = () => {
       const active = bindings.find((binding) => binding.trigger.isActive);
       if (!active) return;
-      activate(active.sceneId, active.sceneIndex, active.trigger.progress);
+      activate(active.sceneId, active.trigger.progress);
     };
 
     const mountProgressTriggers = () => {
       bindings.forEach((binding) => binding.trigger.kill());
       bindings.length = 0;
 
-      SCENE_ORDER.forEach((sceneId, sceneIndex) => {
+      SCENE_ORDER.forEach((sceneId) => {
         const root = document.getElementById(sceneId);
         if (!root) return;
 
@@ -59,15 +81,15 @@ export function useSceneProgress(enabled: boolean) {
           trigger: triggerElement,
           start: "top top",
           end: SCENE_SCROLL[sceneId].end,
-          onEnter: () => activate(sceneId, sceneIndex, 0),
-          onEnterBack: () => activate(sceneId, sceneIndex, 1),
+          onEnter: () => activate(sceneId, 0),
+          onEnterBack: () => activate(sceneId, 1),
           onUpdate: (self) => {
             if (!self.isActive) return;
-            activate(sceneId, sceneIndex, self.progress);
+            activate(sceneId, self.progress);
           },
         });
 
-        bindings.push({ sceneId, sceneIndex, trigger });
+        bindings.push({ sceneId, trigger });
       });
 
       syncActive();
@@ -96,6 +118,6 @@ export function useSceneProgress(enabled: boolean) {
     activeScene,
     index,
     progress,
-    total: SCENE_ORDER.length,
+    total: PROGRESS_STEPS.length,
   };
 }

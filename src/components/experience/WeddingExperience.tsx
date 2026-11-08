@@ -7,7 +7,6 @@ import { LanguagePreference } from "@/components/envelope/LanguagePreference";
 import { EnvelopeIntro } from "@/components/scenes/EnvelopeIntro";
 import { FinalScene } from "@/components/scenes/FinalScene";
 import { GrandReveal } from "@/components/scenes/GrandReveal";
-import { GroomBride } from "@/components/scenes/GroomBride";
 import { GuestBlessingScene } from "@/components/scenes/GuestBlessingScene";
 import { VenueReveal } from "@/components/scenes/VenueReveal";
 import { WeddingEvents } from "@/components/scenes/WeddingEvents";
@@ -86,7 +85,6 @@ function ExperienceInner() {
           <InvitationHeader showProgress />
 
           <GrandReveal />
-          <GroomBride />
           <WeddingEvents />
           <VenueReveal />
           <FinalScene />

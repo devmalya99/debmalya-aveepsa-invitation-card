@@ -227,7 +227,34 @@ export function GoldParticles({ className = "" }: ClassProps) {
   );
 }
 
-function ShiuliPetalMark({ size }: { size: number }) {
+type PetalTone = "red" | "orange" | "white";
+type LeafTone = "green" | "yellow";
+
+const PETAL_TONES: Record<
+  PetalTone,
+  { fill: string; center: string }
+> = {
+  red: { fill: "#C43B2E", center: "#8B1E18" },
+  orange: { fill: "#E07A2F", center: "#C45A18" },
+  white: { fill: "#FFF8F0", center: "#E8D4C4" },
+};
+
+const LEAF_TONES: Record<
+  LeafTone,
+  { fill: string; stroke: string; vein: string }
+> = {
+  green: { fill: "#5F8F3C", stroke: "#3F6B28", vein: "#2F5220" },
+  yellow: { fill: "#D4B84A", stroke: "#B89A2E", vein: "#8F7520" },
+};
+
+function ShiuliPetalMark({
+  size,
+  tone = "white",
+}: {
+  size: number;
+  tone?: PetalTone;
+}) {
+  const colors = PETAL_TONES[tone];
   return (
     <svg
       width={size}
@@ -238,15 +265,29 @@ function ShiuliPetalMark({ size }: { size: number }) {
     >
       <path
         d="M8 1.5 C11.5 4 13.5 8 13 12.5 C12.5 16 10 18.5 8 19 C6 18.5 3.5 16 3 12.5 C2.5 8 4.5 4 8 1.5 Z"
-        fill="#FFF8EA"
-        opacity="0.92"
+        fill={colors.fill}
+        opacity="0.95"
       />
-      <ellipse cx="8" cy="11" rx="2.2" ry="2.8" fill="#E8A04A" opacity="0.5" />
+      <ellipse
+        cx="8"
+        cy="11"
+        rx="2.2"
+        ry="2.8"
+        fill={colors.center}
+        opacity="0.55"
+      />
     </svg>
   );
 }
 
-function GoldLeafMark({ size }: { size: number }) {
+function LeafMark({
+  size,
+  tone = "green",
+}: {
+  size: number;
+  tone?: LeafTone;
+}) {
+  const colors = LEAF_TONES[tone];
   return (
     <svg
       width={size}
@@ -257,12 +298,17 @@ function GoldLeafMark({ size }: { size: number }) {
     >
       <path
         d="M2 7 C8 2 14 2 22 7 C14 12 8 12 2 7 Z"
-        fill="#B99A58"
-        fillOpacity="0.28"
-        stroke="#B99A58"
+        fill={colors.fill}
+        fillOpacity="0.88"
+        stroke={colors.stroke}
         strokeWidth="1"
       />
-      <path d="M4 7 H18" stroke="#B99A58" strokeWidth="0.7" opacity="0.65" />
+      <path
+        d="M4 7 H18"
+        stroke={colors.vein}
+        strokeWidth="0.75"
+        opacity="0.8"
+      />
     </svg>
   );
 }
@@ -276,30 +322,33 @@ type FallItem = {
   rotate: number;
 };
 
-const REVEAL_PETALS: FallItem[] = [
-  { left: "6%", size: 11, delay: 0, duration: 15, drift: 18, rotate: 48 },
-  { left: "18%", size: 9, delay: 1.8, duration: 17, drift: -14, rotate: -36 },
-  { left: "32%", size: 12, delay: 0.6, duration: 14, drift: 10, rotate: 55 },
-  { left: "46%", size: 8, delay: 3.2, duration: 18, drift: -18, rotate: -42 },
-  { left: "58%", size: 10, delay: 1.1, duration: 16, drift: 12, rotate: 30 },
-  { left: "70%", size: 9, delay: 4.0, duration: 15, drift: -10, rotate: -50 },
-  { left: "82%", size: 11, delay: 2.4, duration: 17, drift: 16, rotate: 40 },
-  { left: "90%", size: 8, delay: 5.1, duration: 19, drift: -8, rotate: -28 },
-  { left: "24%", size: 7, delay: 6.2, duration: 20, drift: 14, rotate: 60 },
-  { left: "64%", size: 10, delay: 3.8, duration: 16, drift: -12, rotate: -35 },
+type PetalItem = FallItem & { tone: PetalTone };
+type LeafItem = FallItem & { tone: LeafTone };
+
+const REVEAL_PETALS: PetalItem[] = [
+  { left: "6%", size: 18, delay: 0, duration: 15, drift: 18, rotate: 48, tone: "red" },
+  { left: "18%", size: 15, delay: 1.8, duration: 17, drift: -14, rotate: -36, tone: "orange" },
+  { left: "32%", size: 20, delay: 0.6, duration: 14, drift: 10, rotate: 55, tone: "white" },
+  { left: "46%", size: 14, delay: 3.2, duration: 18, drift: -18, rotate: -42, tone: "red" },
+  { left: "58%", size: 17, delay: 1.1, duration: 16, drift: 12, rotate: 30, tone: "orange" },
+  { left: "70%", size: 15, delay: 4.0, duration: 15, drift: -10, rotate: -50, tone: "white" },
+  { left: "82%", size: 19, delay: 2.4, duration: 17, drift: 16, rotate: 40, tone: "red" },
+  { left: "90%", size: 14, delay: 5.1, duration: 19, drift: -8, rotate: -28, tone: "orange" },
+  { left: "24%", size: 13, delay: 6.2, duration: 20, drift: 14, rotate: 60, tone: "white" },
+  { left: "64%", size: 16, delay: 3.8, duration: 16, drift: -12, rotate: -35, tone: "red" },
 ];
 
-const REVEAL_LEAVES: FallItem[] = [
-  { left: "10%", size: 18, delay: 0.8, duration: 18, drift: -16, rotate: -40 },
-  { left: "28%", size: 16, delay: 2.6, duration: 20, drift: 12, rotate: 28 },
-  { left: "52%", size: 20, delay: 1.4, duration: 17, drift: -10, rotate: -55 },
-  { left: "74%", size: 15, delay: 4.2, duration: 19, drift: 14, rotate: 36 },
-  { left: "88%", size: 17, delay: 3.0, duration: 21, drift: -12, rotate: -24 },
-  { left: "40%", size: 14, delay: 5.5, duration: 22, drift: 8, rotate: 45 },
+const REVEAL_LEAVES: LeafItem[] = [
+  { left: "10%", size: 28, delay: 0.8, duration: 18, drift: -16, rotate: -40, tone: "green" },
+  { left: "28%", size: 26, delay: 2.6, duration: 20, drift: 12, rotate: 28, tone: "yellow" },
+  { left: "52%", size: 32, delay: 1.4, duration: 17, drift: -10, rotate: -55, tone: "green" },
+  { left: "74%", size: 24, delay: 4.2, duration: 19, drift: 14, rotate: 36, tone: "yellow" },
+  { left: "88%", size: 27, delay: 3.0, duration: 21, drift: -12, rotate: -24, tone: "green" },
+  { left: "40%", size: 22, delay: 5.5, duration: 22, drift: 8, rotate: 45, tone: "yellow" },
 ];
 
 /**
- * Petal + leaf shower for Scene 01 — understated, continuous fall.
+ * Petal + leaf shower for Scene 01 — larger, colored, continuous fall.
  * Respects prefers-reduced-motion (static soft scatter).
  */
 export function FloatingPetals({ className = "" }: ClassProps) {
@@ -314,25 +363,25 @@ export function FloatingPetals({ className = "" }: ClassProps) {
         {REVEAL_PETALS.slice(0, 4).map((petal, index) => (
           <span
             key={`p-static-${index}`}
-            className="absolute opacity-35"
+            className="absolute opacity-70"
             style={{
               left: petal.left,
               top: `${18 + index * 16}%`,
             }}
           >
-            <ShiuliPetalMark size={petal.size} />
+            <ShiuliPetalMark size={petal.size} tone={petal.tone} />
           </span>
         ))}
         {REVEAL_LEAVES.slice(0, 3).map((leaf, index) => (
           <span
             key={`l-static-${index}`}
-            className="absolute opacity-30"
+            className="absolute opacity-65"
             style={{
               left: leaf.left,
               top: `${28 + index * 18}%`,
             }}
           >
-            <GoldLeafMark size={leaf.size} />
+            <LeafMark size={leaf.size} tone={leaf.tone} />
           </span>
         ))}
       </div>
@@ -353,7 +402,7 @@ export function FloatingPetals({ className = "" }: ClassProps) {
             y: ["0vh", "108vh"],
             x: [0, petal.drift * 0.55, petal.drift],
             rotate: [0, petal.rotate * 0.5, petal.rotate],
-            opacity: [0, 0.72, 0.65, 0],
+            opacity: [0, 0.92, 0.85, 0],
           }}
           transition={{
             duration: petal.duration,
@@ -363,7 +412,7 @@ export function FloatingPetals({ className = "" }: ClassProps) {
             times: [0, 0.12, 0.82, 1],
           }}
         >
-          <ShiuliPetalMark size={petal.size} />
+          <ShiuliPetalMark size={petal.size} tone={petal.tone} />
         </motion.span>
       ))}
 
@@ -376,7 +425,7 @@ export function FloatingPetals({ className = "" }: ClassProps) {
             y: ["0vh", "108vh"],
             x: [0, leaf.drift * 0.4, leaf.drift],
             rotate: [leaf.rotate * -0.2, leaf.rotate],
-            opacity: [0, 0.55, 0.48, 0],
+            opacity: [0, 0.88, 0.8, 0],
           }}
           transition={{
             duration: leaf.duration,
@@ -386,7 +435,7 @@ export function FloatingPetals({ className = "" }: ClassProps) {
             times: [0, 0.1, 0.85, 1],
           }}
         >
-          <GoldLeafMark size={leaf.size} />
+          <LeafMark size={leaf.size} tone={leaf.tone} />
         </motion.span>
       ))}
     </div>
@@ -405,7 +454,7 @@ function FlappingBird({
   return (
     <svg
       viewBox="0 0 120 60"
-      className="h-full w-full fill-current text-[#4a1d24]/55"
+      className="h-full w-full fill-current text-[#141414]"
       aria-hidden
     >
       <ellipse cx="58" cy="32" rx="15" ry="6" />
@@ -465,15 +514,15 @@ type BirdSpec = {
 };
 
 const REVEAL_FLOCK: BirdSpec[] = [
-  { top: "14%", size: 34, duration: 22, delay: 0.4, flap: 0.48, yNudge: 14 },
-  { top: "20%", size: 26, duration: 26, delay: 1.8, flap: 0.42, yNudge: -10 },
-  { top: "26%", size: 30, duration: 24, delay: 3.2, flap: 0.5, yNudge: 8 },
-  { top: "12%", size: 22, duration: 28, delay: 5.0, flap: 0.4, yNudge: -16 },
-  { top: "32%", size: 28, duration: 23, delay: 2.4, flap: 0.46, yNudge: 12 },
-  { top: "18%", size: 20, duration: 30, delay: 6.5, flap: 0.38, yNudge: -6 },
+  { top: "14%", size: 48, duration: 22, delay: 0.4, flap: 0.48, yNudge: 14 },
+  { top: "20%", size: 38, duration: 26, delay: 1.8, flap: 0.42, yNudge: -10 },
+  { top: "26%", size: 44, duration: 24, delay: 3.2, flap: 0.5, yNudge: 8 },
+  { top: "12%", size: 34, duration: 28, delay: 5.0, flap: 0.4, yNudge: -16 },
+  { top: "32%", size: 42, duration: 23, delay: 2.4, flap: 0.46, yNudge: 12 },
+  { top: "18%", size: 32, duration: 30, delay: 6.5, flap: 0.38, yNudge: -6 },
 ];
 
-/** Soft champagne-ink bird flock drifting across Scene 01. */
+/** Black bird flock drifting across the opening canvas. */
 export function FlightOfBirds({ className = "" }: ClassProps) {
   const reducedMotion = usePrefersReducedMotion();
 
@@ -486,7 +535,7 @@ export function FlightOfBirds({ className = "" }: ClassProps) {
         {REVEAL_FLOCK.slice(0, 3).map((bird, index) => (
           <span
             key={`bird-static-${index}`}
-            className="absolute opacity-40"
+            className="absolute opacity-75"
             style={{
               top: bird.top,
               left: `${18 + index * 22}%`,
@@ -519,7 +568,7 @@ export function FlightOfBirds({ className = "" }: ClassProps) {
           animate={{
             x: ["-16vw", "112vw"],
             y: [0, bird.yNudge, 0],
-            opacity: [0, 0.7, 0.7, 0],
+            opacity: [0, 0.92, 0.9, 0],
           }}
           transition={{
             duration: bird.duration,

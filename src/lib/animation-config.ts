@@ -1,8 +1,9 @@
 export const SCENE_SCROLL = {
-  /* Very short pin — hold hero, then hand off before a blank ivory frame appears. */
-  "grand-reveal": { end: "+=45%" },
-  /* Identity choreography needs room, but avoid long blank holds. */
-  "groom-bride": { end: "+=150%" },
+  /*
+   * One pinned canvas: couple → groom family → bride family.
+   * Long enough for three readable holds without empty ivory between beats.
+   */
+  "grand-reveal": { end: "+=280%" },
   "venue-reveal": { end: "+=180%" },
   "wedding-events": { end: "+=200%" },
   /* Moderate pin — enough for unveil choreography without dominating the scroll. */
@@ -13,14 +14,41 @@ export const SCENE_SCROLL = {
 
 export type SceneId = keyof typeof SCENE_SCROLL;
 
-/** Narrative order: hero → identities → festivities → destination → close → name */
+/** Pin / DOM scene order (family beats live inside grand-reveal). */
 export const SCENE_ORDER: SceneId[] = [
   "grand-reveal",
-  "groom-bride",
   "wedding-events",
   "venue-reveal",
   "final-scene",
   "guest-blessing",
+];
+
+/**
+ * Progress counter steps — layer-by-layer inside the opening pin,
+ * then one step per remaining scene.
+ */
+export type ProgressStep = {
+  id: string;
+  sceneId: SceneId;
+  /** Inclusive start of pin progress [0, 1]. */
+  pinStart: number;
+  /** Exclusive end of pin progress [0, 1] (1 = inclusive at end). */
+  pinEnd: number;
+};
+
+export const PROGRESS_STEPS: ProgressStep[] = [
+  { id: "couple", sceneId: "grand-reveal", pinStart: 0, pinEnd: 1 / 3 },
+  {
+    id: "groom-family",
+    sceneId: "grand-reveal",
+    pinStart: 1 / 3,
+    pinEnd: 2 / 3,
+  },
+  { id: "bride-family", sceneId: "grand-reveal", pinStart: 2 / 3, pinEnd: 1 },
+  { id: "wedding-events", sceneId: "wedding-events", pinStart: 0, pinEnd: 1 },
+  { id: "venue-reveal", sceneId: "venue-reveal", pinStart: 0, pinEnd: 1 },
+  { id: "final-scene", sceneId: "final-scene", pinStart: 0, pinEnd: 1 },
+  { id: "guest-blessing", sceneId: "guest-blessing", pinStart: 0, pinEnd: 1 },
 ];
 
 export const SCROLL_SCRUB = 1;

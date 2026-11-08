@@ -10,6 +10,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useLanguage } from "@/hooks/useLanguage";
 import { usePrefersReducedMotion } from "@/hooks/useReducedMotion";
 
 const IDLE_MS = 4000;
@@ -28,6 +29,7 @@ type AutoPlayContextValue = {
 const AutoPlayContext = createContext<AutoPlayContextValue | null>(null);
 
 export function AutoPlayProvider({ children }: { children: ReactNode }) {
+  const { hasChosenLocale } = useLanguage();
   const reducedMotion = usePrefersReducedMotion();
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const idleTimerRef = useRef<number | null>(null);
@@ -37,8 +39,8 @@ export function AutoPlayProvider({ children }: { children: ReactNode }) {
   const clearIdleTimer = useCallback(() => {
     if (idleTimerRef.current != null) {
       window.clearTimeout(idleTimerRef.current);
-      idleTimerRef.current = null;
     }
+    idleTimerRef.current = null;
   }, []);
 
   const markProgrammatic = useCallback((ms = PROGRAMMATIC_GUARD_MS) => {
@@ -47,12 +49,12 @@ export function AutoPlayProvider({ children }: { children: ReactNode }) {
 
   const armIdleTimer = useCallback(() => {
     clearIdleTimer();
-    if (reducedMotion) return;
+    if (reducedMotion || !hasChosenLocale) return;
     idleTimerRef.current = window.setTimeout(() => {
       isAutoPlayingRef.current = true;
       setIsAutoPlaying(true);
     }, IDLE_MS);
-  }, [clearIdleTimer, reducedMotion]);
+  }, [clearIdleTimer, hasChosenLocale, reducedMotion]);
 
   const notifyUserActivity = useCallback(() => {
     if (Date.now() < programmaticUntilRef.current) return;
@@ -64,7 +66,8 @@ export function AutoPlayProvider({ children }: { children: ReactNode }) {
   }, [armIdleTimer]);
 
   useEffect(() => {
-    if (reducedMotion) {
+    /* Idle auto-open/scroll only after the guest explicitly picks a language. */
+    if (reducedMotion || !hasChosenLocale) {
       clearIdleTimer();
       isAutoPlayingRef.current = false;
       setIsAutoPlaying(false);
@@ -87,7 +90,13 @@ export function AutoPlayProvider({ children }: { children: ReactNode }) {
       window.removeEventListener("wheel", onActivity);
       window.removeEventListener("keydown", onActivity);
     };
-  }, [armIdleTimer, clearIdleTimer, notifyUserActivity, reducedMotion]);
+  }, [
+    armIdleTimer,
+    clearIdleTimer,
+    hasChosenLocale,
+    notifyUserActivity,
+    reducedMotion,
+  ]);
 
   const value = useMemo(
     () => ({

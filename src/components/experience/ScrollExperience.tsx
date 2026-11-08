@@ -18,7 +18,7 @@ export function ScrollExperience({ children }: ScrollExperienceProps) {
   return (
     <ScrollModeProvider
       value={{
-        mode: ready ? mode : true,
+        mode: ready ? mode : "pin-only",
         cinematic: ready ? cinematic : true,
       }}
     >

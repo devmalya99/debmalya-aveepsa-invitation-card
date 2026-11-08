@@ -318,7 +318,7 @@ export function EnvelopeIntro({ onOpen }: EnvelopeIntroProps) {
 
         <InvitationHeader
           showProgress={false}
-          staticProgress={{ current: 1, total: 6 }}
+          staticProgress={{ current: 1, total: 7 }}
         />
 
       <div className="relative z-10 mx-auto flex w-full max-w-[24rem] flex-1 flex-col justify-center gap-0">

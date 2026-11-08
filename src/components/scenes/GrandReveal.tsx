@@ -13,6 +13,7 @@ import {
   GoldParticles,
   PortraitArchFrame,
 } from "@/components/reveal/HeroOrnaments";
+import { UnionFamilyCard } from "@/components/scenes/UnionFamilyCard";
 import { assets } from "@/data/assets";
 import { useLanguage } from "@/hooks/useLanguage";
 import { usePinnedScene } from "@/hooks/usePinnedScene";
@@ -22,8 +23,9 @@ import { MOTION } from "@/lib/animation-config";
 import { gsap, registerGsap } from "@/lib/gsap";
 
 /**
- * Scene 01 — Royal Bengal editorial cover.
- * Unified invitation composition: heading → arched portrait → names → date → place.
+ * Opening canvas — one pin, three beats on the same atmosphere:
+ * couple composition → groom family → bride family.
+ * Birds / petals stay; only content layers swap.
  */
 export function GrandReveal() {
   const { content, locale } = useLanguage();
@@ -88,8 +90,47 @@ export function GrandReveal() {
         gsap.set(".reveal-arch-frame", { filter: "brightness(1)" });
       };
 
+      /* Union layer starts hidden — scrub brings it in after the couple beat. */
+      gsap.set(".opening-layer-union", { autoAlpha: 0, y: 18 });
+      gsap.set(".union-glow", { autoAlpha: 0.35, scale: 0.85 });
+      gsap.set(".union-mandala-mask", { clipPath: "circle(12% at 50% 50%)" });
+      gsap.set(".union-mandala-art", { scale: 1.04, autoAlpha: 0.95 });
+      gsap.set(".union-shimmer", { rotate: 0, autoAlpha: 0 });
+      gsap.set(".union-caption, .union-caption-bn", { autoAlpha: 0, y: 8 });
+      gsap.set(".union-family-groom, .union-family-bride", {
+        autoAlpha: 0,
+        y: 18,
+      });
+      gsap.set(".union-family-row", { autoAlpha: 0, y: 8 });
+      gsap.set(".union-family-rule", { scaleX: 0 });
+      gsap.set(".union-bridge", { autoAlpha: 0, scaleX: 0 });
+      gsap.set(".union-finale", { autoAlpha: 0, y: 10 });
+      gsap.set(".union-particle, .identity-border, .identity-corner", {
+        autoAlpha: 1,
+      });
+
+      if (!reducedMotion) {
+        gsap.to(".union-mandala-spin", {
+          rotate: 360,
+          duration: 80,
+          repeat: -1,
+          ease: "none",
+          transformOrigin: "50% 50%",
+        });
+      }
+
       if (reducedMotion || !cinematic) {
         showSettled();
+        gsap.set(".opening-layer-union", { autoAlpha: 1, y: 0 });
+        gsap.set(".union-mandala-mask", { clipPath: "circle(50% at 50% 50%)" });
+        gsap.set(".union-caption, .union-caption-bn", { autoAlpha: 1, y: 0 });
+        gsap.set(".union-family-groom, .union-family-bride", {
+          autoAlpha: 1,
+          y: 0,
+        });
+        gsap.set(".union-family-row", { autoAlpha: 1, y: 0 });
+        gsap.set(".union-family-rule", { scaleX: 1 });
+        gsap.set(".union-finale", { autoAlpha: 1, y: 0 });
         entrancePlayedRef.current = true;
         return;
       }
@@ -261,67 +302,170 @@ export function GrandReveal() {
     enabled: cinematic,
     build: (timeline) => {
       /*
-       * Keep the full composition on screen for most of the pin.
-       * Only soft-exit in the final beat so we never hold a blank ivory frame
-       * before Scene 02 arrives.
+       * Shared atmosphere (birds/petals) never leaves.
+       * Timeline spans ~3 units → progress thirds:
+       * couple 0–⅓ | groom ⅓–⅔ | bride ⅔–1.
        */
       timeline
+        /* ── Beat A (0–1): hold couple ── */
         .fromTo(
           ".reveal-parallax-bg",
           { y: 0, scale: 1 },
-          {
-            y: -16,
-            scale: 1.02,
-            duration: 1,
-            ease: MOTION.easeScrub,
-          },
+          { y: -10, scale: 1.015, duration: 1, ease: MOTION.easeScrub },
           0,
         )
         .fromTo(
           ".reveal-parallax-photo",
           { y: 0 },
-          {
-            y: 8,
-            duration: 1,
-            ease: MOTION.easeScrub,
-          },
+          { y: 6, duration: 1, ease: MOTION.easeScrub },
           0,
         )
-        .fromTo(
-          ".reveal-exit-line",
-          { autoAlpha: 1, y: 0 },
+        .to(
+          ".opening-layer-couple",
           {
             autoAlpha: 0,
-            y: -8,
-            stagger: 0.04,
+            y: -14,
+            duration: 0.28,
+            ease: MOTION.easeScrub,
+          },
+          0.85,
+        )
+
+        /* ── Beat B1 (1–2): union card + groom family ── */
+        .to(
+          ".opening-layer-union",
+          { autoAlpha: 1, y: 0, duration: 0.3, ease: MOTION.easeScrub },
+          1.0,
+        )
+        .to(
+          ".union-glow",
+          {
+            autoAlpha: 0.5,
+            scale: 1,
+            duration: 0.4,
+            ease: MOTION.easeScrub,
+          },
+          1.05,
+        )
+        .to(
+          ".union-mandala-mask",
+          {
+            clipPath: "circle(50% at 50% 50%)",
+            duration: 0.5,
+            ease: MOTION.easeScrub,
+          },
+          1.05,
+        )
+        .to(
+          ".union-mandala-art",
+          { autoAlpha: 1, scale: 1, duration: 0.45, ease: MOTION.easeScrub },
+          1.08,
+        )
+        .fromTo(
+          ".union-shimmer",
+          { autoAlpha: 0.3, rotate: -12 },
+          {
+            autoAlpha: 0,
+            rotate: 18,
+            duration: 0.35,
+            ease: MOTION.easeScrub,
+          },
+          1.25,
+        )
+        .to(
+          ".union-caption",
+          { autoAlpha: 1, y: 0, duration: 0.25, ease: MOTION.easeScrub },
+          1.2,
+        )
+        .to(
+          ".union-caption-bn",
+          { autoAlpha: 1, y: 0, duration: 0.22, ease: MOTION.easeScrub },
+          1.28,
+        )
+        .to(
+          ".union-mandala-stage",
+          { scale: 0.72, y: -12, duration: 0.3, ease: MOTION.easeScrub },
+          1.35,
+        )
+        .to(
+          ".union-family-groom",
+          { autoAlpha: 1, y: 0, duration: 0.28, ease: MOTION.easeScrub },
+          1.4,
+        )
+        .to(
+          ".union-family-groom .union-family-rule",
+          { scaleX: 1, duration: 0.18, ease: MOTION.easeScrub },
+          1.48,
+        )
+        .to(
+          ".union-family-groom .union-family-row",
+          {
+            autoAlpha: 1,
+            y: 0,
+            stagger: 0.05,
             duration: 0.22,
             ease: MOTION.easeScrub,
           },
-          0.78,
+          1.52,
         )
-        .fromTo(
-          ".reveal-portrait-stage",
-          { autoAlpha: 1, y: 0, scale: 1 },
+        /* Hold groom through end of beat 2 */
+        .to({}, { duration: 0.28 }, 1.72)
+
+        /* Bridge into beat B2 */
+        .to(
+          ".union-family-groom",
           {
             autoAlpha: 0,
-            y: -10,
-            scale: 0.985,
+            y: -14,
+            duration: 0.24,
+            ease: MOTION.easeScrub,
+          },
+          2.0,
+        )
+        .to(
+          ".union-bridge",
+          {
+            autoAlpha: 1,
+            scaleX: 1,
+            duration: 0.2,
+            ease: MOTION.easeScrub,
+          },
+          2.02,
+        )
+        .to(
+          ".union-bridge",
+          { autoAlpha: 0, duration: 0.16, ease: MOTION.easeScrub },
+          2.18,
+        )
+
+        /* ── Beat B2 (2–3): bride family ── */
+        .to(
+          ".union-family-bride",
+          { autoAlpha: 1, y: 0, duration: 0.28, ease: MOTION.easeScrub },
+          2.15,
+        )
+        .to(
+          ".union-family-bride .union-family-rule",
+          { scaleX: 1, duration: 0.18, ease: MOTION.easeScrub },
+          2.25,
+        )
+        .to(
+          ".union-family-bride .union-family-row",
+          {
+            autoAlpha: 1,
+            y: 0,
+            stagger: 0.05,
             duration: 0.22,
             ease: MOTION.easeScrub,
           },
-          0.8,
+          2.3,
         )
-        .fromTo(
-          ".reveal-scene-fade",
-          { autoAlpha: 1 },
-          {
-            autoAlpha: 0,
-            duration: 0.18,
-            ease: MOTION.easeScrub,
-          },
-          0.84,
-        );
-      /* Atmosphere stays — prevents a dead flat empty screen during unpin. */
+        .to(
+          ".union-finale",
+          { autoAlpha: 1, y: 0, duration: 0.22, ease: MOTION.easeScrub },
+          2.55,
+        )
+        .to({}, { duration: 0.3 }, 2.7);
     },
   });
 
@@ -375,9 +519,8 @@ export function GrandReveal() {
         <FloatingPetals />
       </div>
 
-      {/* Editorial composition — no flex-1 grow, so content stays a tight stack */}
-      <div className="reveal-scene-fade relative z-10 flex w-full flex-col items-center text-center">
-        {/* B. Wedding identity / Bengali heading */}
+      {/* Layer A — couple composition */}
+      <div className="opening-layer-couple reveal-scene-fade relative z-10 flex w-full flex-col items-center text-center will-change-transform">
         <div className="reveal-heading-mask relative z-10 overflow-hidden pb-0.5">
           <p
             className={`reveal-kicker reveal-exit-line text-[1.15rem] leading-none text-sindoor-red sm:text-[1.25rem] ${
@@ -389,7 +532,6 @@ export function GrandReveal() {
         </div>
         <div className="reveal-exit-line mt-2 h-px w-11 bg-gradient-to-r from-transparent via-antique-gold/80 to-transparent" />
 
-        {/* C. Hero couple portrait — circular frame */}
         <div className="reveal-parallax-photo reveal-portrait-stage relative mt-2.5 w-[min(72vw,18.5rem)]">
           <div className="pointer-events-none absolute -inset-5 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(185,154,88,0.2)_0%,transparent_68%)]" />
 
@@ -412,7 +554,6 @@ export function GrandReveal() {
           </div>
         </div>
 
-        {/* D. Couple names */}
         <div className="mt-3 w-full px-1">
           <div className="reveal-names-bn-mask overflow-hidden pb-0.5">
             <h1 className="reveal-names-bn reveal-exit-line font-bn-display text-[1.65rem] leading-[1.22] text-balance text-[#5c1520] sm:text-[1.85rem]">
@@ -423,7 +564,6 @@ export function GrandReveal() {
             {copy.namesEn}
           </p>
 
-          {/* E. Date plaque + location */}
           <DateMedallion
             dateBn={copy.date}
             dateEn={copy.dateEn}
@@ -442,6 +582,11 @@ export function GrandReveal() {
             {copy.tagline}
           </p>
         </div>
+      </div>
+
+      {/* Layer B — family card (same canvas; birds/petals keep moving behind) */}
+      <div className="opening-layer-union pointer-events-none absolute inset-x-0 top-0 bottom-0 z-20 flex items-center justify-center">
+        <UnionFamilyCard />
       </div>
     </SceneWrapper>
   );
