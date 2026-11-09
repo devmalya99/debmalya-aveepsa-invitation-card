@@ -204,17 +204,21 @@ export function FinalScene() {
             <p className="font-display text-[0.55rem] tracking-[0.12em] text-antique-gold uppercase">
               Mazumdar Family
             </p>
-            <p className="mt-1 font-bn-display text-[0.82rem] leading-snug text-antique-ivory">
-              মজুমদার পরিবার
-            </p>
+            {isBengali ? (
+              <p className="mt-1 font-bn-display text-[0.82rem] leading-snug text-antique-ivory">
+                মজুমদার পরিবার
+              </p>
+            ) : null}
           </div>
           <div className="rx-family-right">
             <p className="font-display text-[0.55rem] tracking-[0.12em] text-antique-gold uppercase">
               Chakrabarti Family
             </p>
-            <p className="mt-1 font-bn-display text-[0.82rem] leading-snug text-antique-ivory">
-              চক্রবর্তী পরিবার
-            </p>
+            {isBengali ? (
+              <p className="mt-1 font-bn-display text-[0.82rem] leading-snug text-antique-ivory">
+                চক্রবর্তী পরিবার
+              </p>
+            ) : null}
           </div>
           <FamilyOrnament className="rx-family-ornament pointer-events-none absolute top-1/2 left-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 text-antique-gold/80" />
         </div>

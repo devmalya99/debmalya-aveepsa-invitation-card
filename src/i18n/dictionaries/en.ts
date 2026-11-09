@@ -12,10 +12,10 @@ const en: Dictionary = {
     welcomeSubtitle:
       "Choose a language. You can switch anytime without losing your place.",
     chooseEnglish: "Continue in English",
-    chooseBengali: "বাংলায় আমন্ত্রণটি দেখুন",
+    chooseBengali: "Continue in Bengali",
     switcherLabel: "Language",
     switchToEnglish: "English",
-    switchToBengali: "বাংলা",
+    switchToBengali: "BN",
   },
   nav: {
     home: "Opening",
@@ -38,7 +38,7 @@ const en: Dictionary = {
     invite: "Invite",
   },
   hero: {
-    shubhoBibaho: "শুভ বিবাহ",
+    shubhoBibaho: "Our Wedding",
     partnerOne: "Debmalya",
     ampersand: "&",
     partnerTwo: "Aveepsa",
@@ -68,7 +68,7 @@ const en: Dictionary = {
     scrollHint: "Keep scrolling the story",
     chapters: {
       cover: {
-        kicker: "শুভ বিবাহ",
+        kicker: "Our Wedding",
         title: "Once upon a Bengal evening",
         lines: [
           "Debmalya & Aveepsa",

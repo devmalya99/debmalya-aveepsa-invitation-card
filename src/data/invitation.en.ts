@@ -3,13 +3,12 @@ import { WEDDING_CARD_COPY } from "@/config/weddingCard";
 import type { InvitationContent } from "@/types/invitation";
 
 /**
- * English invitation copy.
- * Bengali names stay in original script where that better preserves identity.
+ * English invitation copy — English only (no Bengali script in EN locale).
  * Celebrations → `weddingCard.ts`. Family heritage → `familyHeritage.ts`.
  */
 export const invitationEN: InvitationContent = {
   meta: {
-    title: "শুভ বিবাহ — Debmalya & Aveepsa",
+    title: "Our Wedding — Debmalya & Aveepsa",
     description:
       "A digital Bengali wedding invitation for Debmalya & Aveepsa — 25 November 2026.",
   },
@@ -28,19 +27,25 @@ export const invitationEN: InvitationContent = {
   },
   grandReveal: {
     kicker: "Our Wedding",
-    namesBn: "দেবমাল্য ও অভীপ্সা",
+    blessing: "WITH THE BLESSINGS OF OUR FAMILIES",
+    monogram: "D & A",
+    nameOne: "Debmalya",
+    nameTwo: "Aveepsa",
+    ampersand: "&",
+    namesBn: "Debmalya & Aveepsa",
     namesEn: "DEBMALYA & AVEEPSA",
-    date: "২৫ নভেম্বর ২০২৬",
-    dateEn: "25 November 2026",
+    date: "25 NOVEMBER 2026",
+    dateEn: "25 NOVEMBER 2026",
     location: "Murshidabad, West Bengal",
-    tagline: "A celebration of Bengali heritage, love and togetherness",
+    tagline: "Two hearts, two families, one beautiful beginning.",
+    exploreLabel: "EXPLORE OUR WEDDING",
   },
   identities: toInvitationIdentities("en"),
   events: WEDDING_CARD_COPY.en,
   letter: {
     eyebrow: "An invitation from our families",
     salutation: "With warm regards",
-    bengaliTitle: "শুভ বিবাহ",
+    bengaliTitle: "Our Wedding",
     subtitle: "A celebration of love & togetherness",
     paragraphs: [
       "With joy in our hearts, our families invite you to celebrate the beautiful union of Debmalya and Aveepsa.",
@@ -51,32 +56,23 @@ export const invitationEN: InvitationContent = {
     date: "25 November 2026",
   },
   venue: {
-    greetingBn: "সাদর আমন্ত্রণ",
-    greetingEn: "With warm regards",
-    cordially: "You are cordially invited",
-    destinationEyebrow: "Our wedding destination",
-    cityBn: "রঘুনাথগঞ্জ, মুর্শিদাবাদ",
-    cityEn: "Raghunathganj, Murshidabad",
-    heritageTagline: "West Bengal, India",
-    lodgeBn: "ভাগীরথী লজ",
-    lodgeEn: "Bhagirathi Lodge",
-    addressBn: "রঘুনাথগঞ্জ, মুর্শিদাবাদ",
-    addressEn: "Raghunathganj, Murshidabad, West Bengal, India",
-    mapsLabel: "Open in Google Maps",
-    mapsUrl:
-      "https://www.google.com/maps/search/?api=1&query=Bhagirathi%20Lodge%20Raghunathganj%20Murshidabad",
-    blessing: "Your presence and blessings are our greatest gift.",
-    coupleNames: "DEBMALYA ♥ AVEEPSA",
+    eyebrow: "THE CELEBRATION",
+    heading: "A Place to Gather",
+    subtitle: "Where beautiful memories begin.",
+    photoCaption: "A MOMENT IN BENGAL",
+    storyHeading: "A Celebration of Love & Togetherness",
+    storyBody:
+      "Surrounded by the warmth of our families, we look forward to celebrating this beautiful beginning with everyone who holds a special place in our hearts.",
+    closing: "Your presence and blessings are our greatest gift.",
   },
   final: {
-    blessing:
-      "Your presence and blessings are our greatest gift.",
-    closingTitle: "শুভ পরিণয়",
+    blessing: "Your presence and blessings are our greatest gift.",
+    closingTitle: "A Blessed Union",
     names: "DEBMALYA ♥ AVEEPSA",
     familyLines: ["Mazumdar Family", "Chakrabarti Family"],
     weekdayEvening: "Wednesday · Evening",
     signatureSub: "A beautiful beginning",
-    familiesBn: "মজুমদার ও চক্রবর্তী পরিবার",
+    familiesBn: "Mazumdar & Chakrabarti Families",
     familiesEn: "Mazumdar & Chakrabarti Families",
   },
   guestForm: {

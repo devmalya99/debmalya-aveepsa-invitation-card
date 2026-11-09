@@ -1,11 +1,10 @@
 export const SCENE_SCROLL = {
   /*
-   * One pinned canvas: couple → groom → bride → festivities.
-   * Keep the pin short enough that auto-play / swipe don't linger ~10s per card.
+   * One pinned canvas: royal cover → families → festivities.
    */
-  "grand-reveal": { end: "+=200%" },
-  /* Enough pin for unveil, short enough that auto-play can pause mid-scene to read. */
-  "venue-reveal": { end: "+=120%" },
+  "grand-reveal": { end: "+=180%" },
+  /* Flowing editorial section — progress tracks natural height, no pin. */
+  "venue-reveal": { end: "bottom top" },
   "final-scene": { end: "+=100%" },
   /* Guest form is interactive — light scroll range only. */
   "guest-blessing": { end: "+=45%" },
@@ -35,23 +34,17 @@ export type ProgressStep = {
 };
 
 export const PROGRESS_STEPS: ProgressStep[] = [
-  { id: "couple", sceneId: "grand-reveal", pinStart: 0, pinEnd: 0.25 },
+  { id: "couple", sceneId: "grand-reveal", pinStart: 0, pinEnd: 1 / 3 },
   {
-    id: "groom-family",
+    id: "families",
     sceneId: "grand-reveal",
-    pinStart: 0.25,
-    pinEnd: 0.5,
-  },
-  {
-    id: "bride-family",
-    sceneId: "grand-reveal",
-    pinStart: 0.5,
-    pinEnd: 0.75,
+    pinStart: 1 / 3,
+    pinEnd: 2 / 3,
   },
   {
     id: "festivities",
     sceneId: "grand-reveal",
-    pinStart: 0.75,
+    pinStart: 2 / 3,
     pinEnd: 1,
   },
   { id: "venue-reveal", sceneId: "venue-reveal", pinStart: 0, pinEnd: 1 },

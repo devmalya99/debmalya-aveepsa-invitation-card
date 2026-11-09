@@ -55,20 +55,20 @@ export function getAmbientDensity() {
 
 /**
  * Auto-scroll pixels per frame while moving between readable stops.
- * Soft cruise — not a blur, not a multi-minute crawl.
+ * Keep this low — guests need time to read; holds do the resting.
  */
 export function getAutoScrollPxPerFrame() {
-  return isCoarseMobile() ? 7.5 : 8.5;
+  return isCoarseMobile() ? 3.6 : 4.2;
 }
 
 /** How long auto-play holds each opening card before snapping to the next. */
-export const OPENING_AUTO_HOLD_MS = 3200;
+export const OPENING_AUTO_HOLD_MS = 6000;
 
 /** Festivities has more copy (two dates) — hold longer before leaving. */
-export const OPENING_EXIT_HOLD_MS = 5200;
+export const OPENING_EXIT_HOLD_MS = 8000;
 
 /** Default pause on later scenes once readable. */
-export const SCENE_READ_HOLD_MS = 3800;
+export const SCENE_READ_HOLD_MS = 6500;
 
 /** Venue folio needs extra time for greeting + address. */
-export const VENUE_READ_HOLD_MS = 5600;
+export const VENUE_READ_HOLD_MS = 8000;

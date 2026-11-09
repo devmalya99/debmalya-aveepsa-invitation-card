@@ -21,6 +21,8 @@ export type FamilySideCopy = {
 };
 
 export type FamilyHeritageCopy = {
+  blessing: string;
+  monogram: string;
   headingEn: string;
   headingBn: string;
   closingLine: string;
@@ -35,6 +37,8 @@ export type FamilyHeritageCopy = {
 
 export const FAMILY_HERITAGE_COPY: Record<Locale, FamilyHeritageCopy> = {
   bn: {
+    blessing: "দুই পরিবারের আশীর্বাদে",
+    monogram: "D & A",
     headingEn: "THE UNION OF TWO FAMILIES",
     headingBn: "বাংলার দুই পরিবারের এক শুভ মিলন",
     closingLine: "United in love & blessings",
@@ -83,13 +87,15 @@ export const FAMILY_HERITAGE_COPY: Record<Locale, FamilyHeritageCopy> = {
     },
   },
   en: {
+    blessing: "WITH THE BLESSINGS OF OUR FAMILIES",
+    monogram: "D & A",
     headingEn: "THE UNION OF TWO FAMILIES",
-    headingBn: "বাংলার দুই পরিবারের এক শুভ মিলন",
+    headingBn: "THE UNION OF TWO FAMILIES",
     closingLine: "United in love & blessings",
     groomLabelEn: "The Groom",
     brideLabelEn: "The Bride",
-    groomLabelBn: "পাত্র",
-    brideLabelBn: "পাত্রী",
+    groomLabelBn: "The Groom",
+    brideLabelBn: "The Bride",
     unitedLine: "Debmalya & Aveepsa",
     groom: {
       sectionLabel: "Groom's family",
@@ -147,21 +153,22 @@ export const FAMILY_HERITAGE_DESIGN = {
     english: "var(--font-cormorant), Georgia, serif",
   },
   type: {
-    headingEnSize: "clamp(0.58rem, 1.7vw, 0.7rem)",
+    headingEnSize: "clamp(0.68rem, 2vw, 0.82rem)",
     headingEnTracking: "0.2em",
-    headingBnSize: "clamp(0.82rem, 2.6vw, 0.98rem)",
-    sectionSize: "clamp(0.55rem, 1.5vw, 0.65rem)",
+    headingBnSize: "clamp(0.95rem, 3vw, 1.15rem)",
+    sectionSize: "clamp(0.62rem, 1.8vw, 0.74rem)",
     sectionTracking: "0.18em",
-    nameSize: "clamp(1.2rem, 4.2vw, 1.55rem)",
-    nameLineHeight: "1.28",
-    labelSize: "clamp(0.58rem, 1.6vw, 0.68rem)",
-    valueSize: "clamp(0.82rem, 2.5vw, 0.95rem)",
-    closingSize: "clamp(0.55rem, 1.5vw, 0.65rem)",
+    nameSize: "clamp(1.55rem, 5.4vw, 2.05rem)",
+    nameLineHeight: "1.22",
+    labelSize: "clamp(0.62rem, 1.8vw, 0.74rem)",
+    valueSize: "clamp(0.95rem, 2.9vw, 1.12rem)",
+    closingSize: "clamp(0.6rem, 1.7vw, 0.72rem)",
   },
   layout: {
     contentMaxWidth: "21.5rem",
-    mandalaSize: "min(42vw, 9.75rem)",
-    mandalaMaxHeight: "16svh",
+    /* Large watermark behind copy — clipped circular. */
+    mandalaSize: "min(78vw, 19.5rem)",
+    mandalaMaxHeight: "42svh",
     cardPaddingX: "1.15rem",
     cardPaddingY: "1.05rem",
     borderInsetOuter: "0.45rem",
@@ -171,12 +178,14 @@ export const FAMILY_HERITAGE_DESIGN = {
 
 export const FAMILY_HERITAGE_MOTION = {
   ease: [0.22, 1, 0.36, 1] as const,
-  sequenceStartMs: 180,
-  mandalaDuration: 0.85,
+  sequenceStartMs: 120,
+  mandalaDuration: 0.75,
+  monogramDuration: 0.5,
+  blessingDuration: 0.5,
   headingDuration: 0.55,
-  nameDuration: 0.55,
-  rowDuration: 0.45,
-  rowStagger: 0.16,
+  nameDuration: 0.5,
+  rowDuration: 0.4,
+  rowStagger: 0.07,
   closingDuration: 0.5,
 } as const;
 

@@ -25,6 +25,7 @@ export function FestivitiesCard({ className = "" }: FestivitiesCardProps) {
   const [sequenceOn, setSequenceOn] = useState(false);
   const copy = getWeddingCardCopy(locale);
   const [wedding, reception] = copy.items;
+  const isBengali = locale === "bn";
   const instant = reducedMotion;
   const go = sequenceOn || instant;
   const d = (delay: number) => (instant ? 0 : delay);
@@ -43,7 +44,7 @@ export function FestivitiesCard({ className = "" }: FestivitiesCardProps) {
 
   return (
     <motion.div
-      className={`wedding-card relative flex h-full min-h-0 w-full flex-col items-center justify-center overflow-y-auto overscroll-contain ${className}`}
+      className={`wedding-card relative flex h-full min-h-0 w-full flex-col items-center justify-center overflow-hidden ${className}`}
       initial={instant ? false : { opacity: 0, scale: 0.98 }}
       animate={go ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.98 }}
       transition={{
@@ -89,40 +90,45 @@ export function FestivitiesCard({ className = "" }: FestivitiesCardProps) {
             {copy.eyebrow}
           </motion.p>
 
-          <div className="mt-2.5 overflow-hidden">
-            <motion.h2
-              className="text-balance"
-              style={{
-                fontFamily: "var(--wc-font-bn)",
-                fontSize: "var(--wc-heading-bn-size)",
-                lineHeight: 1.28,
-                color: "var(--wc-primary)",
-              }}
-              initial={false}
-              animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: "100%" }}
-              transition={{
-                duration: instant ? 0 : WEDDING_CARD_MOTION.headingDuration,
-                delay: d(0.18),
-                ease: WEDDING_CARD_MOTION.ease,
-              }}
-            >
-              {copy.headingBn}
-            </motion.h2>
-          </div>
+          {isBengali ? (
+            <div className="mt-2.5 overflow-hidden">
+              <motion.h2
+                className="text-balance"
+                style={{
+                  fontFamily: "var(--wc-font-bn)",
+                  fontSize: "var(--wc-heading-bn-size)",
+                  lineHeight: 1.28,
+                  color: "var(--wc-primary)",
+                }}
+                initial={false}
+                animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: "100%" }}
+                transition={{
+                  duration: instant ? 0 : WEDDING_CARD_MOTION.headingDuration,
+                  delay: d(0.18),
+                  ease: WEDDING_CARD_MOTION.ease,
+                }}
+              >
+                {copy.headingBn}
+              </motion.h2>
+            </div>
+          ) : null}
 
           <motion.p
-            className="mt-1.5"
+            className={isBengali ? "mt-1.5" : "mt-2.5"}
             style={{
               fontFamily: "var(--wc-font-en)",
-              fontSize: "var(--wc-heading-en-size)",
-              letterSpacing: "0.04em",
-              color: "var(--wc-secondary)",
+              fontSize: isBengali
+                ? "var(--wc-heading-en-size)"
+                : "var(--wc-heading-bn-size)",
+              letterSpacing: isBengali ? "0.04em" : "0.02em",
+              lineHeight: 1.28,
+              color: isBengali ? "var(--wc-secondary)" : "var(--wc-primary)",
             }}
             initial={false}
             animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
             transition={{
               duration: instant ? 0 : 0.45,
-              delay: d(0.36),
+              delay: d(isBengali ? 0.36 : 0.18),
               ease: WEDDING_CARD_MOTION.ease,
             }}
           >
@@ -132,7 +138,7 @@ export function FestivitiesCard({ className = "" }: FestivitiesCardProps) {
           <motion.p
             className="mt-1.5 text-balance"
             style={{
-              fontFamily: "var(--wc-font-bn)",
+              fontFamily: isBengali ? "var(--wc-font-bn)" : "var(--wc-font-en)",
               fontSize: "var(--wc-subtitle-size)",
               color: "var(--wc-body)",
               lineHeight: 1.4,
@@ -176,6 +182,7 @@ export function FestivitiesCard({ className = "" }: FestivitiesCardProps) {
             event={wedding}
             go={go}
             instant={instant}
+            showBengali={isBengali}
             baseDelay={WEDDING_CARD_MOTION.eventBaseDelays[0]}
           />
 
@@ -203,6 +210,7 @@ export function FestivitiesCard({ className = "" }: FestivitiesCardProps) {
             event={reception}
             go={go}
             instant={instant}
+            showBengali={isBengali}
             baseDelay={WEDDING_CARD_MOTION.eventBaseDelays[1]}
           />
         </div>

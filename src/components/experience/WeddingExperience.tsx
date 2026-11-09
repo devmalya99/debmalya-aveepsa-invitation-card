@@ -6,6 +6,7 @@ import { ScrollExperience } from "@/components/experience/ScrollExperience";
 import { MobileOnlyGate } from "@/components/mobile/MobileOnlyGate";
 import { LanguagePreference } from "@/components/envelope/LanguagePreference";
 import { EnvelopeIntro } from "@/components/scenes/EnvelopeIntro";
+import { VenueReveal } from "@/components/scenes/VenueReveal";
 import { InvitationHeader } from "@/components/navigation/InvitationHeader";
 import { AudioProvider } from "@/hooks/useAudio";
 import { AutoPlayProvider, useAutoPlay } from "@/hooks/useAutoPlay";
@@ -16,7 +17,7 @@ import { registerGsap, ScrollTrigger } from "@/lib/gsap";
 
 const OPENED_KEY = "wedding-invite-opened";
 /** Let guests read the couple card before auto-scroll starts. */
-const INTRO_HOLD_MS = 3200;
+const INTRO_HOLD_MS = 5500;
 
 const sceneLoading = () => (
   <div className="scene-shell surface-ivory min-h-svh" aria-hidden />
@@ -26,14 +27,6 @@ const GrandReveal = dynamic(
   () =>
     import("@/components/scenes/GrandReveal").then((mod) => ({
       default: mod.GrandReveal,
-    })),
-  { ssr: false, loading: sceneLoading },
-);
-
-const VenueReveal = dynamic(
-  () =>
-    import("@/components/scenes/VenueReveal").then((mod) => ({
-      default: mod.VenueReveal,
     })),
   { ssr: false, loading: sceneLoading },
 );
@@ -89,6 +82,7 @@ function ExperienceInner() {
         img.decoding = "async";
         img.src = src;
       };
+      warmImage(assets.decorations.royalCoverFrame);
       warmImage(assets.decorations.bhagirathiBoat);
       warmImage(assets.couple.finalBlessing);
       warmImage(assets.decorations.namasteFrame);
@@ -106,7 +100,6 @@ function ExperienceInner() {
     registerGsap();
     /* Mount venue+ immediately — delayed mount left auto-scroll stranded at pin end. */
     setLaterScenes(true);
-    void import("@/components/scenes/VenueReveal");
     void import("@/components/scenes/FinalScene");
     void import("@/components/scenes/GuestBlessingScene");
 

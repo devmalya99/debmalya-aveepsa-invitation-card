@@ -47,6 +47,7 @@
   --color-foreground: var(--foreground);
 
   --font-display: var(--font-cormorant);
+  --font-hero: var(--font-playfair);
   --font-body: var(--font-dm-sans);
   --font-letter: var(--font-lora);
   --font-bengali-display: var(--font-noto-serif-bengali);
@@ -104,6 +105,10 @@
 @layer utilities {
   .font-display {
     font-family: var(--font-cormorant), Georgia, serif;
+  }
+
+  .font-hero {
+    font-family: var(--font-playfair), Georgia, "Times New Roman", serif;
   }
 
   .font-body {
@@ -245,7 +250,7 @@
 
   /* Family heritage cards — tokens from src/config/familyHeritage.ts */
   .family-heritage {
-    --fh-bg: #f7eedc;
+    --fh-bg: #f8eedb;
     --fh-primary: #702632;
     --fh-secondary: #54232c;
     --fh-accent: #b58a50;
@@ -254,26 +259,50 @@
     --fh-border: #b58a50;
     --fh-font-bn: var(--font-noto-serif-bengali), serif;
     --fh-font-en: var(--font-cormorant), Georgia, serif;
-    --fh-heading-en-size: clamp(0.58rem, 1.7vw, 0.7rem);
-    --fh-heading-en-tracking: 0.2em;
-    --fh-heading-bn-size: clamp(0.82rem, 2.6vw, 0.98rem);
-    --fh-section-size: clamp(0.55rem, 1.5vw, 0.65rem);
+    --fh-font-hero: var(--font-playfair), Georgia, serif;
+    --fh-heading-en-size: clamp(0.62rem, 1.8vw, 0.74rem);
+    --fh-heading-en-tracking: 0.22em;
+    --fh-heading-bn-size: clamp(0.88rem, 2.8vw, 1.05rem);
+    --fh-blessing-size: clamp(0.58rem, 1.7vw, 0.68rem);
+    --fh-section-size: clamp(0.58rem, 1.7vw, 0.68rem);
     --fh-section-tracking: 0.18em;
-    --fh-name-size: clamp(1.2rem, 4.2vw, 1.55rem);
-    --fh-name-lh: 1.28;
-    --fh-label-size: clamp(0.58rem, 1.6vw, 0.68rem);
-    --fh-value-size: clamp(0.82rem, 2.5vw, 0.95rem);
-    --fh-closing-size: clamp(0.55rem, 1.5vw, 0.65rem);
-    --fh-content-max: 21.5rem;
-    --fh-mandala-size: min(42vw, 9.75rem);
-    --fh-mandala-max-h: 16svh;
-    --fh-pad-x: 1.15rem;
-    --fh-pad-y: 1.05rem;
-    --fh-border-outer: 0.45rem;
-    --fh-border-inner: 0.7rem;
+    --fh-name-size: clamp(1.05rem, 3.8vw, 1.35rem);
+    --fh-name-lh: 1.2;
+    --fh-relation-size: clamp(0.62rem, 1.8vw, 0.72rem);
+    --fh-label-size: clamp(0.52rem, 1.5vw, 0.6rem);
+    --fh-value-size: clamp(0.78rem, 2.4vw, 0.92rem);
+    --fh-closing-size: clamp(0.58rem, 1.7vw, 0.68rem);
+    --fh-content-max: 23rem;
+    --fh-mandala-size: min(72vw, 17.5rem);
+    --fh-mandala-max-h: 38svh;
+    --fh-pad-x: 1.05rem;
+    --fh-pad-y: 1rem;
+    --fh-border-outer: 0.4rem;
+    --fh-border-inner: 0.65rem;
     color: var(--fh-primary);
-    background-color: #f7eedc;
+    background-color: #f8eedb;
     color-scheme: only light;
+  }
+
+  .family-heritage-shimmer {
+    background: linear-gradient(
+      110deg,
+      transparent 35%,
+      color-mix(in srgb, var(--fh-muted-gold) 28%, transparent) 50%,
+      transparent 65%
+    );
+    background-size: 220% 100%;
+    animation: family-heritage-shimmer 7s ease-in-out infinite;
+  }
+
+  @keyframes family-heritage-shimmer {
+    0%,
+    100% {
+      background-position: 100% 0;
+    }
+    50% {
+      background-position: 0 0;
+    }
   }
 
   .family-heritage-paper {
@@ -316,7 +345,8 @@
   @media (prefers-reduced-motion: reduce) {
     .family-heritage-mandala-drift,
     .family-heritage-float,
-    .family-heritage-float-delayed {
+    .family-heritage-float-delayed,
+    .family-heritage-shimmer {
       animation: none;
     }
   }
@@ -326,6 +356,7 @@
     .family-heritage-mandala-drift,
     .family-heritage-float,
     .family-heritage-float-delayed,
+    .family-heritage-shimmer,
     .wedding-card-float,
     .wedding-card-float-delayed {
       animation: none;

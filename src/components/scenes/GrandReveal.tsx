@@ -14,7 +14,7 @@ import {
 } from "@/components/reveal/HeroOrnaments";
 import { FestivitiesCard } from "@/components/scenes/FestivitiesCard";
 import { OpeningCoupleCard } from "@/components/scenes/OpeningCoupleCard";
-import { UnionFamilyCard } from "@/components/scenes/UnionFamilyCard";
+import { UnionFamiliesCard } from "@/components/scenes/UnionFamiliesCard";
 import { assets } from "@/data/assets";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useOpeningBeat } from "@/hooks/useOpeningBeat";
@@ -28,24 +28,16 @@ import { gsap, registerGsap } from "@/lib/gsap";
 const LAYER_EASE = [0.22, 1, 0.36, 1] as const;
 
 const LAYER_MOTION = {
-  /* Soft fade only — element sequence lives inside OpeningCoupleCard.
-   * No CSS blur filters — expensive on mobile GPUs. */
   couple: {
     initial: { opacity: 0 },
     animate: { opacity: 1 },
-    exit: { opacity: 0, y: -28 },
+    exit: { opacity: 0, y: -20 },
   },
-  groom: {
-    initial: { opacity: 0, x: -80, rotate: -2.5, scale: 0.97 },
-    animate: { opacity: 1, x: 0, rotate: 0, scale: 1 },
-    exit: { opacity: 0, x: 64, rotate: 1.5, scale: 0.98 },
+  families: {
+    initial: { opacity: 0, y: 28 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -24 },
   },
-  bride: {
-    initial: { opacity: 0, x: 80, rotate: 2.5, scale: 0.97 },
-    animate: { opacity: 1, x: 0, rotate: 0, scale: 1 },
-    exit: { opacity: 0, x: -56, rotate: -1.5, scale: 0.98 },
-  },
-  /* Soft fade + scale — element sequence lives inside FestivitiesCard. */
   festivities: {
     initial: { opacity: 0, scale: 0.985 },
     animate: { opacity: 1, scale: 1 },
@@ -55,7 +47,7 @@ const LAYER_MOTION = {
 
 /**
  * Opening canvas — one pin, shared atmosphere.
- * Cards swap with Framer Motion from different directions.
+ * Beats: royal cover → families → festivities.
  */
 export function GrandReveal() {
   const { locale } = useLanguage();
@@ -66,6 +58,7 @@ export function GrandReveal() {
   const entrancePlayedRef = useRef(false);
   const { beat, onPinProgress, goNext, goPrev } = useOpeningBeat();
   const isBengali = locale === "bn";
+  const showAmbient = beat !== "couple";
 
   useOpeningLayerSwipe(layerRef, {
     enabled: !reducedMotion,
@@ -78,7 +71,6 @@ export function GrandReveal() {
       if (!sectionRef.current) return;
       registerGsap();
 
-      /* Atmosphere only — couple card owns its own Framer sequence. */
       const showSettled = () => {
         gsap.set(
           [
@@ -180,8 +172,8 @@ export function GrandReveal() {
     sceneId: "grand-reveal",
     enabled: cinematic,
     onProgress: onPinProgress,
+    fastScrollEnd: false,
     build: (timeline) => {
-      /* Pin spacer only — card swaps are Framer Motion, not scrub fades. */
       timeline
         .fromTo(
           ".reveal-parallax-bg",
@@ -193,7 +185,6 @@ export function GrandReveal() {
     },
   });
 
-  /* Always follow beat — swipe works even if pin mode is still hydrating. */
   const activeBeat = beat;
   const motionOff = reducedMotion;
 
@@ -203,46 +194,54 @@ export function GrandReveal() {
       id="grand-reveal"
       tone="ivory"
       className="overflow-hidden"
-      innerClassName="max-w-[26rem] justify-center sm:max-w-lg"
+      innerClassName="!max-w-none max-w-none px-0 pt-0 pb-0 sm:max-w-none"
     >
       <div className="reveal-atmosphere pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_28%,rgba(255,248,236,0.92)_0%,rgba(246,235,215,0.42)_48%,transparent_74%)]" />
+        {/* Opaque base so venue never shows through family/festivity layers. */}
+        <div className="absolute inset-0" style={{ backgroundColor: "#f6ebd6" }} />
         <div
-          className="absolute inset-0 opacity-[0.035]"
-          style={{
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
-          }}
-        />
-
-        <div className="reveal-parallax-bg reveal-mandala-wrap absolute top-[max(4.35rem,calc(env(safe-area-inset-top)+3.15rem))] left-1/2 h-[min(42vw,11.5rem)] w-[min(42vw,11.5rem)] -translate-x-1/2">
+          className="absolute inset-0 transition-opacity duration-500"
+          style={{ opacity: showAmbient ? 1 : 0 }}
+          aria-hidden={!showAmbient}
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_28%,rgba(255,248,236,0.92)_0%,rgba(246,235,215,0.55)_48%,rgba(246,235,214,0.92)_100%)]" />
           <div
-            className="relative h-full w-full overflow-hidden rounded-full"
+            className="absolute inset-0 opacity-[0.035]"
             style={{
-              maskImage:
-                "radial-gradient(circle, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.18) 46%, transparent 70%)",
-              WebkitMaskImage:
-                "radial-gradient(circle, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.18) 46%, transparent 70%)",
+              backgroundImage:
+                "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
             }}
-          >
-            <Image
-              src={assets.decorations.headingMandala}
-              alt=""
-              fill
-              className="reveal-mandala-art object-cover opacity-[0.28] [filter:sepia(0.4)_saturate(0.5)_brightness(1.18)]"
-              sizes="200px"
-            />
-            <AlpanaMandala className="absolute inset-0 h-full w-full opacity-100" />
-          </div>
-        </div>
+          />
 
-        <CornerLotus className="reveal-lotus absolute top-[max(5.1rem,calc(env(safe-area-inset-top)+3.8rem))] left-2.5 h-8 w-8 opacity-45 sm:left-4" />
-        <CornerLotus className="reveal-lotus absolute top-[max(5.1rem,calc(env(safe-area-inset-top)+3.8rem))] right-2.5 h-8 w-8 rotate-90 opacity-45 sm:right-4" />
-        <CornerLotus className="reveal-lotus absolute bottom-[8%] left-3 h-7 w-7 -rotate-90 opacity-30" />
-        <CornerLotus className="reveal-lotus absolute right-3 bottom-[8%] h-7 w-7 rotate-180 opacity-30" />
-        <GoldParticles />
-        <FlightOfBirds />
-        <FloatingPetals />
+          <div className="reveal-parallax-bg reveal-mandala-wrap absolute top-[max(4.35rem,calc(env(safe-area-inset-top)+3.15rem))] left-1/2 h-[min(42vw,11.5rem)] w-[min(42vw,11.5rem)] -translate-x-1/2">
+            <div
+              className="relative h-full w-full overflow-hidden rounded-full"
+              style={{
+                maskImage:
+                  "radial-gradient(circle, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.18) 46%, transparent 70%)",
+                WebkitMaskImage:
+                  "radial-gradient(circle, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.18) 46%, transparent 70%)",
+              }}
+            >
+              <Image
+                src={assets.decorations.headingMandala}
+                alt=""
+                fill
+                className="reveal-mandala-art object-cover opacity-[0.28] [filter:sepia(0.4)_saturate(0.5)_brightness(1.18)]"
+                sizes="200px"
+              />
+              <AlpanaMandala className="absolute inset-0 h-full w-full opacity-100" />
+            </div>
+          </div>
+
+          <CornerLotus className="reveal-lotus absolute top-[max(5.1rem,calc(env(safe-area-inset-top)+3.8rem))] left-2.5 h-8 w-8 opacity-45 sm:left-4" />
+          <CornerLotus className="reveal-lotus absolute top-[max(5.1rem,calc(env(safe-area-inset-top)+3.8rem))] right-2.5 h-8 w-8 rotate-90 opacity-45 sm:right-4" />
+          <CornerLotus className="reveal-lotus absolute bottom-[8%] left-3 h-7 w-7 -rotate-90 opacity-30" />
+          <CornerLotus className="reveal-lotus absolute right-3 bottom-[8%] h-7 w-7 rotate-180 opacity-30" />
+          <GoldParticles />
+          <FlightOfBirds />
+          <FloatingPetals />
+        </div>
       </div>
 
       <div
@@ -259,46 +258,35 @@ export function GrandReveal() {
           {activeBeat === "couple" ? (
             <motion.div
               key="opening-couple"
-              className="absolute inset-0 flex items-center justify-center"
+              className="absolute inset-0"
               initial={motionOff ? false : LAYER_MOTION.couple.initial}
               animate={LAYER_MOTION.couple.animate}
               exit={motionOff ? undefined : LAYER_MOTION.couple.exit}
-              transition={{ duration: 0.35, ease: LAYER_EASE }}
+              transition={{ duration: 0.4, ease: LAYER_EASE }}
             >
               <OpeningCoupleCard />
             </motion.div>
           ) : null}
 
-          {activeBeat === "groom" ? (
+          {activeBeat === "families" ? (
             <motion.div
-              key="opening-groom"
-              className="absolute inset-0 flex items-center justify-center"
-              initial={motionOff ? false : LAYER_MOTION.groom.initial}
-              animate={LAYER_MOTION.groom.animate}
-              exit={motionOff ? undefined : LAYER_MOTION.groom.exit}
-              transition={{ duration: 0.58, ease: LAYER_EASE }}
+              key="opening-families"
+              className="absolute inset-0 flex items-center justify-center px-4 pt-[max(4.25rem,calc(env(safe-area-inset-top)+3.25rem))] pb-6"
+              style={{ backgroundColor: "#f6ebd6" }}
+              initial={motionOff ? false : LAYER_MOTION.families.initial}
+              animate={LAYER_MOTION.families.animate}
+              exit={motionOff ? undefined : LAYER_MOTION.families.exit}
+              transition={{ duration: 0.5, ease: LAYER_EASE }}
             >
-              <UnionFamilyCard side="groom" />
-            </motion.div>
-          ) : null}
-
-          {activeBeat === "bride" ? (
-            <motion.div
-              key="opening-bride"
-              className="absolute inset-0 flex items-center justify-center"
-              initial={motionOff ? false : LAYER_MOTION.bride.initial}
-              animate={LAYER_MOTION.bride.animate}
-              exit={motionOff ? undefined : LAYER_MOTION.bride.exit}
-              transition={{ duration: 0.58, ease: LAYER_EASE }}
-            >
-              <UnionFamilyCard side="bride" />
+              <UnionFamiliesCard className="w-full max-w-[26rem]" />
             </motion.div>
           ) : null}
 
           {activeBeat === "festivities" ? (
             <motion.div
               key="opening-festivities"
-              className="absolute inset-0 flex items-center justify-center"
+              className="absolute inset-0 flex items-center justify-center px-4 pt-[max(4.25rem,calc(env(safe-area-inset-top)+3.25rem))] pb-6"
+              style={{ backgroundColor: "#f6ebd6" }}
               initial={motionOff ? false : LAYER_MOTION.festivities.initial}
               animate={LAYER_MOTION.festivities.animate}
               exit={motionOff ? undefined : LAYER_MOTION.festivities.exit}

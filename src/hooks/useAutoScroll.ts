@@ -3,8 +3,10 @@
 import { useEffect } from "react";
 import { useAutoPlay } from "@/hooks/useAutoPlay";
 import {
-  nextOpeningAutoTarget,
+  nextOpeningAutoTargetFromBeat,
+  OPENING_BEATS,
   progressForBeat,
+  type OpeningBeat,
 } from "@/hooks/useOpeningBeat";
 import { ScrollTrigger } from "@/lib/gsap";
 import {
@@ -14,8 +16,8 @@ import {
   SCENE_READ_HOLD_MS,
   VENUE_READ_HOLD_MS,
 } from "@/lib/performance";
+import { emitOpeningBeat } from "@/lib/openingBeatBus";
 
-/** Instant Y write — avoids CSS smooth scroll fighting RAF. */
 function scrollYTo(top: number) {
   window.scrollTo(0, top);
   ScrollTrigger.update();
@@ -23,29 +25,30 @@ function scrollYTo(top: number) {
 
 type SceneReadStop = {
   pinId: string;
-  /** Pin progress where the scene is readable enough to pause. */
   readAt: number;
   holdMs: number;
-  /** Softer approach so the unveil doesn’t blur past. */
   approachPx?: number;
 };
 
-/** Pause mid-pin so venue / finale can be read — then continue past. */
 const SCENE_READ_STOPS: SceneReadStop[] = [
   {
+    /* Flowing venue — hold early while the editorial folio is on screen. */
     pinId: "pin-venue-reveal",
-    readAt: 0.62,
+    readAt: 0.22,
     holdMs: VENUE_READ_HOLD_MS,
-    approachPx: 4.2,
+    approachPx: 2.8,
   },
-  { pinId: "pin-final-scene", readAt: 0.62, holdMs: SCENE_READ_HOLD_MS + 400 },
+  {
+    pinId: "pin-final-scene",
+    readAt: 0.55,
+    holdMs: SCENE_READ_HOLD_MS,
+    approachPx: 2.4,
+  },
 ];
 
 /**
- * Auto-play scroll:
- * - Opening: snap card → card with readable holds.
- * - Venue / finale: cruise to a readable frame, pause, then leave.
- * - Never dies at a temporary document end (late-mounted scenes).
+ * Auto-play: sequential opening beats only (cover → families → festivities).
+ * Never race scroll toward pin end.
  */
 export function useAutoScroll(enabled: boolean) {
   const { isAutoPlaying, markProgrammatic } = useAutoPlay();
@@ -63,11 +66,21 @@ export function useAutoScroll(enabled: boolean) {
     let leavingOpening = false;
     let endWaitStartedAt: number | null = null;
     let lastEndRefreshAt = 0;
+    let openingBeatIndex = 0;
     const heldPins = new Set<string>();
     const holdStartedAt = new Map<string, number>();
     const pxPerFrame = getAutoScrollPxPerFrame();
-    /* Leave festivities gently — a fast exit made the schedule card feel skipped. */
-    const exitPxPerFrame = Math.max(pxPerFrame * 1.15, 8);
+    const exitPxPerFrame = Math.max(pxPerFrame * 1.1, 4.5);
+
+    const snapOpeningBeat = (beat: OpeningBeat) => {
+      const pin = ScrollTrigger.getById("pin-grand-reveal");
+      if (!pin) return false;
+      const span = pin.end - pin.start;
+      if (span <= 0) return false;
+      emitOpeningBeat(beat);
+      scrollYTo(pin.start + span * progressForBeat(beat));
+      return true;
+    };
 
     const tick = () => {
       if (!active) return;
@@ -92,24 +105,36 @@ export function useAutoScroll(enabled: boolean) {
 
       const openingPin = ScrollTrigger.getById("pin-grand-reveal");
       const inOpening = Boolean(openingPin?.isActive);
-      const openingProgress = openingPin?.progress ?? 0;
 
-      if (inOpening && !leavingOpening) {
+      /* Still in opening journey — hold & snap beat-by-beat. */
+      if (!leavingOpening && openingBeatIndex < OPENING_BEATS.length) {
+        const currentBeat = OPENING_BEATS[openingBeatIndex] as OpeningBeat;
         const holdMs =
-          openingProgress >= 0.74 ? OPENING_EXIT_HOLD_MS : OPENING_AUTO_HOLD_MS;
+          currentBeat === "festivities"
+            ? OPENING_EXIT_HOLD_MS
+            : OPENING_AUTO_HOLD_MS;
+
+        /* Keep pin parked on this beat while holding (recovers if ST drifts). */
+        if (inOpening && openingPin) {
+          const target = progressForBeat(currentBeat);
+          if (Math.abs(openingPin.progress - target) > 0.04) {
+            snapOpeningBeat(currentBeat);
+          }
+        } else if (openingPin && openingBeatIndex < OPENING_BEATS.length - 1) {
+          /* Pin inactive too early — pull back to current beat, do not race to end. */
+          snapOpeningBeat(currentBeat);
+        }
 
         if (Date.now() - lastOpeningSnap >= holdMs) {
           lastOpeningSnap = Date.now();
-          markProgrammatic(1200);
-          const target = nextOpeningAutoTarget(openingProgress);
+          markProgrammatic(1600);
+          const target = nextOpeningAutoTargetFromBeat(currentBeat);
           if (target.type === "exit") {
             leavingOpening = true;
+            openingBeatIndex = OPENING_BEATS.length;
           } else {
-            const span = openingPin!.end - openingPin!.start;
-            const top =
-              openingPin!.start +
-              span * Math.min(1, Math.max(0, progressForBeat(target.beat)));
-            scrollYTo(top);
+            openingBeatIndex = OPENING_BEATS.indexOf(target.beat);
+            snapOpeningBeat(target.beat);
           }
         }
 
@@ -119,16 +144,18 @@ export function useAutoScroll(enabled: boolean) {
         }
       }
 
-      /* Venue / finale — pause once readable, then leave the pin. */
       for (const stop of SCENE_READ_STOPS) {
         if (heldPins.has(stop.pinId)) continue;
         const pin = ScrollTrigger.getById(stop.pinId);
-        if (!pin?.isActive) continue;
+        if (!pin) continue;
 
-        const span = pin.end - pin.start;
+        /* Venue is unpinned — only hold while the section is actually active. */
+        if (!pin.isActive) continue;
+
+        const span = Math.max(1, pin.end - pin.start);
         const readTop = pin.start + span * stop.readAt;
 
-        if (pin.progress < stop.readAt - 0.02) {
+        if (window.scrollY + 2 < readTop && pin.progress < stop.readAt - 0.02) {
           markProgrammatic(200);
           const approach = stop.approachPx ?? pxPerFrame;
           scrollYTo(Math.min(readTop, window.scrollY + approach));
@@ -138,7 +165,9 @@ export function useAutoScroll(enabled: boolean) {
 
         if (!holdStartedAt.has(stop.pinId)) {
           holdStartedAt.set(stop.pinId, Date.now());
-          scrollYTo(readTop);
+          if (stop.pinId !== "pin-venue-reveal") {
+            scrollYTo(readTop);
+          }
         }
 
         const heldFor = Date.now() - (holdStartedAt.get(stop.pinId) ?? 0);
@@ -152,16 +181,22 @@ export function useAutoScroll(enabled: boolean) {
       }
 
       markProgrammatic(200);
-      const step = leavingOpening && inOpening ? exitPxPerFrame : pxPerFrame;
-      scrollYTo(Math.min(max, window.scrollY + step));
 
-      if (leavingOpening && !inOpening) {
+      if (leavingOpening || inOpening) {
+        if (inOpening && openingPin) {
+          scrollYTo(Math.min(max, window.scrollY + exitPxPerFrame));
+          raf = window.requestAnimationFrame(tick);
+          return;
+        }
         leavingOpening = false;
       }
 
+      scrollYTo(Math.min(max, window.scrollY + pxPerFrame));
       raf = window.requestAnimationFrame(tick);
     };
 
+    /* Park on couple at start so first hold is readable. */
+    snapOpeningBeat("couple");
     raf = window.requestAnimationFrame(tick);
 
     return () => {

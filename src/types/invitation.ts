@@ -31,12 +31,18 @@ export type InvitationContent = {
   };
   grandReveal: {
     kicker: string;
+    blessing: string;
+    monogram: string;
+    nameOne: string;
+    nameTwo: string;
+    ampersand: string;
     namesBn: string;
     namesEn: string;
     date: string;
     dateEn: string;
     location: string;
     tagline: string;
+    exploreLabel: string;
   };
   identities: {
     groomLabelEn: string;
@@ -71,21 +77,13 @@ export type InvitationContent = {
     date: string;
   };
   venue: {
-    greetingBn: string;
-    greetingEn: string;
-    cordially: string;
-    destinationEyebrow: string;
-    cityBn: string;
-    cityEn: string;
-    heritageTagline: string;
-    lodgeBn: string;
-    lodgeEn: string;
-    addressBn: string;
-    addressEn: string;
-    mapsLabel: string;
-    mapsUrl: string;
-    blessing: string;
-    coupleNames: string;
+    eyebrow: string;
+    heading: string;
+    subtitle: string;
+    photoCaption: string;
+    storyHeading: string;
+    storyBody: string;
+    closing: string;
   };
   final: {
     blessing: string;

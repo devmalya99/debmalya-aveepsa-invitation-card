@@ -32,7 +32,7 @@ function stepIndexFor(sceneId: SceneId, pinProgress: number) {
 
 /**
  * Scene counter must use the same trigger + end as each scene's pin.
- * Opening canvas subdivides into couple / groom / bride progress steps.
+ * Opening canvas subdivides into cover / families / festivities progress steps.
  */
 export function useSceneProgress(enabled: boolean) {
   const [activeScene, setActiveScene] = useState<SceneId>(SCENE_ORDER[0]);
@@ -103,11 +103,13 @@ export function useSceneProgress(enabled: boolean) {
         const section = root.querySelector("section");
         const triggerElement = section ?? root;
 
+        const scrollEnd = SCENE_SCROLL[sceneId].end;
+        const isFlowEnd = !scrollEnd.startsWith("+=");
         const trigger = ScrollTrigger.create({
           id: `progress-${sceneId}`,
           trigger: triggerElement,
-          start: "top top",
-          end: SCENE_SCROLL[sceneId].end,
+          start: isFlowEnd ? "top 80%" : "top top",
+          end: scrollEnd,
           onEnter: () => activate(sceneId, 0),
           onEnterBack: () => activate(sceneId, 1),
           onUpdate: (self) => {

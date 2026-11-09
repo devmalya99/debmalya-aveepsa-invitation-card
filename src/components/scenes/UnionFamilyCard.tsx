@@ -108,16 +108,17 @@ export function UnionFamilyCard({ side, className = "" }: UnionFamilyCardProps) 
         aria-hidden
       />
 
+      {/* Mandala watermark — behind all copy */}
+      <FamilyHeritageMandala go={go} instant={instant} />
+
       <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center justify-center">
         <div
           className="flex w-full flex-col items-center"
           style={{ maxWidth: "var(--fh-content-max)" }}
         >
-          <FamilyHeritageMandala go={go} instant={instant} />
-
-          <header className="mt-3 w-full text-center sm:mt-3.5">
+          <header className="w-full text-center">
             <motion.p
-              className="uppercase"
+              className="font-semibold uppercase"
               style={{
                 fontFamily: "var(--fh-font-en)",
                 fontSize: "var(--fh-heading-en-size)",
@@ -139,31 +140,35 @@ export function UnionFamilyCard({ side, className = "" }: UnionFamilyCardProps) 
               {copy.headingEn}
             </motion.p>
 
-            <div className="mt-1.5 overflow-hidden">
-              <motion.p
-                className="text-balance"
-                style={{
-                  fontFamily: "var(--fh-font-bn)",
-                  fontSize: "var(--fh-heading-bn-size)",
-                  lineHeight: 1.4,
-                  color: "var(--fh-body)",
-                }}
-                initial={false}
-                animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: "105%" }}
-                transition={{
-                  duration: instant ? 0 : 0.6,
-                  delay: d(0.34),
-                  ease: FAMILY_HERITAGE_MOTION.ease,
-                }}
-              >
-                {copy.headingBn}
-              </motion.p>
-            </div>
+            {isBengali ? (
+              <div className="mt-1.5 overflow-hidden">
+                <motion.p
+                  className="text-balance font-semibold"
+                  style={{
+                    fontFamily: "var(--fh-font-bn)",
+                    fontSize: "var(--fh-heading-bn-size)",
+                    lineHeight: 1.4,
+                    color: "var(--fh-body)",
+                  }}
+                  initial={false}
+                  animate={
+                    go ? { opacity: 1, y: 0 } : { opacity: 0, y: "105%" }
+                  }
+                  transition={{
+                    duration: instant ? 0 : 0.6,
+                    delay: d(0.34),
+                    ease: FAMILY_HERITAGE_MOTION.ease,
+                  }}
+                >
+                  {copy.headingBn}
+                </motion.p>
+              </div>
+            ) : null}
           </header>
 
           <div className="mt-4 w-full text-center sm:mt-5">
             <motion.p
-              className="uppercase"
+              className="font-semibold uppercase"
               style={{
                 fontFamily: "var(--fh-font-en)",
                 fontSize: "var(--fh-section-size)",
@@ -182,7 +187,7 @@ export function UnionFamilyCard({ side, className = "" }: UnionFamilyCardProps) 
             </motion.p>
 
             <motion.h3
-              className="mt-2 text-balance"
+              className="mt-2 text-balance font-bold"
               style={{
                 fontFamily: isBengali ? "var(--fh-font-bn)" : "var(--fh-font-en)",
                 fontSize: "var(--fh-name-size)",

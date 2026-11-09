@@ -1,244 +1,320 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import {
-  DateMedallion,
-  PortraitArchFrame,
-} from "@/components/reveal/HeroOrnaments";
 import { assets } from "@/data/assets";
 import { useLanguage } from "@/hooks/useLanguage";
 import { usePrefersReducedMotion } from "@/hooks/useReducedMotion";
-import { gsap, registerGsap } from "@/lib/gsap";
 
 type OpeningCoupleCardProps = {
   className?: string;
 };
 
 const EASE = [0.22, 1, 0.36, 1] as const;
-/** Wait for envelope → film handoff to settle before the sequence starts. */
-const SEQUENCE_START_MS = 380;
 
-/** Layer A — couple composition with sequential Framer entrance. */
+/** Royal cover — artwork frame with editorial type in the ivory arch. */
 export function OpeningCoupleCard({ className = "" }: OpeningCoupleCardProps) {
   const { content, locale } = useLanguage();
   const reducedMotion = usePrefersReducedMotion();
-  const rootRef = useRef<HTMLDivElement>(null);
   const [sequenceOn, setSequenceOn] = useState(false);
   const copy = content.grandReveal;
   const isBengali = locale === "bn";
   const instant = reducedMotion;
+  const go = sequenceOn || instant;
 
   useEffect(() => {
     if (instant) {
       setSequenceOn(true);
       return;
     }
-    const timer = window.setTimeout(() => setSequenceOn(true), SEQUENCE_START_MS);
+    const timer = window.setTimeout(() => setSequenceOn(true), 40);
     return () => window.clearTimeout(timer);
   }, [instant]);
 
-  /* Ornament SVGs ship with dash-offset=1 for scrub scenes — settle them here. */
-  useLayoutEffect(() => {
-    if (!rootRef.current) return;
-    registerGsap();
-    const ctx = gsap.context(() => {
-      gsap.set(".reveal-draw-path", { strokeDashoffset: 0 });
-      gsap.set(".reveal-plaque-border, .reveal-plaque-border-inner", {
-        strokeDashoffset: 0,
-      });
-    }, rootRef);
-    return () => ctx.revert();
-  }, []);
-
-  const go = sequenceOn || instant;
+  const d = (ms: number) => (instant ? 0 : ms / 1000);
 
   return (
-    <div
-      ref={rootRef}
-      className={`reveal-scene-fade flex w-full flex-col items-center text-center ${className}`}
+    <article
+      className={`relative h-full min-h-0 w-full overflow-hidden ${className}`}
+      aria-label={isBengali ? "বিবাহ আমন্ত্রণ প্রচ্ছদ" : "Wedding invitation cover"}
     >
       <motion.div
-        className="reveal-heading-mask relative z-10 overflow-hidden pb-0.5"
+        className="absolute inset-0"
         initial={false}
-        animate={
-          go ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }
-        }
-        transition={{
-          duration: instant ? 0 : 0.55,
-          delay: instant ? 0 : 0.85,
-          ease: EASE,
-        }}
+        animate={go ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 1.04 }}
+        transition={{ duration: instant ? 0 : 0.55, ease: EASE }}
       >
-        <p
-          className={`reveal-kicker text-[1.15rem] leading-none text-sindoor-red sm:text-[1.25rem] ${
-            isBengali ? "font-bn-display" : "font-display tracking-[0.06em]"
-          }`}
-        >
-          {copy.kicker}
-        </p>
+        <Image
+          src={assets.decorations.royalCoverFrame}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[50%_42%]"
+        />
+        {/* Soft parchment wash so type stays legible in the ivory arch. */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse at 50% 38%, rgba(248,238,219,0.22) 0%, rgba(248,238,219,0.08) 42%, rgba(40,20,12,0.18) 100%)",
+          }}
+          aria-hidden
+        />
       </motion.div>
 
-      <motion.div
-        className="mt-2 h-px w-11 origin-center bg-gradient-to-r from-transparent via-antique-gold/80 to-transparent"
-        initial={false}
-        animate={go ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 }}
-        transition={{
-          duration: instant ? 0 : 0.45,
-          delay: instant ? 0 : 1.0,
-          ease: EASE,
-        }}
-      />
-
-      <motion.div
-        className="reveal-parallax-photo reveal-portrait-stage relative mt-2.5 w-[min(72vw,18.5rem)]"
-        initial={false}
-        animate={go ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.92 }}
-        transition={{
-          duration: instant ? 0 : 0.7,
-          delay: instant ? 0 : 0.05,
-          ease: EASE,
-        }}
-      >
-        <div className="pointer-events-none absolute -inset-5 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(185,154,88,0.2)_0%,transparent_68%)]" />
-
-        <div className="relative aspect-square w-full">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-col items-center justify-center px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-[max(3.75rem,calc(env(safe-area-inset-top)+2.75rem))]">
+        <div className="flex w-full max-w-[22rem] flex-col items-center text-center sm:max-w-[26rem]">
+          {/* Monogram */}
           <motion.div
-            className="absolute inset-0"
+            className="relative mb-3 flex h-14 w-14 items-center justify-center sm:mb-4 sm:h-16 sm:w-16"
             initial={false}
-            animate={go ? { opacity: 1 } : { opacity: 0 }}
+            animate={
+              go
+                ? { opacity: 1, scale: 1, rotate: 0 }
+                : { opacity: 0, scale: 0.86, rotate: -6 }
+            }
             transition={{
-              duration: instant ? 0 : 0.55,
-              delay: instant ? 0 : 0.15,
+              duration: instant ? 0 : 0.5,
+              delay: d(900),
               ease: EASE,
             }}
+            whileHover={instant ? undefined : { scale: 1.04 }}
           >
-            <PortraitArchFrame />
+            <svg
+              viewBox="0 0 64 64"
+              className="absolute inset-0 h-full w-full"
+              aria-hidden
+            >
+              <motion.circle
+                cx="32"
+                cy="32"
+                r="29"
+                fill="none"
+                stroke="rgba(181,138,80,0.75)"
+                strokeWidth="0.9"
+                strokeLinecap="round"
+                initial={false}
+                style={{ pathLength: 0 }}
+                animate={
+                  go
+                    ? { pathLength: 1, opacity: 1 }
+                    : { pathLength: 0, opacity: 0.35 }
+                }
+                transition={{
+                  duration: instant ? 0 : 0.7,
+                  delay: d(400),
+                  ease: EASE,
+                }}
+              />
+              <motion.circle
+                cx="32"
+                cy="32"
+                r="25.5"
+                fill="none"
+                stroke="rgba(217,189,140,0.55)"
+                strokeWidth="0.55"
+                strokeLinecap="round"
+                initial={false}
+                style={{ pathLength: 0 }}
+                animate={
+                  go
+                    ? { pathLength: 1, opacity: 1 }
+                    : { pathLength: 0, opacity: 0.25 }
+                }
+                transition={{
+                  duration: instant ? 0 : 0.65,
+                  delay: d(520),
+                  ease: EASE,
+                }}
+              />
+            </svg>
+            <span
+              className={`relative z-10 text-[0.95rem] tracking-[0.08em] text-[#5c1520] sm:text-[1.05rem] ${
+                isBengali ? "font-bn-display" : "font-hero"
+              }`}
+            >
+              {copy.monogram}
+            </span>
           </motion.div>
 
-          <div className="absolute inset-[5.5%] overflow-hidden rounded-full">
-            <motion.div
-              className="reveal-photo-reveal absolute inset-0 overflow-hidden rounded-full bg-[#2a1612] shadow-[inset_0_12px_28px_rgba(40,16,12,0.28)]"
+          {/* Blessing */}
+          <div className="overflow-hidden">
+            <motion.p
+              className={`text-[0.62rem] tracking-[0.28em] text-[#B58A50] uppercase sm:text-[0.68rem] ${
+                isBengali ? "font-bn-body tracking-[0.12em] normal-case" : "font-display"
+              }`}
               initial={false}
-              animate={
-                go
-                  ? { clipPath: "circle(78% at 50% 50%)", opacity: 1 }
-                  : { clipPath: "circle(0% at 50% 58%)", opacity: 0.85 }
-              }
+              animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: "110%" }}
               transition={{
-                duration: instant ? 0 : 1.05,
-                delay: instant ? 0 : 0.12,
+                duration: instant ? 0 : 0.55,
+                delay: d(1300),
                 ease: EASE,
               }}
             >
-              <motion.div
-                className="absolute inset-0"
+              {copy.blessing}
+            </motion.p>
+          </div>
+
+          {/* Names */}
+          <div className="mt-3 flex w-full flex-col items-center gap-0.5 sm:mt-4">
+            <div className="overflow-hidden pb-0.5">
+              <motion.h1
+                className={`text-[clamp(2rem,9vw,2.85rem)] leading-[1.05] text-[#5c1520] ${
+                  isBengali ? "font-bn-display font-semibold" : "font-hero font-medium"
+                }`}
                 initial={false}
-                animate={go ? { scale: 1 } : { scale: 1.14 }}
+                animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: "110%" }}
                 transition={{
-                  duration: instant ? 0 : 1.25,
-                  delay: instant ? 0 : 0.12,
+                  duration: instant ? 0 : 0.6,
+                  delay: d(1800),
                   ease: EASE,
                 }}
               >
-                <Image
-                  src={assets.couple.grandReveal}
-                  alt={copy.namesEn}
-                  fill
-                  priority
-                  unoptimized
-                  className="reveal-photo object-cover object-[42%_center]"
-                  sizes="(max-width: 430px) 72vw, 296px"
-                />
-              </motion.div>
-            </motion.div>
+                {copy.nameOne}
+              </motion.h1>
+            </div>
+            <div className="overflow-hidden">
+              <motion.span
+                className={`block text-[clamp(1.15rem,4.5vw,1.45rem)] leading-none text-[#B58A50] ${
+                  isBengali ? "font-bn-display" : "font-display italic"
+                }`}
+                initial={false}
+                animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: "110%" }}
+                transition={{
+                  duration: instant ? 0 : 0.5,
+                  delay: d(2050),
+                  ease: EASE,
+                }}
+              >
+                {copy.ampersand}
+              </motion.span>
+            </div>
+            <div className="overflow-hidden pb-0.5">
+              <motion.h2
+                className={`text-[clamp(2rem,9vw,2.85rem)] leading-[1.05] text-[#5c1520] ${
+                  isBengali ? "font-bn-display font-semibold" : "font-hero font-medium"
+                }`}
+                initial={false}
+                animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: "110%" }}
+                transition={{
+                  duration: instant ? 0 : 0.6,
+                  delay: d(2200),
+                  ease: EASE,
+                }}
+              >
+                {copy.nameTwo}
+              </motion.h2>
+            </div>
           </div>
-        </div>
-      </motion.div>
 
-      <div className="mt-3 w-full px-1">
-        <div className="reveal-names-bn-mask overflow-hidden pb-0.5">
-          <motion.h1
-            className="reveal-names-bn font-bn-display text-[1.65rem] leading-[1.22] text-balance text-[#5c1520] sm:text-[1.85rem]"
+          {/* Date frame */}
+          <motion.div
+            className="mt-4 flex w-full max-w-[14rem] flex-col items-center sm:mt-5"
             initial={false}
-            animate={go ? { opacity: 1, y: "0%" } : { opacity: 0, y: "110%" }}
+            animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
             transition={{
-              duration: instant ? 0 : 0.6,
-              delay: instant ? 0 : 1.15,
+              duration: instant ? 0 : 0.5,
+              delay: d(2500),
               ease: EASE,
             }}
           >
-            {copy.namesBn}
-          </motion.h1>
+            <div
+              className="h-px w-12"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent, rgba(181,138,80,0.85), transparent)",
+              }}
+              aria-hidden
+            />
+            <div
+              className="mt-2.5 w-full px-3 py-2"
+              style={{
+                boxShadow:
+                  "inset 0 0 0 1px rgba(181,138,80,0.45), inset 0 0 0 3px rgba(217,189,140,0.28)",
+              }}
+            >
+              <p
+                className={`text-[0.78rem] tracking-[0.18em] text-[#5c1520] uppercase sm:text-[0.85rem] ${
+                  isBengali
+                    ? "font-bn-display tracking-[0.04em] normal-case"
+                    : "font-display"
+                }`}
+              >
+                {isBengali ? copy.date : copy.dateEn}
+              </p>
+            </div>
+            <div
+              className="mt-2.5 h-px w-12"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent, rgba(181,138,80,0.85), transparent)",
+              }}
+              aria-hidden
+            />
+          </motion.div>
+
+          {/* Romantic line + explore */}
+          <motion.p
+            className={`mt-4 max-w-[17rem] text-[0.78rem] leading-relaxed text-[#702632]/88 sm:mt-5 sm:text-[0.84rem] ${
+              isBengali ? "font-bn-body" : "font-display italic"
+            }`}
+            initial={false}
+            animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            transition={{
+              duration: instant ? 0 : 0.5,
+              delay: d(3000),
+              ease: EASE,
+            }}
+          >
+            {copy.tagline}
+          </motion.p>
+
+          <motion.div
+            className="mt-3 flex flex-col items-center gap-1.5 sm:mt-4"
+            initial={false}
+            animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            transition={{
+              duration: instant ? 0 : 0.5,
+              delay: d(3200),
+              ease: EASE,
+            }}
+          >
+            <p
+              className={`text-[0.58rem] tracking-[0.24em] text-[#B58A50] uppercase sm:text-[0.62rem] ${
+                isBengali ? "font-bn-body tracking-[0.08em] normal-case" : "font-display"
+              }`}
+            >
+              {copy.exploreLabel}
+            </p>
+            <motion.span
+              className="block text-[#B58A50]"
+              aria-hidden
+              animate={
+                instant
+                  ? { y: 0 }
+                  : { y: [0, 5, 0] }
+              }
+              transition={
+                instant
+                  ? { duration: 0 }
+                  : { duration: 1.8, repeat: Infinity, ease: "easeInOut", delay: d(3600) }
+              }
+            >
+              <svg width="14" height="18" viewBox="0 0 14 18" fill="none">
+                <path
+                  d="M7 1v12.5M7 13.5 2.5 9M7 13.5 11.5 9"
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </motion.span>
+          </motion.div>
         </div>
-
-        <motion.p
-          className="reveal-names-en mt-1 font-display text-[0.88rem] tracking-[0.12em] text-deep-burgundy/88 uppercase sm:text-[0.94rem]"
-          initial={false}
-          animate={
-            go
-              ? { opacity: 1, y: 0, letterSpacing: "0.12em" }
-              : { opacity: 0, y: 10, letterSpacing: "0.22em" }
-          }
-          transition={{
-            duration: instant ? 0 : 0.55,
-            delay: instant ? 0 : 1.32,
-            ease: EASE,
-          }}
-        >
-          {copy.namesEn}
-        </motion.p>
-
-        <motion.div
-          className="reveal-date-plaque"
-          initial={false}
-          animate={
-            go
-              ? { opacity: 1, y: 0, scale: 1 }
-              : { opacity: 0, y: 14, scale: 0.97 }
-          }
-          transition={{
-            duration: instant ? 0 : 0.55,
-            delay: instant ? 0 : 1.48,
-            ease: EASE,
-          }}
-        >
-          <DateMedallion
-            dateBn={copy.date}
-            dateEn={copy.dateEn}
-            className="mt-3"
-          />
-        </motion.div>
-
-        <motion.p
-          className="reveal-location mt-3 font-display text-[0.78rem] tracking-[0.05em] text-deep-burgundy/85"
-          initial={false}
-          animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-          transition={{
-            duration: instant ? 0 : 0.5,
-            delay: instant ? 0 : 1.64,
-            ease: EASE,
-          }}
-        >
-          {copy.location}
-        </motion.p>
-
-        <motion.p
-          className={`reveal-tagline mx-auto mt-1.5 max-w-[17rem] text-[0.74rem] leading-relaxed text-deep-burgundy/75 ${
-            isBengali ? "font-bn-body" : "font-display italic"
-          }`}
-          initial={false}
-          animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-          transition={{
-            duration: instant ? 0 : 0.55,
-            delay: instant ? 0 : 1.78,
-            ease: EASE,
-          }}
-        >
-          {copy.tagline}
-        </motion.p>
       </div>
-    </div>
+    </article>
   );
 }

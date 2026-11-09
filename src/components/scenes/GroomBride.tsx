@@ -1,5 +1,5 @@
 /**
- * @deprecated Family identity UI now lives in UnionFamilyCard and plays
- * inside the shared GrandReveal opening canvas (couple → groom → bride).
+ * @deprecated Family identity now lives in UnionFamiliesCard
+ * on the shared GrandReveal opening canvas (cover → families → festivities).
  */
-export { UnionFamilyCard as GroomBride } from "@/components/scenes/UnionFamilyCard";
+export { UnionFamiliesCard as GroomBride } from "@/components/scenes/UnionFamiliesCard";

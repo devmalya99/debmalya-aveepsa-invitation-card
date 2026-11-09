@@ -4,17 +4,19 @@ import { motion } from "motion/react";
 import { WEDDING_CARD_MOTION } from "@/config/weddingCard";
 
 type WeddingCardDatePlaqueProps = {
-  bengaliDate: string;
+  date: string;
   go: boolean;
   instant: boolean;
   delay: number;
+  useBengaliScript?: boolean;
 };
 
 export function WeddingCardDatePlaque({
-  bengaliDate,
+  date,
   go,
   instant,
   delay,
+  useBengaliScript = true,
 }: WeddingCardDatePlaqueProps) {
   return (
     <motion.div
@@ -41,18 +43,26 @@ export function WeddingCardDatePlaque({
       >
         <span
           className="pointer-events-none absolute inset-[3px]"
-          style={{ boxShadow: "inset 0 0 0 1px color-mix(in srgb, var(--wc-plaque-border) 45%, transparent)" }}
+          style={{
+            boxShadow:
+              "inset 0 0 0 1px color-mix(in srgb, var(--wc-plaque-border) 45%, transparent)",
+          }}
           aria-hidden
         />
         <p
           className="relative text-center"
           style={{
-            fontFamily: "var(--wc-font-bn)",
-            fontSize: "var(--wc-date-bn-size)",
+            fontFamily: useBengaliScript
+              ? "var(--wc-font-bn)"
+              : "var(--wc-font-en)",
+            fontSize: useBengaliScript
+              ? "var(--wc-date-bn-size)"
+              : "var(--wc-date-en-size)",
             lineHeight: 1.35,
+            letterSpacing: useBengaliScript ? undefined : "0.04em",
           }}
         >
-          {bengaliDate}
+          {date}
         </p>
       </div>
     </motion.div>

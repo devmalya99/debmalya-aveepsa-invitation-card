@@ -3,7 +3,7 @@ import { fontVariables } from "@/app/theme/fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "শুভ বিবাহ — Debmalya & Aveepsa",
+  title: "Our Wedding — Debmalya & Aveepsa",
   description:
     "A celebration of Bengali heritage, love and togetherness — Debmalya & Aveepsa, 25 November 2026.",
   other: {

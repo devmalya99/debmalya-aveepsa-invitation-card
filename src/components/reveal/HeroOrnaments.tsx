@@ -677,10 +677,13 @@ export function CornerLotus({ className = "" }: ClassProps) {
 export function DateMedallion({
   dateBn,
   dateEn,
+  showBengali = true,
   className = "",
 }: {
   dateBn: string;
   dateEn: string;
+  /** When false (English locale), only the English date is shown. */
+  showBengali?: boolean;
   className?: string;
 }) {
   return (
@@ -744,10 +747,18 @@ export function DateMedallion({
         <circle cx="24" cy="3.5" r="1.1" fill="currentColor" opacity="0.55" />
       </svg>
 
-      <p className="reveal-date-bn relative z-10 mt-1.5 text-center font-bn-display text-[1.05rem] leading-snug text-sindoor-red">
-        {dateBn}
-      </p>
-      <p className="reveal-date-en relative z-10 mt-1 text-center font-display text-[0.78rem] tracking-[0.08em] text-deep-burgundy/90">
+      {showBengali ? (
+        <p className="reveal-date-bn relative z-10 mt-1.5 text-center font-bn-display text-[1.05rem] leading-snug text-sindoor-red">
+          {dateBn}
+        </p>
+      ) : null}
+      <p
+        className={`reveal-date-en relative z-10 text-center font-display tracking-[0.08em] text-deep-burgundy/90 ${
+          showBengali
+            ? "mt-1 text-[0.78rem]"
+            : "mt-1.5 text-[1.02rem] leading-snug text-sindoor-red"
+        }`}
+      >
         {dateEn}
       </p>
     </div>

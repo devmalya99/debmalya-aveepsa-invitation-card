@@ -13,7 +13,7 @@ export function SectionIndicator({
   enabled,
   className = "",
 }: SectionIndicatorProps) {
-  const { content } = useLanguage();
+  const { content, locale } = useLanguage();
   const { index, total, progress } = useSceneProgress(enabled);
 
   if (!enabled) return null;
@@ -23,10 +23,15 @@ export function SectionIndicator({
   const totalLabel = String(total).padStart(2, "0");
   /* Bar reflects overall journey; number is the active scene only. */
   const fill = Math.min(1, Math.max(0, (safeIndex + progress) / total));
+  const isBengali = locale === "bn";
 
   return (
     <div className={`min-w-0 ${className}`}>
-      <p className="font-bn-display text-[0.68rem] leading-none tracking-normal text-antique-gold">
+      <p
+        className={`text-[0.68rem] leading-none tracking-normal text-antique-gold ${
+          isBengali ? "font-bn-display" : "font-display tracking-[0.06em]"
+        }`}
+      >
         {content.common.wedding}
       </p>
 

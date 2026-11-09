@@ -5,12 +5,20 @@ import {
   Lora,
   Noto_Sans_Bengali,
   Noto_Serif_Bengali,
+  Playfair_Display,
 } from "next/font/google";
 
 export const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-cormorant",
+  display: "swap",
+});
+
+export const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-playfair",
   display: "swap",
 });
 
@@ -53,6 +61,7 @@ export const hindSiliguri = Hind_Siliguri({
 
 export const fontVariables = [
   cormorant.variable,
+  playfair.variable,
   dmSans.variable,
   lora.variable,
   notoSerifBengali.variable,

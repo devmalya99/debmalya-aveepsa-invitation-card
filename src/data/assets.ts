@@ -4,7 +4,7 @@
  */
 export const assets = {
   couple: {
-    grandReveal: "/images/couple/couple-grand-reveal-v2.jpg",
+    grandReveal: "/images/couple/couple-grand-reveal-v3.jpg",
     finalBlessing: "/images/couple/couple-02.jpg",
   },
   decorations: {
@@ -27,6 +27,7 @@ export const assets = {
     kolkataHeritage: "/decorations/invitation/kolkata-heritage.jpg",
     balconyFrame: "/decorations/invitation/balcony-frame.jpg",
     namasteFrame: "/decorations/invitation/namaste-couple-frame.jpg",
+    royalCoverFrame: "/decorations/invitation/royal-cover-frame.jpg",
     mandapCeremony: "/decorations/invitation/mandap-ceremony.jpg",
     murshidabadSketch: "/decorations/venue/murshidabad-heritage-sketch.png",
     hazarduari: "/decorations/venue/hazarduari-palace.jpg",

@@ -59,7 +59,7 @@ export const WEDDING_CARD_COPY: Record<Locale, WeddingCardCopy> = {
   },
   en: {
     eyebrow: "The Wedding Festivities",
-    headingBn: "শুভ অনুষ্ঠান সূচী",
+    headingBn: "Wedding Celebrations",
     headingEn: "Wedding Celebrations",
     subtitle: "Two special days · One beautiful beginning",
     closingNames: "Debmalya & Aveepsa",
@@ -67,9 +67,9 @@ export const WEDDING_CARD_COPY: Record<Locale, WeddingCardCopy> = {
     items: [
       {
         id: "wedding",
-        titleBn: "গাত্রহরিদ্রা ও শুভবিবাহ",
+        titleBn: "Gaye Holud & Wedding",
         titleEn: "Gaye Holud & Wedding",
-        bengaliDate: "৮ই অগ্রহায়ণ, ১৪৩৩",
+        bengaliDate: "25 November 2026",
         englishDate: "25 November 2026",
         day: "Wednesday",
         time: "Evening",
@@ -77,9 +77,9 @@ export const WEDDING_CARD_COPY: Record<Locale, WeddingCardCopy> = {
       },
       {
         id: "reception",
-        titleBn: "প্রীতিভোজ",
+        titleBn: "Wedding Reception",
         titleEn: "Wedding Reception",
-        bengaliDate: "১০ই অগ্রহায়ণ, ১৪৩৩",
+        bengaliDate: "27 November 2026",
         englishDate: "27 November 2026",
         day: "Friday",
         time: "Evening",

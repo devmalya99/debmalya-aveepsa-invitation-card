@@ -12,6 +12,8 @@ type WeddingCardEventBlockProps = {
   go: boolean;
   instant: boolean;
   baseDelay: number;
+  /** English locale must not render Bengali titles/dates. */
+  showBengali?: boolean;
 };
 
 export function WeddingCardEventBlock({
@@ -19,6 +21,7 @@ export function WeddingCardEventBlock({
   go,
   instant,
   baseDelay,
+  showBengali = true,
 }: WeddingCardEventBlockProps) {
   const d = (offset: number) => (instant ? 0 : baseDelay + offset);
   const accentColor =
@@ -39,10 +42,12 @@ export function WeddingCardEventBlock({
         className="uppercase"
         style={{
           fontFamily: "var(--wc-font-en)",
-          fontSize: "var(--wc-event-label-size)",
-          letterSpacing: "0.18em",
-          color: accentColor,
-          lineHeight: 1,
+          fontSize: showBengali
+            ? "var(--wc-event-label-size)"
+            : "var(--wc-event-title-size)",
+          letterSpacing: showBengali ? "0.18em" : "0.08em",
+          color: showBengali ? accentColor : "var(--wc-secondary)",
+          lineHeight: 1.25,
         }}
         initial={false}
         animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
@@ -55,53 +60,58 @@ export function WeddingCardEventBlock({
         {event.titleEn}
       </motion.p>
 
-      <motion.h3
-        className="mt-2 text-balance"
-        style={{
-          fontFamily: "var(--wc-font-bn)",
-          fontSize: "var(--wc-event-title-size)",
-          lineHeight: 1.3,
-          color: "var(--wc-secondary)",
-        }}
-        initial={false}
-        animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
-        transition={{
-          duration: instant ? 0 : 0.5,
-          delay: d(0.14),
-          ease: WEDDING_CARD_MOTION.ease,
-        }}
-      >
-        {event.titleBn}
-      </motion.h3>
+      {showBengali ? (
+        <motion.h3
+          className="mt-2 text-balance"
+          style={{
+            fontFamily: "var(--wc-font-bn)",
+            fontSize: "var(--wc-event-title-size)",
+            lineHeight: 1.3,
+            color: "var(--wc-secondary)",
+          }}
+          initial={false}
+          animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+          transition={{
+            duration: instant ? 0 : 0.5,
+            delay: d(0.14),
+            ease: WEDDING_CARD_MOTION.ease,
+          }}
+        >
+          {event.titleBn}
+        </motion.h3>
+      ) : null}
 
       <WeddingCardDatePlaque
-        bengaliDate={event.bengaliDate}
+        date={showBengali ? event.bengaliDate : event.englishDate}
+        useBengaliScript={showBengali}
         go={go}
         instant={instant}
         delay={d(0.24)}
       />
 
-      <motion.p
-        className="mt-2.5"
-        style={{
-          fontFamily: "var(--wc-font-en)",
-          fontSize: "var(--wc-date-en-size)",
-          lineHeight: 1.35,
-          color: "var(--wc-primary)",
-        }}
-        initial={false}
-        animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
-        transition={{
-          duration: instant ? 0 : 0.4,
-          delay: d(0.34),
-          ease: WEDDING_CARD_MOTION.ease,
-        }}
-      >
-        {event.englishDate}
-      </motion.p>
+      {showBengali ? (
+        <motion.p
+          className="mt-2.5"
+          style={{
+            fontFamily: "var(--wc-font-en)",
+            fontSize: "var(--wc-date-en-size)",
+            lineHeight: 1.35,
+            color: "var(--wc-primary)",
+          }}
+          initial={false}
+          animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+          transition={{
+            duration: instant ? 0 : 0.4,
+            delay: d(0.34),
+            ease: WEDDING_CARD_MOTION.ease,
+          }}
+        >
+          {event.englishDate}
+        </motion.p>
+      ) : null}
 
       <motion.p
-        className="mt-1"
+        className={showBengali ? "mt-1" : "mt-2.5"}
         style={{
           fontFamily: "var(--wc-font-en)",
           fontSize: "var(--wc-meta-size)",
@@ -112,7 +122,7 @@ export function WeddingCardEventBlock({
         animate={go ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
         transition={{
           duration: instant ? 0 : 0.4,
-          delay: d(0.42),
+          delay: d(showBengali ? 0.42 : 0.34),
           ease: WEDDING_CARD_MOTION.ease,
         }}
       >

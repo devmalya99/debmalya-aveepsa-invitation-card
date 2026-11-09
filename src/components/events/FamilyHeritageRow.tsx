@@ -36,7 +36,7 @@ export function FamilyHeritageRow({
     >
       <div className="flex flex-col items-center gap-0.5 text-center sm:gap-1">
         <p
-          className="uppercase"
+          className="font-semibold uppercase"
           style={{
             fontFamily: "var(--fh-font-en)",
             fontSize: "var(--fh-label-size)",
@@ -48,7 +48,7 @@ export function FamilyHeritageRow({
           {row.label}
         </p>
         <p
-          className="max-w-full text-balance"
+          className="max-w-full text-balance font-semibold"
           style={{
             fontFamily: isBengali ? "var(--fh-font-bn)" : "var(--fh-font-en)",
             fontSize: "var(--fh-value-size)",

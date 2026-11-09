@@ -32,11 +32,11 @@ export function LanguageSelector({ className = "" }: LanguageSelectorProps) {
             type="button"
             onClick={() => setLocale(code)}
             aria-pressed={active}
-            className={`relative z-10 flex h-full min-h-[2rem] min-w-[2.4rem] items-center justify-center px-2 text-[0.65rem] leading-none transition-colors active:scale-[0.97] ${
-              code === "bn" ? "font-bn-body" : "font-body tracking-[0.04em]"
-            } ${active ? "text-antique-ivory" : "text-deep-burgundy/70"}`}
+            className={`relative z-10 flex h-full min-h-[2rem] min-w-[2.4rem] items-center justify-center px-2 font-body text-[0.65rem] leading-none tracking-[0.04em] transition-colors active:scale-[0.97] ${
+              active ? "text-antique-ivory" : "text-deep-burgundy/70"
+            }`}
           >
-            {code === "bn" ? "বাংলা" : "EN"}
+            {code === "bn" ? "BN" : "EN"}
           </button>
         );
       })}

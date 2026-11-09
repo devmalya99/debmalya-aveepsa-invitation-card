@@ -23,6 +23,8 @@ type UsePinnedSceneOptions = {
   scrub?: number | boolean;
   /** Fired with the pin ScrollTrigger progress (0–1). */
   onProgress?: (progress: number) => void;
+  /** Override fastScrollEnd (false keeps intermediate opening beats reachable). */
+  fastScrollEnd?: boolean;
 };
 
 /**
@@ -39,6 +41,7 @@ export function usePinnedScene({
   end,
   scrub = SCROLL_SCRUB,
   onProgress,
+  fastScrollEnd = true,
 }: UsePinnedSceneOptions) {
   const onProgressRef = useRef(onProgress);
   useEffect(() => {
@@ -65,8 +68,9 @@ export function usePinnedScene({
           /* anticipatePin repositions early and fights RAF auto-scroll at scene edges. */
           anticipatePin: 0,
           invalidateOnRefresh: true,
-          /* Finish the pin cleanly on fast flicks so the next scene can take over. */
-          fastScrollEnd: true,
+          /* Keep the pinned scene above the next one (stops venue bleeding into opening). */
+          pinReparent: false,
+          fastScrollEnd,
           onUpdate: (self) => {
             onProgressRef.current?.(self.progress);
           },
@@ -81,7 +85,7 @@ export function usePinnedScene({
     },
     {
       scope: sectionRef,
-      dependencies: [enabled, sceneId, pin, start, end, scrub],
+      dependencies: [enabled, sceneId, pin, start, end, scrub, fastScrollEnd],
       revertOnUpdate: true,
     },
   );

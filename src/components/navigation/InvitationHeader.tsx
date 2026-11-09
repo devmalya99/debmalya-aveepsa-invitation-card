@@ -19,14 +19,21 @@ function StaticProgress({
   current: number;
   total: number;
 }) {
-  const { content } = useLanguage();
+  const { content, locale } = useLanguage();
   const fill = Math.min(1, Math.max(0, current / total));
   const currentLabel = String(current).padStart(2, "0");
   const totalLabel = String(total).padStart(2, "0");
+  const isBengali = locale === "bn";
 
   return (
     <div className="min-w-0">
-      <p className="font-bn-display text-[0.68rem] leading-none tracking-normal text-antique-gold">
+      <p
+        className={`text-[0.68rem] leading-none text-antique-gold ${
+          isBengali
+            ? "font-bn-display tracking-normal"
+            : "font-display tracking-[0.06em]"
+        }`}
+      >
         {content.common.wedding}
       </p>
       <div className="mt-1.5 flex items-center gap-2.5">
