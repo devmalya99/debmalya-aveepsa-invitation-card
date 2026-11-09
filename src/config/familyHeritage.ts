@@ -100,7 +100,7 @@ export const FAMILY_HERITAGE_COPY: Record<Locale, FamilyHeritageCopy> = {
     groom: {
       sectionLabel: "Groom's family",
       name: "Debmalya Mazumdar",
-      relation: "Youngest son",
+      relation: "Youngest Son",
       members: [
         { label: "Father", value: "Sri Prashanta Kumar Mazumdar" },
         { label: "Mother", value: "Srimati Nutan Mazumdar" },
@@ -118,16 +118,16 @@ export const FAMILY_HERITAGE_COPY: Record<Locale, FamilyHeritageCopy> = {
     bride: {
       sectionLabel: "Bride's family",
       name: "Aveepsa Chakrabarti",
-      relation: "Only daughter",
+      relation: "Only Daughter",
       members: [
         { label: "Father", value: "Sri Basudeb Chakrabarti" },
-        { label: "Mother", value: "Srimati Madhuchhanda Chakraborti" },
+        { label: "Mother", value: "Srimati Madhuchchanda Chakrabarti" },
         { label: "Brother", value: "Sri Abhijit Chakrabarti" },
         { label: "Sister-in-law", value: "Srimati Amrita Mazumdar" },
       ],
       allDetails: [
         { label: "Father", value: "Sri Basudeb Chakrabarti" },
-        { label: "Mother", value: "Srimati Madhuchhanda Chakraborti" },
+        { label: "Mother", value: "Srimati Madhuchchanda Chakrabarti" },
         { label: "Brother", value: "Sri Abhijit Chakrabarti" },
         { label: "Sister-in-law", value: "Srimati Amrita Mazumdar" },
         { label: "Residence", value: "Old Hospital Road" },

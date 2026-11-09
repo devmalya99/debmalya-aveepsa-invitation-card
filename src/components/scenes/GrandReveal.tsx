@@ -271,14 +271,15 @@ export function GrandReveal() {
           {activeBeat === "families" ? (
             <motion.div
               key="opening-families"
-              className="absolute inset-0 flex items-center justify-center px-4 pt-[max(4.25rem,calc(env(safe-area-inset-top)+3.25rem))] pb-6"
+              className="absolute inset-0 overflow-hidden"
               style={{ backgroundColor: "#f6ebd6" }}
               initial={motionOff ? false : LAYER_MOTION.families.initial}
               animate={LAYER_MOTION.families.animate}
               exit={motionOff ? undefined : LAYER_MOTION.families.exit}
               transition={{ duration: 0.5, ease: LAYER_EASE }}
             >
-              <UnionFamiliesCard className="w-full max-w-[26rem]" />
+              {/* Full-bleed like the cover — no nested scroll, no letterbox margins. */}
+              <UnionFamiliesCard className="h-full w-full" />
             </motion.div>
           ) : null}
 

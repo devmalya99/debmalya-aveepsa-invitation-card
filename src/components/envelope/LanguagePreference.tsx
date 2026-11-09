@@ -10,7 +10,7 @@ const COVER_SRC = assets.decorations.kolkataCover;
 /**
  * Blurred Kolkata cover + explicit language choice (no guessing).
  * Shown on every full page reload; last choice is only a default for later toggles.
- * Auto-open / auto-scroll never start until the guest taps a language here.
+ * Idle auto-open never starts until the guest taps a language here.
  * Music starts on this tap — browsers allow playback only after a user gesture.
  */
 export function LanguagePreference() {

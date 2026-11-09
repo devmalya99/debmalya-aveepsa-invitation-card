@@ -7,6 +7,11 @@ export const assets = {
     grandReveal: "/images/couple/couple-grand-reveal-v3.jpg",
     finalBlessing: "/images/couple/couple-02.jpg",
   },
+  invitation: {
+    /** Finished family cards — text is baked into the artwork */
+    familyBn: "/images/family-invitation-bn.jpg",
+    familyEn: "/images/family-invitation-en.jpg",
+  },
   decorations: {
     alpana: "/decorations/alpana/alpana-lotus.png",
     headingMandala: "/decorations/alpana/heading-mandala-circle-v2.png",

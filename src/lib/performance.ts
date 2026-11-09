@@ -4,24 +4,18 @@ export function shouldUseCinematicScroll() {
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (reduced) return false;
 
-  const coarse = window.matchMedia("(pointer: coarse)").matches;
-
-  // Prefer native touch scrolling on phones; keep pinning via GSAP only.
-  // Short viewports still pin — otherwise opening layers stay stuck on couple.
-  if (coarse && window.innerWidth < 768) {
-    return "pin-only" as const;
-  }
-
-  if (window.innerHeight < 560) {
-    return "pin-only" as const;
-  }
-
-  return "smooth" as const;
+  /*
+   * Always pin-only for this invite. Lenis ("smooth") virtualizes window scroll
+   * without a ScrollTrigger scrollerProxy, which fights GSAP pins and traps
+   * scroll at the venue → finale boundary (tablets / desktop responsive / iPad).
+   * MobileOnlyGate already limits the experience to phone/tablet widths.
+   */
+  return "pin-only" as const;
 }
 
 export type ScrollMode = false | "pin-only" | "smooth";
 
-/** Touch phones — use lighter ambient density and softer auto-scroll. */
+/** Touch phones — use lighter ambient density. */
 export function isCoarseMobile() {
   if (typeof window === "undefined") return false;
   return (
@@ -52,23 +46,3 @@ export const AMBIENT_DENSITY = {
 export function getAmbientDensity() {
   return isCoarseMobile() ? AMBIENT_DENSITY.mobile : AMBIENT_DENSITY.desktop;
 }
-
-/**
- * Auto-scroll pixels per frame while moving between readable stops.
- * Keep this low — guests need time to read; holds do the resting.
- */
-export function getAutoScrollPxPerFrame() {
-  return isCoarseMobile() ? 3.6 : 4.2;
-}
-
-/** How long auto-play holds each opening card before snapping to the next. */
-export const OPENING_AUTO_HOLD_MS = 6000;
-
-/** Festivities has more copy (two dates) — hold longer before leaving. */
-export const OPENING_EXIT_HOLD_MS = 8000;
-
-/** Default pause on later scenes once readable. */
-export const SCENE_READ_HOLD_MS = 6500;
-
-/** Venue folio needs extra time for greeting + address. */
-export const VENUE_READ_HOLD_MS = 8000;

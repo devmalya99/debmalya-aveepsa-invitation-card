@@ -9,15 +9,12 @@ import { EnvelopeIntro } from "@/components/scenes/EnvelopeIntro";
 import { VenueReveal } from "@/components/scenes/VenueReveal";
 import { InvitationHeader } from "@/components/navigation/InvitationHeader";
 import { AudioProvider } from "@/hooks/useAudio";
-import { AutoPlayProvider, useAutoPlay } from "@/hooks/useAutoPlay";
-import { useAutoScroll } from "@/hooks/useAutoScroll";
+import { AutoPlayProvider } from "@/hooks/useAutoPlay";
 import { LanguageProvider, useLanguage } from "@/hooks/useLanguage";
 import { assets } from "@/data/assets";
 import { registerGsap, ScrollTrigger } from "@/lib/gsap";
 
 const OPENED_KEY = "wedding-invite-opened";
-/** Let guests read the couple card before auto-scroll starts. */
-const INTRO_HOLD_MS = 5500;
 
 const sceneLoading = () => (
   <div className="scene-shell surface-ivory min-h-svh" aria-hidden />
@@ -49,13 +46,9 @@ const GuestBlessingScene = dynamic(
 
 function ExperienceInner() {
   const { ready, hasChosenLocale } = useLanguage();
-  const { markProgrammatic } = useAutoPlay();
   const [opened, setOpened] = useState(false);
   const [hydratedOpen, setHydratedOpen] = useState(false);
-  const [introReady, setIntroReady] = useState(false);
   const [laterScenes, setLaterScenes] = useState(false);
-
-  useAutoScroll(opened && introReady);
 
   useEffect(() => {
     if (!ready) return;
@@ -64,12 +57,11 @@ function ExperienceInner() {
     // cleared on replay) for in-session continuity only.
     window.localStorage.removeItem(OPENED_KEY);
     setOpened(false);
-    setIntroReady(false);
     setLaterScenes(false);
     setHydratedOpen(true);
   }, [ready]);
 
-  /* Warm scene chunks + venue hero while the guest is still on the envelope. */
+  /* Warm scene chunks + heroes while the guest is still on the envelope. */
   useEffect(() => {
     if (opened || !hydratedOpen) return;
     const warm = window.setTimeout(() => {
@@ -92,25 +84,21 @@ function ExperienceInner() {
 
   useEffect(() => {
     if (!opened) {
-      setIntroReady(false);
       setLaterScenes(false);
       return;
     }
 
     registerGsap();
-    /* Mount venue+ immediately — delayed mount left auto-scroll stranded at pin end. */
     setLaterScenes(true);
     void import("@/components/scenes/FinalScene");
     void import("@/components/scenes/GuestBlessingScene");
 
     const frame = window.requestAnimationFrame(() => ScrollTrigger.refresh());
     const later = window.setTimeout(() => ScrollTrigger.refresh(), 180);
-    const intro = window.setTimeout(() => setIntroReady(true), INTRO_HOLD_MS);
 
     return () => {
       window.cancelAnimationFrame(frame);
       window.clearTimeout(later);
-      window.clearTimeout(intro);
     };
   }, [opened]);
 
@@ -126,18 +114,16 @@ function ExperienceInner() {
   }, [laterScenes]);
 
   const openInvitation = useCallback(() => {
-    markProgrammatic(INTRO_HOLD_MS + 400);
     /* CoverSplash locks body scroll — clear defensively so pin scrub always works. */
     document.body.style.overflow = "";
     setOpened(true);
-    setIntroReady(false);
     setLaterScenes(true);
     window.localStorage.setItem(OPENED_KEY, "1");
     window.requestAnimationFrame(() => {
       window.scrollTo(0, 0);
       ScrollTrigger.refresh();
     });
-  }, [markProgrammatic]);
+  }, []);
 
   const replay = useCallback(() => {
     window.localStorage.removeItem(OPENED_KEY);

@@ -65,7 +65,7 @@ export function OpeningCoupleCard({ className = "" }: OpeningCoupleCardProps) {
       </motion.div>
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col items-center justify-center px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-[max(3.75rem,calc(env(safe-area-inset-top)+2.75rem))]">
-        <div className="flex w-full max-w-[22rem] flex-col items-center text-center sm:max-w-[26rem]">
+        <div className="flex w-full max-w-[22rem] -translate-y-5 flex-col items-center text-center sm:max-w-[26rem] sm:-translate-y-6">
           {/* Monogram */}
           <motion.div
             className="relative mb-3 flex h-14 w-14 items-center justify-center sm:mb-4 sm:h-16 sm:w-16"
