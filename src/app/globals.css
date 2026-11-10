@@ -63,6 +63,8 @@
   :root,
   html {
     color-scheme: only light;
+    forced-color-adjust: none;
+    -webkit-tap-highlight-color: transparent;
   }
 
   /*
@@ -94,6 +96,36 @@
     color: var(--foreground);
     font-family: var(--font-dm-sans), system-ui, sans-serif;
     color-scheme: only light;
+    forced-color-adjust: none;
+  }
+
+  /*
+   * Hard re-assert light stationery if the OS/browser still reports dark.
+   * Android Chrome Auto Dark Theme + Samsung Internet ignore softer hints.
+   */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: only light;
+      --background: #f6ebd6;
+      --foreground: #4b151f;
+    }
+
+    html,
+    body {
+      color-scheme: only light !important;
+      background-color: #f6ebd6 !important;
+      background-image: none !important;
+      color: #4b151f !important;
+      forced-color-adjust: none;
+    }
+
+    img,
+    video,
+    canvas,
+    svg {
+      color-scheme: only light;
+      forced-color-adjust: none;
+    }
   }
 
   ::selection {
@@ -132,12 +164,15 @@
     background-image: var(--gradient-ivory);
     color: var(--color-deep-burgundy);
     color-scheme: only light;
+    forced-color-adjust: none;
   }
 
   .surface-burgundy {
     background-color: #4b151f;
     background-image: var(--gradient-burgundy);
     color: var(--color-antique-ivory);
+    color-scheme: only light;
+    forced-color-adjust: none;
   }
 
   .surface-parchment {
@@ -150,6 +185,7 @@
     );
     color: var(--color-deep-burgundy);
     color-scheme: only light;
+    forced-color-adjust: none;
   }
 
   /* Explicit stationery sheet — survives mobile auto-dark inversion attempts */
@@ -163,6 +199,7 @@
     );
     color: #4b151f;
     color-scheme: only light;
+    forced-color-adjust: none;
   }
 
   .ornament-border {
@@ -282,6 +319,7 @@
     color: var(--fh-primary);
     background-color: #f8eedb;
     color-scheme: only light;
+    forced-color-adjust: none;
   }
 
   .family-heritage-shimmer {
@@ -391,6 +429,7 @@
     --wc-content-max: 22.5rem;
     color: var(--wc-primary);
     color-scheme: only light;
+    forced-color-adjust: none;
   }
 
   .wedding-card-shimmer {

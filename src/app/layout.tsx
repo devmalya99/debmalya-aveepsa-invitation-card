@@ -14,7 +14,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  colorScheme: "light",
+  /* Must be "only light" — plain "light" still lets Android Chrome auto-dark invert ivory. */
+  colorScheme: "only light",
   themeColor: "#f6ebd6",
 };
 
